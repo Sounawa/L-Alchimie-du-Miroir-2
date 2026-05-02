@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type ViewType = 'cover' | 'toc' | 'intro' | 'chapter' | 'progress' | 'search' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization';
+type ViewType = 'cover' | 'toc' | 'intro' | 'chapter' | 'progress' | 'search' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization' | 'reading-plan' | 'comparison';
 
 type FontFamily = 'system' | 'serif' | 'reading';
 type ReadingMode = 'normal' | 'focus' | 'soothing';
@@ -99,6 +99,13 @@ interface AppState {
   // Memorization progress
   memorizationProgress: Record<string, { level: string; bestScore: number; attempts: number }>;
 
+  // Reading plan
+  selectedPlan: string | null;
+  planStartDate: string | null; // ISO date string
+
+  // Word of the day
+  wordOfDayDismissed: string; // ISO date string of when it was last dismissed
+
   // Keyboard shortcuts overlay (transient - not persisted)
   showShortcuts: boolean;
 
@@ -156,6 +163,14 @@ interface AppState {
 
   // Memorization actions
   updateMemorizationProgress: (chapterId: string, level: string, score: number) => void;
+
+  // Reading plan actions
+  selectPlan: (planId: string) => void;
+  clearPlan: () => void;
+
+  // Word of the day actions
+  dismissWordOfDay: () => void;
+  isWordOfDayDismissed: () => boolean;
 
   // Keyboard shortcuts overlay actions
   toggleShortcuts: () => void;
@@ -242,6 +257,13 @@ export const useAppStore = create<AppState>()(
 
       // ── Memorization Progress ──────────────────────────────────────
       memorizationProgress: {},
+
+      // ── Reading Plan ────────────────────────────────────────────────
+      selectedPlan: null,
+      planStartDate: null,
+
+      // ── Word of the Day ─────────────────────────────────────────────
+      wordOfDayDismissed: '',
 
       // ── Keyboard Shortcuts Overlay ────────────────────────────────
       showShortcuts: false,
@@ -612,6 +634,29 @@ export const useAppStore = create<AppState>()(
         })
       },
 
+      // ── Reading Plan Actions ────────────────────────────────────────
+
+      selectPlan: (planId: string) => {
+        set({
+          selectedPlan: planId,
+          planStartDate: getTodayDateString(),
+        });
+      },
+
+      clearPlan: () => {
+        set({ selectedPlan: null, planStartDate: null });
+      },
+
+      // ── Word of the Day Actions ─────────────────────────────────────
+
+      dismissWordOfDay: () => {
+        set({ wordOfDayDismissed: getTodayDateString() });
+      },
+
+      isWordOfDayDismissed: () => {
+        return get().wordOfDayDismissed === getTodayDateString();
+      },
+
       // ── Keyboard Shortcuts Overlay Actions ────────────────────────
 
       toggleShortcuts: () => {
@@ -700,6 +745,9 @@ export const useAppStore = create<AppState>()(
           searchQuery: '',
           reminderDismissedDate: '',
           memorizationProgress: {},
+          selectedPlan: null,
+          planStartDate: null,
+          wordOfDayDismissed: '',
           showShortcuts: false,
         });
       },
@@ -729,6 +777,9 @@ export const useAppStore = create<AppState>()(
         tasbihDhikr: state.tasbihDhikr,
         reminderDismissedDate: state.reminderDismissedDate,
         memorizationProgress: state.memorizationProgress,
+        selectedPlan: state.selectedPlan,
+        planStartDate: state.planStartDate,
+        wordOfDayDismissed: state.wordOfDayDismissed,
       }),
     }
   )

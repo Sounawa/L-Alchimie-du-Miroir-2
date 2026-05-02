@@ -18,6 +18,8 @@ import { SettingsView } from '@/components/views/settings-view'
 import { BookmarksView } from '@/components/views/bookmarks-view'
 import { TasbihCounter } from '@/components/shared/tasbih-counter'
 import { MemorizationView } from '@/components/views/memorization-view'
+import { ReadingPlanView } from '@/components/views/reading-plan-view'
+import { ChapterComparison } from '@/components/shared/chapter-comparison'
 import { ShortcutsOverlay } from '@/components/shared/shortcuts-overlay'
 import { ReadingProgressBar } from '@/components/shared/reading-progress-bar'
 import { ViewTransition } from '@/components/shared/view-transition'
@@ -86,6 +88,10 @@ export default function Home() {
         return <BookmarksView />
       case 'memorization':
         return <MemorizationView />
+      case 'reading-plan':
+        return <ReadingPlanView />
+      case 'comparison':
+        return <ChapterComparison />
       default:
         return <CoverView />
     }

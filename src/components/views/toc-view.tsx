@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { CheckCircle2, Bookmark, ChevronRight, BookOpen, Flame, Trophy, Clock, Eye } from 'lucide-react';
 import { DailyInspiration } from '@/components/shared/daily-inspiration';
+import { WordOfTheDay } from '@/components/shared/word-of-the-day';
 import { StudyReminder } from '@/components/shared/study-reminder';
 import { useRef, useEffect, useState } from 'react';
 
@@ -131,7 +132,7 @@ export function TocView() {
         {/* Résumé de progression mini-card */}
         <motion.div variants={fadeIn} className="mb-6">
           <StudyReminder />
-          <div className="rounded-xl border border-amber-200/50 bg-gradient-to-r from-amber-50/80 via-stone-50 to-amber-50/60 p-4 dark:border-amber-800/30 dark:from-amber-950/20 dark:via-stone-900 dark:to-amber-950/10">
+          <div className="rounded-xl border border-amber-200/50 bg-gradient-to-r from-amber-50/80 via-stone-50 to-amber-50/60 p-4 dark:border-amber-800/30 dark:from-amber-950/20 dark:via-stone-900 dark:to-amber-950/10 shadow-sm shadow-amber-200/20 dark:shadow-amber-900/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Trophy className="h-5 w-5 text-amber-600 dark:text-amber-400" />
@@ -158,6 +159,11 @@ export function TocView() {
         {/* Daily Inspiration */}
         <motion.div variants={fadeIn} className="mb-8">
           <DailyInspiration />
+        </motion.div>
+
+        {/* Word of the Day */}
+        <motion.div variants={fadeIn}>
+          <WordOfTheDay />
         </motion.div>
 
         {/* Dernière lecture indicator */}
@@ -209,7 +215,7 @@ export function TocView() {
             transition={{ delay: partIdx * 0.1, duration: 0.5, ease: 'easeOut' }}
           >
             {/* Part header with color dot */}
-            <div className="my-6">
+            <div className="my-8">
               <div className="flex items-center gap-3">
                 <span className="h-px flex-1 bg-gradient-to-r from-amber-500/40 to-transparent dark:from-amber-600/40" />
                 <div className="flex items-center gap-2">
@@ -231,7 +237,7 @@ export function TocView() {
                 <motion.div key={entry.id} variants={slideIn}>
                   <button
                     onClick={() => navigate('chapter', entry.id)}
-                    className={`group flex w-full items-center gap-2 rounded-xl border-l-2 ${partBorderColor[part.letter] || 'border-l-amber-500'} px-3 py-2.5 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:border-l-[3px] hover:translate-x-1 ${currentChapterId === entry.id ? 'bg-amber-50/80 dark:bg-amber-900/15 border-l-[3px]' : ''}`}
+                    className={`group flex w-full items-center gap-2 rounded-xl border-l-2 ${partBorderColor[part.letter] || 'border-l-amber-500'} px-3 py-3 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:border-l-[3px] hover:translate-x-1 hover:pl-4 ${currentChapterId === entry.id ? 'bg-amber-50/80 dark:bg-amber-900/15 border-l-[3px]' : ''}`}
                   >
                     {/* Completion icon */}
                     <span className="w-5 shrink-0">
@@ -291,7 +297,7 @@ export function TocView() {
           <motion.div key={entry.id} variants={slideIn}>
             <button
               onClick={() => navigate('chapter', entry.id)}
-              className="group flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:translate-x-1"
+              className="group flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:translate-x-1 hover:pl-4"
             >
               <span className="w-5 shrink-0">
                 <span className="block size-4 rounded-full border border-stone-300 dark:border-stone-600/30" />

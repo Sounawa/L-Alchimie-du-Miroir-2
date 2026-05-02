@@ -81,7 +81,9 @@ export function AppHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-stone-200/50 dark:border-stone-700/30 bg-background/60 backdrop-blur-xl supports-[backdrop-filter]:bg-background/50">
+    <header className="sticky top-0 z-40 border-b border-stone-200/50 dark:border-stone-700/30 bg-background/70 backdrop-blur-2xl supports-[backdrop-filter]:bg-background/60">
+      {/* Subtle warm divider line at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-400/20 dark:via-amber-500/15 to-transparent" />
       <div className="flex h-14 items-center gap-2 px-3 md:px-4">
         {/* Hamburger menu */}
         <Button
@@ -100,11 +102,11 @@ export function AppHeader() {
           <AnimatePresence mode="wait">
             <motion.h2
               key={headerTitle}
-              initial={{ opacity: 0, y: -4 }}
+              initial={{ opacity: 0, y: -3 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 4 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="text-sm font-semibold truncate"
+              exit={{ opacity: 0, y: 3 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="text-sm font-semibold truncate transition-opacity duration-300"
             >
               {headerTitle}
             </motion.h2>

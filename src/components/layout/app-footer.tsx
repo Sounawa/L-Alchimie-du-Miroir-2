@@ -22,7 +22,9 @@ export function AppFooter() {
   ]
 
   return (
-    <footer className="border-t border-amber-200/30 dark:border-amber-800/20 bg-gradient-to-b from-amber-50/40 via-stone-50/30 to-amber-50/60 dark:from-amber-950/20 dark:via-stone-900/30 dark:to-amber-950/10">
+    <footer className="border-t border-amber-200/30 dark:border-amber-800/20 bg-gradient-to-b from-amber-50/40 via-stone-50/30 to-amber-50/60 dark:from-amber-950/20 dark:via-stone-900/30 dark:to-amber-950/10 animate-fade-in-up">
+      {/* Thin decorative line above */}
+      <div className="h-px bg-gradient-to-r from-transparent via-amber-400/25 dark:via-amber-500/15 to-transparent" />
       {/* SVG Wave divider at top */}
       <div className="w-full overflow-hidden leading-[0]">
         <svg
@@ -78,7 +80,7 @@ export function AppFooter() {
             <button
               key={link.view}
               onClick={() => navigate(link.view)}
-              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-amber-600 dark:hover:text-amber-400 transition-colors duration-200"
             >
               <link.icon className="h-3.5 w-3.5" />
               <span>{link.label}</span>

@@ -132,8 +132,8 @@ const intro = {
     {
       part: "Partie C",
       content: "Les Sept Niveaux de Lecture",
-      chapters: "Théorie + Pratique",
-      duration: "~1h30",
+      chapters: "C1 à C7",
+      duration: "~2h30",
     },
   ],
   advice:
@@ -912,188 +912,1016 @@ const b3to10: Chapter = {
 // ---------------------------------------------------------------------------
 
 const partCDescription =
-  "Le Coran n'est pas un livre qu'on lit — c'est un livre qu'on vit. Les savants ont identifié sept niveaux de lecture qui mènent du déchiffrement des lettres à la transformation de l'être. Cette partie vous présente la théorie et vous guide dans l'application pratique de chaque niveau.";
+  "Le Coran n'est pas un livre qu'on lit — c'est un livre qu'on vit. Les savants ont identifié sept niveaux de lecture qui mènent du déchiffrement des lettres à la transformation de l'être. Chacun de ces sept chapitres explore un niveau en profondeur, avec un verset-ancrage, une analyse linguistique, des questions miroir et des exercices pratiques. La progression est essentielle : chaque niveau prépare le suivant.";
+
+// ---- Chapter C1 — Tilawa (Récitation) ----
 
 const c1: Chapter = {
   id: "c1",
   number: "C1",
-  title: "Les Sept Niveaux de Lecture",
-  subtitle: "Théorie et Application",
+  title: "Tilawa",
+  subtitle: "Récitation — La lettre comme lumière",
   part: "C",
-  arabicVerse:
-    "قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ",
+  arabicVerse: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ۝ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
   translation:
-    "Dis : Il est Allah, l'Unique. Allah, Le Seul à être imploré pour ce que nous désirons. Il n'a jamais engendré, n'a pas été engendré non plus. Et nul n'est égal à Lui.",
-  translationSource: "Sourate 112 — Al-Ikhlas",
-  wordAnalysis: [],
-  mirrorQuestions: [],
-  munajatPrompts: [],
-  timerMinutes: 90,
+    "Au nom d'Allah, le Tout Miséricordieux, le Très Miséricordieux. Louange à Allah, Seigneur de l'univers.",
+  translationSource: "Traduction Hamidullah — Sourate 1, versets 1-2",
+  wordAnalysis: [
+    {
+      arabic: "تِلَاوَةٌ",
+      transliteration: "Tilawa",
+      literalMeaning: "Récitation / Lecture suivie",
+      mirrorDimension:
+        "La tilawa n'est pas une simple lecture — c'est un acte de suivi, comme on suit les pas d'un guide. Je suis les lettres du Coran comme on suit un chemin.",
+    },
+    {
+      arabic: "بِسْمِ",
+      transliteration: "Bismi",
+      literalMeaning: "Avec le nom",
+      mirrorDimension:
+        "Chaque lettre que je prononce commence par un acte d'association avec le Divin. Ma langue est l'instrument, mais le nom est la mélodie.",
+    },
+    {
+      arabic: "الرَّحْمَٰنِ",
+      transliteration: "Ar-Rahman",
+      literalMeaning: "Le Tout Miséricordieux",
+      mirrorDimension:
+        "La miséricorde qui enveloppe la récitation — chaque lettre récitée est enveloppée de la miséricorde divine.",
+    },
+    {
+      arabic: "الْحَمْدُ",
+      transliteration: "Al-Hamd",
+      literalMeaning: "La louange",
+      mirrorDimension:
+        "La récitation commence par la louange — le souffle du récitant est lui-même un acte de gratitude envers Celui qui a donné la parole.",
+    },
+    {
+      arabic: "رَبِّ",
+      transliteration: "Rabb",
+      literalMeaning: "Seigneur / Éducateur",
+      mirrorDimension:
+        "Le Rabb est Celui qui éduque par étapes — la récitation est la première étape de cette éducation spirituelle.",
+    },
+  ],
+  coherencePoints: [
+    "La tilawa est le socle de tout : sans récitation correcte, il n'y a pas de compréhension possible. La lettre est le véhicule de la lumière.",
+    "Le tajwid n'est pas un ornement — c'est une obligation spirituelle. Chaque règle de prononciation préserve le sens. Un « dhad » confondu avec un « dad » peut inverser le sens d'un verset.",
+    "La Fatiha comme verset-ancrage : c'est la sourate que chaque musulman récite au moins 17 fois par jour. La méditer au niveau de la tilawa, c'est redécouvrir ce qu'on croit connaître.",
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "Quand je récite le Coran, suis-je conscient de chaque lettre, ou ma langue court-elle par habitude ?",
+      meditation:
+        "Ralentissez. Prenez une seule page et récitez-la comme si c'était la première fois. Que remarquez-vous ?",
+    },
+    {
+      question:
+        "Est-ce que je corrige ma récitation quand je commets une erreur, ou je continue comme si de rien n'était ?",
+      meditation:
+        "La correction (islah) de la récitation est un acte d'humilité. Revenir en arrière pour corriger une lettre, c'est reconnaître que la Parole mérite mieux que notre négligence.",
+    },
+    {
+      question:
+        "Quel lien ressens-je entre la beauté sonore de la récitation et l'état de mon cœur ?",
+      meditation:
+        "Le Prophète ﷺ disait : « Embellissez le Coran par vos voix. » La beauté n'est pas un luxe — c'est une nécessité spirituelle.",
+    },
+    {
+      question:
+        "Ai-je déjà pleuré en récitant le Coran ? Si non, pourquoi ?",
+      meditation:
+        "Les larmes du récitant ne sont pas de la tristesse — elles sont le signe que le cœur a été touché par la lumière des lettres.",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Allah, fais que chaque lettre que je récite soit une lumière qui entre dans mon cœur.",
+    "Ya Rabb, enseigne-moi la récitation correcte de Ton Livre — pas pour que les gens m'admirent, mais pour que Ta Parole soit honorée sur ma langue.",
+    "Ya Rahman, ouvre mes oreilles à la beauté de Ta récitation, et fais que j'entende au-delà des sons.",
+    "Ya Allah, transforme ma récitation mécanique en récitation vivante — que chaque souffle soit une prière.",
+  ],
+  timerMinutes: 20,
   exercises: [
     {
       question:
-        "Niveau 1 (Tilawa) : Qu'avez-vous remarqué en récitant lentement ?",
+        "Prenez les deux premiers versets d'Al-Fatiha et récitez-les 7 fois lentement, en prêtant attention à chaque lettre, chaque voyelle, chaque prolongation. Notez ce que vous ressentez à la 7e répétition par rapport à la 1re.",
       placeholder:
-        "Votre expérience de récitation lente...",
+        "Votre expérience de récitation lente et consciente des 7 répétitions...",
     },
     {
       question:
-        "Niveau 2 (Tarjamah) : Quels mots avez-vous mieux compris ?",
+        "Enregistrez votre récitation d'Al-Fatiha, puis écoutez-la. Identifiez 3 points d'amélioration dans votre tajwid. Comment cette écoute vous fait-elle réaliser l'importance de la précision ?",
       placeholder:
-        "Les mots que vous avez mieux compris...",
+        "Mes 3 points d'amélioration et ma réflexion sur la précision...",
     },
     {
       question:
-        "Niveau 3 (Tadabbur) : Quelles questions le verset soulève-t-il ?",
+        "Choisissez une règle de tajwid que vous négligez souvent (par exemple, la prolongation des mudud ou l'assimilation) et pratiquez-la consciemment pendant une semaine. Décrivez le changement dans votre récitation.",
       placeholder:
-        "Les questions soulevées par le verset...",
-    },
-    {
-      question:
-        "Niveau 4 (Tafakkur) : Quelle est l'implication spirituelle ?",
-      placeholder:
-        "L'implication spirituelle que vous percevez...",
-    },
-    {
-      question:
-        "Niveau 5 (Tazakkur) : De quoi ce verset vous rappelle-t-il ?",
-      placeholder:
-        "Ce dont le verset vous rappelle...",
-    },
-    {
-      question:
-        "Niveau 6 (Tahqiq) : Êtes-vous en accord avec ce verset dans votre vie ?",
-      placeholder:
-        "Votre vérification honnête...",
-    },
-    {
-      question:
-        "Niveau 7 (Tajalli) : Avez-vous ressenti quelque chose de spécial ?",
-      placeholder:
-        "Votre expérience spirituelle, si applicable...",
-    },
-  ],
-  comparisonTable: {
-    headers: ["Niveau", "Nom", "Description", "Exemple pratique"],
-    rows: [
-      [
-        "1",
-        "Tilawa (Récitation)",
-        "Lire les lettres et les mots correctement",
-        "Réciter la Fatiha avec tajwid",
-      ],
-      [
-        "2",
-        "Tarjamah (Compréhension)",
-        "Comprendre le sens littéral du texte",
-        "Savoir que « al-hamd » signifie « la louange »",
-      ],
-      [
-        "3",
-        "Tadabbur (Réflexion)",
-        "Réfléchir profondément sur le sens des versets",
-        "Pourquoi « al-hamd » et non « ash-shukr » ?",
-      ],
-      [
-        "4",
-        "Tafakkur (Contemplation)",
-        "Méditer sur les implications spirituelles",
-        "Comment ce verset transforme ma vision du monde ?",
-      ],
-      [
-        "5",
-        "Tazakkur (Rappel)",
-        "Se rappeler des vérités spirituelles à travers le texte",
-        "Ce verset me rappelle que toute chose appartient à Allah",
-      ],
-      [
-        "6",
-        "Tahqiq (Vérification)",
-        "Vérifier si le verset est réalisé dans sa propre vie",
-        "Est-ce que je vis vraiment « iyyaka na'budu » ?",
-      ],
-      [
-        "7",
-        "Tajalli (Révélation spirituelle)",
-        "Expérimenter la lumière divine à travers le verset",
-        "Une illumination intérieure lors de la méditation",
-      ],
-    ],
-  },
-  extraSections: [
-    // Application pratique — Les Sept Niveaux sur Al-Ikhlas
-    {
-      id: "c1-level1",
-      title: "Niveau 1 — Tilawa (Récitation)",
-      arabic: "",
-      translation: "",
-      commentary:
-        "Pratiquez la récitation d'Al-Ikhlas en vous concentrant sur chaque lettre. La lettre « Ha » dans « Huwa » doit être prononcée avec douceur depuis la poitrine. Le « Sad » dans « As-Samad » doit être plein et articulé. Prenez 5 minutes pour réciter lentement, chaque mot étant une perle.",
-    },
-    {
-      id: "c1-level2",
-      title: "Niveau 2 — Tarjamah (Compréhension)",
-      arabic: "",
-      translation: "",
-      commentary:
-        "Comprenez le sens de chaque mot. « Huwa » (Lui) est un pronom qui pointe vers l'essence divine sans la nommer — une indication de Sa transcendance. « Ahad » (l'Unique) est un degré supérieur à « Wahid » (un) : Il est Unique en Son essence, Ses attributs et Ses actes. « As-Samad » est Celui vers qui toute la création se tourne dans le besoin.",
-    },
-    {
-      id: "c1-level3",
-      title: "Niveau 3 — Tadabbur (Réflexion)",
-      arabic: "",
-      translation: "",
-      commentary:
-        "Réfléchissez : pourquoi ce verset commence par « Dis » (Qul) ? Parce que la pureté de la foi ne se proclame pas seulement dans le cœur — elle se prononce. Pourquoi « Ahad » et non « Wahid » ? Parce que l'unicité absolue exclut toute forme de comparaison. « Wahid » pourrait impliquer l'existence d'un « deux » ; « Ahad » nie toute multiplicité.",
-    },
-    {
-      id: "c1-level4",
-      title: "Niveau 4 — Tafakkur (Contemplation)",
-      arabic: "",
-      translation: "",
-      commentary:
-        "Contemplez : si Allah est vraiment « Ahad » et « As-Samad », qu'est-ce que cela change dans ma relation avec le monde ? Si rien ne Lui est comparable, alors rien dans la création ne peut remplacer la connexion avec Lui. L'argent, les gens, le statut — tout est relatif face à L'Unique.",
-    },
-    {
-      id: "c1-level5",
-      title: "Niveau 5 — Tazakkur (Rappel)",
-      arabic: "",
-      translation: "",
-      commentary:
-        "Ce verset me rappelle que mon cœur a été créé pour se tourner vers l'Unique. Chaque fois que je me disperse entre de multiples attachements, Al-Ikhlas me rappelle de revenir à l'essentiel. C'est le verset du retour.",
-    },
-    {
-      id: "c1-level6",
-      title: "Niveau 6 — Tahqiq (Vérification)",
-      arabic: "",
-      translation: "",
-      commentary:
-        "Suis-je sincère dans mon unicité d'adoration ? Est-ce que je dis « la ilaha illa Allah » mais que mon cœur est divisé entre Allah et autre chose ? L'honnêteté au niveau 6 demande de regarder ses faiblesses en face — non pour se condamner, mais pour s'améliorer.",
-    },
-    {
-      id: "c1-level7",
-      title: "Niveau 7 — Tajalli (Révélation spirituelle)",
-      arabic: "",
-      translation: "",
-      commentary:
-        "C'est le niveau de l'expérience directe. Le tajalli peut se manifester comme une paix soudaine du cœur, des larmes involontaires, une clarté intérieure. Il ne se commande pas — il est donné par Allah à qui Il veut. Mais on le prépare par les six niveaux précédents.",
+        "La règle de tajwid que j'ai pratiquée et le changement ressenti...",
     },
   ],
   bulletPoints: [
-    "Commencez par le niveau 1 : Assurez-vous de pouvoir réciter correctement. La base phonétique est essentielle. Un verset mal lu ne peut pas être profondément médité.",
-    "Ne sautez pas le niveau 2 : La compréhension littérale est le socle. Vous ne pouvez pas réfléchir sur ce que vous ne comprenez pas.",
-    "Patience aux niveaux 3-4 : C'est ici que la vraie méditation commence. Prenez votre temps. Un seul verset médité vaut mieux que cent versets survolés.",
-    "L'honnêteté au niveau 6 : Le tahqiq demande du courage. Il faut accepter de voir les écarts entre nos idéalités et notre réalité.",
-    "Le niveau 7 est un don : Le tajalli ne s'obtient pas par l'effort seul — c'est une grâce (fadl) d'Allah. Mais on prépare le terrain par les six premiers niveaux.",
+    "La tilawa est un acte d'adoration ('ibadah) : Réciter le Coran est en soi une adoration, même sans comprendre le sens. La résonance des lettres arabes porte une baraka que la traduction ne peut transmettre.",
+    "Le tajwid protège le sens : Chaque règle de tajwid existe pour préserver le sens révélé. La confusion entre lettres proches (dal/dhad, sin/sad) peut altérer le message divin.",
+    "La lenteur est la clé : Le Coran a été révélé sur 23 ans. Vouloir le lire en vitesse, c'est manquer l'essentiel. La tilawa méditative (tartil) est le mode de récitation le plus méritoire.",
+    "La voix embellit : « Zayyinu al-Qur'an bi aswatikum » — le Prophète ﷺ nous encourage à embellir le Coran par nos voix. La beauté n'est pas superficielle — elle révèle la beauté du contenu.",
   ],
   callouts: [
     {
       type: "gold",
-      title: "Le miroir des sept niveaux",
+      title: "La lettre comme acte spirituel",
       content:
-        "Les niveaux sont comme les étages d'une maison. On ne peut pas atteindre le toit sans monter les escaliers. Mais chaque étage a sa propre beauté — ne cherchez pas le toit en négligeant le rez-de-chaussée.",
+        "Ibn Mas'ud disait : « Celui qui veut savoir s'il aime Allah, qu'il évalue son attachement au Coran. » La tilawa est le thermomètre de l'amour divin. Si votre récitation est mécanique, c'est que le cœur est endormi. Réveillez-le par la lenteur.",
+    },
+    {
+      type: "info",
+      title: "Tartil vs. Tadwur",
+      content:
+        "Le « tartil » est la récitation lente et mesurée, recommandée par le Coran lui-même : « Wa rattili al-Qur'ana tartila » (Sourate 73:4). Le « tadwur » est la récitation rapide pour terminer le Coran. Les savants recommandent le tartil pour la méditation, et le tadwur pour la révision.",
     },
   ],
+  quotes: [
+    {
+      text: "Celui qui récite le Coran avec habileté sera avec les nobles anges enregistreurs, et celui qui le récite avec difficulté en trébuchant aura une double récompense.",
+      source: "Rapporté par Al-Bukhari et Muslim",
+    },
+  ],
+};
+
+// ---- Chapter C2 — Tarjamah (Compréhension) ----
+
+const c2: Chapter = {
+  id: "c2",
+  number: "C2",
+  title: "Tarjamah",
+  subtitle: "Compréhension — Le sens caché dans les mots",
+  part: "C",
+  arabicVerse: "الْحَمْدُ لِلَّهِ الَّذِي لَمْ يَتَّخِذْ وَلَدًا وَلَمْ يَكُن لَّهُ شَرِيكٌ فِي الْمُلْكِ وَلَمْ يَكُن لَّهُ وَلِيٌّ مِّنَ الذُّلِ وَكَبِّرْهُ تَكْبِيرًا",
+  translation:
+    "Louange à Allah qui ne S'est pas attribué d'enfant, qui n'a pas d'associé en la royauté et qui n'a pas besoin d'un allié pour Le protéger de l'humiliation. Et proclame Sa grandeur magnifiquement.",
+  translationSource: "Traduction Hamidullah — Sourate 17, verset 111",
+  wordAnalysis: [
+    {
+      arabic: "تَرْجَمَةٌ",
+      transliteration: "Tarjamah",
+      literalMeaning: "Traduction / Interprétation",
+      mirrorDimension:
+        "La tarjamah n'est pas qu'un passage d'une langue à une autre — c'est un passage de l'ignorance à la compréhension. Traduire, c'est faire traverser le sens.",
+    },
+    {
+      arabic: "وَلَدًا",
+      transliteration: "Walad",
+      literalMeaning: "Enfant / Fils",
+      mirrorDimension:
+        "Allah nie avoir un enfant — Il est au-dessus de la filiation qui implique le besoin et la dépendance. L'enfant a besoin du parent ; Allah n'a besoin de rien.",
+    },
+    {
+      arabic: "شَرِيكٌ",
+      transliteration: "Sharik",
+      literalMeaning: "Associé / Partenaire",
+      mirrorDimension:
+        "L'association (shirk) est le péché ultime car elle nie l'unicité. Comprendre ce mot, c'est comprendre que rien ne partage la souveraineté divine.",
+    },
+    {
+      arabic: "الذُّلِ",
+      transliteration: "Adh-Dhull",
+      literalMeaning: "L'humiliation / L'abaissement",
+      mirrorDimension:
+        "Allah n'a pas besoin d'allié pour Le protéger de l'humiliation — Il est Al-'Aziz (Le Puissant). L'humiliation ne peut L'atteindre.",
+    },
+    {
+      arabic: "تَكْبِيرًا",
+      transliteration: "Takbira",
+      literalMeaning: "Proclamation de grandeur",
+      mirrorDimension:
+        "Après avoir nié toute imperfection, le verset commande de proclamer Sa grandeur — la compréhension mène naturellement à la glorification.",
+    },
+  ],
+  coherencePoints: [
+    "La tarjamah est le pont entre la récitation et la réflexion : sans compréhension littérale, la méditation reste vague. Le sens précis des mots est le fondement de tout approfondissement.",
+    "Ce verset de la sourate Al-Isra est une synthèse de l'unicité divine : pas d'enfant (négation de la filiation), pas d'associé (négation du pouvoir partagé), pas de protecteur contre l'humiliation (négation de la faiblesse). Trois négations qui purifient la conception de Dieu.",
+    "Le verset se termine par un commandement : « kabbirhu takbira » — proclame Sa grandeur. La compréhension n'est pas un exercice intellectuel : elle doit mener à l'action du cœur.",
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "Quand je lis le Coran en traduction, est-ce que je m'arrête sur chaque mot ou est-ce que je lis comme un roman ?",
+      meditation:
+        "La différence entre lire et étudier est la différence entre traverser un jardin et s'y arrêter. Prenez un verset et examinez chaque mot comme une pierre précieuse.",
+    },
+    {
+      question:
+        "Y a-t-il des mots du Coran que je comprends mal ou que j'ai jamais vraiment cherché à comprendre ?",
+      meditation:
+        "Identifiez 3 mots que vous récitez sans en connaître le sens exact. Cherchez leur traduction. Comment cette connaissance change-t-elle votre récitation ?",
+    },
+    {
+      question:
+        "La compréhension du verset change-t-elle mon comportement, ou reste-t-elle théorique ?",
+      meditation:
+        "Comprendre que Dieu n'a pas d'associé dans Sa souveraineté implique-t-il que je Lui associe quelque chose dans ma vie pratique ?",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Allah, ouvre mon intelligence à la compréhension de Ton Livre — pas pour accumuler du savoir, mais pour Te connaître.",
+    "Ya Allah, fais que chaque mot que je comprenne devienne une graine de transformation dans mon cœur.",
+    "Ya Waduud, enseigne-moi à lire Ta Parole non pas avec les yeux seulement, mais avec l'âme.",
+    "Ya Allah, préserve-moi de la compréhension aride — celle qui remplit l'esprit mais vide le cœur.",
+  ],
+  timerMinutes: 20,
+  exercises: [
+    {
+      question:
+        "Prenez le verset d'ancrage (Sourate 17:111) et analysez chaque mot individuellement. Pour chaque mot, écrivez : (a) le sens littéral, (b) ce que ce mot nie ou affirme sur Allah, (c) l'impact sur votre conception de Dieu.",
+      placeholder:
+        "Mon analyse mot par mot du verset d'ancrage...",
+    },
+    {
+      question:
+        "Choisissez un verset que vous récitez souvent sans comprendre (par exemple dans la prière). Cherchez sa traduction, ses nuances, et écrivez comment cette compréhension nouvelle change votre expérience de la prière.",
+      placeholder:
+        "Le verset que j'ai redécouvert et comment sa compréhension transforme ma prière...",
+    },
+    {
+      question:
+        "Comparez les traductions d'un même verset dans au moins deux traductions françaises. Quelles différences remarquez-vous ? Comment chaque traduction oriente-t-elle la compréhension ?",
+      placeholder:
+        "Mes observations sur les différences entre traductions...",
+    },
+  ],
+  bulletPoints: [
+    "La tarjamah est un devoir : Le Prophète ﷺ a dit : « Lisez le Coran en arabe et en traduction. » La compréhension n'est pas un luxe — c'est une obligation minimale pour chaque croyant.",
+    "Les mots ont des racines : En arabe, chaque mot vient d'une racine (jisr) de 3 lettres qui porte un champ sémantique. Comprendre la racine, c'est voir tout l'horizon du mot.",
+    "La traduction est une interprétation : Toute traduction est déjà une lecture. C'est pourquoi il faut revenir au texte arabe autant que possible, et comparer les traductions.",
+  ],
+  callouts: [
+    {
+      type: "warning",
+      title: "Le piège de la compréhension superficielle",
+      content:
+        "Comprendre le sens littéral d'un verset n'est pas en saisir toute la profondeur. Le Coran a un sens extérieur (zahir) et un sens intérieur (batin). La tarjamah vous donne le zahir — ne vous arrêtez pas là. Les niveaux suivants vous mèneront au batin.",
+    },
+    {
+      type: "gold",
+      title: "Le miroir linguistique",
+      content:
+        "Chaque mot du Coran a été choisi parmi des synonymes possibles. Pourquoi « hamd » et non « shukr » ? Pourquoi « ahad » et non « wahid » ? La différence entre synonymes en arabe n'est pas stylistique — elle est ontologique. Chaque mot révèle une dimension de la réalité divine.",
+    },
+  ],
+  quotes: [
+    {
+      text: "Le meilleur d'entre vous est celui qui apprend le Coran et l'enseigne.",
+      source: "Rapporté par Al-Bukhari",
+    },
+  ],
+};
+
+// ---- Chapter C3 — Tadabbur (Réflexion) ----
+
+const c3: Chapter = {
+  id: "c3",
+  number: "C3",
+  title: "Tadabbur",
+  subtitle: "Réflexion — Questionner le texte sacré",
+  part: "C",
+  arabicVerse: "أَفَلَا يَتَدَبَّرُونَ الْقُرْآنَ أَمْ عَلَىٰ قُلُوبٍ أَقْفَالُهَا",
+  translation:
+    "Ne méditent-ils pas sur le Coran ? Ou bien y a-t-il des cadenas sur leurs cœurs ?",
+  translationSource: "Traduction Hamidullah — Sourate 47, verset 24",
+  wordAnalysis: [
+    {
+      arabic: "يَتَدَبَّرُونَ",
+      transliteration: "Yatababbarun",
+      literalMeaning: "Méditer / Examiner en profondeur",
+      mirrorDimension:
+        "Le tadabbur vient de « dubr » (l'arrière / la conséquence). Méditer, c'est regarder au-delà de l'apparent — chercher les conséquences et les profondeurs du texte.",
+    },
+    {
+      arabic: "أَقْفَالٌ",
+      transliteration: "Aqfal",
+      literalMeaning: "Cadenas / Serrures",
+      mirrorDimension:
+        "Le cœur peut être verrouillé — pas par Dieu, mais par notre propre négligence. Le cadenas, c'est l'habitude, la paresse spirituelle, et l'attachement au superficiel.",
+    },
+    {
+      arabic: "قُلُوبٍ",
+      transliteration: "Qulub",
+      literalMeaning: "Cœurs",
+      mirrorDimension:
+        "Le cœur (qalb) est appelé ainsi parce qu'il « se retourne » (taqallub) constamment. Le tadabbur est ce qui stabilise le cœur en le fixant sur la vérité.",
+    },
+    {
+      arabic: "أَفَلَا",
+      transliteration: "Afa la",
+      literalMeaning: "Ne… donc pas ? (Question rhétorique)",
+      mirrorDimension:
+        "La question rhétorique est un appel à la conscience : « Ne vas-tu donc pas réfléchir ? » C'est un rappel que la réflexion est un devoir, pas un choix.",
+    },
+  ],
+  coherencePoints: [
+    "Le Coran nous interpelle directement : ce verset n'est pas une description — c'est un défi. « Ne méditent-ils pas ? » sous-entend : ils devraient le faire.",
+    "Le contraste est saisissant : d'un côté, le tadabbur (ouverture), de l'autre, les cadenas (fermeture). Il n'y a pas de terrain neutre — soit le cœur est ouvert à la réflexion, soit il est verrouillé.",
+    "Le tadabbur commence par des questions : Qui parle ? À qui ? Pourquoi ? Qu'est-ce qui est nié ? Qu'est-ce qui est affirmé ? Chaque question ouvre une porte dans le texte.",
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "Quels cadenas y a-t-il sur mon cœur qui m'empêchent de méditer profondément ?",
+      meditation:
+        "Identifiez vos « cadenas » : la précipitation, la distraction, le doute, la routine, la peur de ce que la réflexion pourrait révéler.",
+    },
+    {
+      question:
+        "Est-ce que je pose des questions au Coran quand je le lis, ou est-ce que je le lis passivement ?",
+      meditation:
+        "La prochaine fois que vous lisez un verset, posez-lui 3 questions. Attendez la réponse du cœur, pas de l'intellect.",
+    },
+    {
+      question:
+        "Quand ai-je ressenti pour la dernière fois qu'un verset me « parlait directement » ?",
+      meditation:
+        "Le tadabbur transforme la lecture en dialogue. Le Coran n'est pas un texte mort — il est vivant (hayy). Chaque lecture peut être une nouvelle rencontre.",
+    },
+    {
+      question:
+        "Quel verset me résiste le plus — celui que j'évite de méditer parce qu'il est inconfortable ?",
+      meditation:
+        "Le verset qui nous dérange est souvent celui dont nous avons le plus besoin. L'inconfort spirituel est un signe que le cœur est en train de s'ouvrir.",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Allah, brise les cadenas de mon cœur — ceux que j'ai moi-même posés par ma négligence et mon oublie.",
+    "Ya Fattah (L'Ouvreur), ouvre mon cœur au tadabbur de Ton Livre, comme Tu as ouvert le cœur de Ton Prophète ﷺ.",
+    "Ya Allah, fais que chaque question que je pose à Ton Livre reçoive une réponse — par une lumière dans mon cœur, par un signe dans ma vie.",
+    "Ya Latif, enseigne-moi la patience du tadabbur — que je ne me précipite pas vers la conclusion avant d'avoir goûté à la profondeur.",
+  ],
+  timerMinutes: 22,
+  exercises: [
+    {
+      question:
+        "Prenez le verset d'ancrage (Sourate 47:24) et posez-lui 7 questions. Pour chaque question, écrivez la réponse qui vous vient du cœur, pas de l'intellect.",
+      placeholder:
+        "Mes 7 questions au verset et les réponses du cœur...",
+    },
+    {
+      question:
+        "Identifiez votre « cadenas » principal — ce qui vous empêche de méditer profondément. Décrivez-le, puis écrivez une intention concrète pour le déverrouiller cette semaine.",
+      placeholder:
+        "Mon cadenas principal et mon intention pour le déverrouiller...",
+    },
+    {
+      question:
+        "Prenez un verset que vous avez déjà étudié aux niveaux 1 et 2. Relisez-le en mode tadabbur : qu'y a-t-il de nouveau que vous n'aviez pas vu aux niveaux précédents ?",
+      placeholder:
+        "Ce que le tadabbur a révélé que la tilawa et la tarjamah n'avaient pas montré...",
+    },
+  ],
+  callouts: [
+    {
+      type: "gold",
+      title: "Le tadabbur est un devoir",
+      content:
+        "Le Coran blâme ceux qui ne méditent pas : « Ne méditent-ils pas sur le Coran ? » (47:24), « Un Livre que Nous avons fait descendre sur toi, béni, pour qu'ils méditent sur ses versets » (38:29). Le tadabbur n'est pas réservé aux savants — c'est une obligation pour chaque croyant.",
+    },
+    {
+      type: "info",
+      title: "La méthode des questions",
+      content:
+        "Al-Ghazali recommandait de lire chaque verset en se posant : Qui parle ? À qui ? De quoi ? Pourquoi ? Comment ? Les réponses à ces questions forment le socle du tadabbur. C'est la méthode du tafsir par le questionnement (tafsir bi al-ma'thur).",
+    },
+  ],
+  comparisonTable: {
+    headers: ["Aspect", "Tilawa (Niveau 1)", "Tarjamah (Niveau 2)", "Tadabbur (Niveau 3)"],
+    rows: [
+      [
+        "Action",
+        "Réciter les lettres",
+        "Comprendre les mots",
+        "Questionner le sens",
+      ],
+      [
+        "Posture",
+        "La langue agit",
+        "L'intellect reçoit",
+        "Le cœur cherche",
+      ],
+      [
+        "Question clé",
+        "Comment prononcer ?",
+        "Que signifie ce mot ?",
+        "Pourquoi ce mot et pas un autre ?",
+      ],
+      [
+        "Analogie",
+        "Lire la partition",
+        "Comprendre les notes",
+        "Entendre la musique entre les notes",
+      ],
+    ],
+  },
+};
+
+// ---- Chapter C4 — Tafakkur (Contemplation) ----
+
+const c4: Chapter = {
+  id: "c4",
+  number: "C4",
+  title: "Tafakkur",
+  subtitle: "Contemplation — Voir au-delà du visible",
+  part: "C",
+  arabicVerse:
+    "اللَّهُ نُورُ السَّمَاوَاتِ وَالْأَرْضِ ۚ مَثَلُ نُورِهِ كَمِشْكَاةٍ فِيهَا مِصْبَاحٌ",
+  translation:
+    "Allah est la Lumière des cieux et de la terre. Sa lumière est comme une niche dans laquelle se trouve une lampe.",
+  translationSource: "Traduction Hamidullah — Sourate 24, verset 35 (début)",
+  wordAnalysis: [
+    {
+      arabic: "تَفَكُّرٌ",
+      transliteration: "Tafakkur",
+      literalMeaning: "Contemplation / Méditation profonde",
+      mirrorDimension:
+        "Le tafakkur vient de « fikr » (la pensée) avec l'intensif « ta » — c'est une pensée qui va et vient, qui tourne autour du sens comme l'abeille autour de la fleur.",
+    },
+    {
+      arabic: "نُورُ",
+      transliteration: "Nur",
+      literalMeaning: "Lumière",
+      mirrorDimension:
+        "La lumière n'est pas une chose — c'est ce qui rend toute chose visible. Allah est la condition de possibilité de toute perception, matérielle et spirituelle.",
+    },
+    {
+      arabic: "مِشْكَاةٍ",
+      transliteration: "Mishkat",
+      literalMeaning: "Niche / Cavité dans le mur",
+      mirrorDimension:
+        "La niche protège et concentre la lumière. Le cœur du croyant est cette niche — un espace intime où la lumière divine peut résider sans être dispersée.",
+    },
+    {
+      arabic: "مِصْبَاحٍ",
+      transliteration: "Misbah",
+      literalMeaning: "Lampe / Source de lumière",
+      mirrorDimension:
+        "La lampe dans la niche, c'est la foi qui brille dans le cœur protégé. Sans la niche (le cœur), la lampe est exposée aux vents. Sans la lampe (la foi), la niche est vide.",
+    },
+  ],
+  coherencePoints: [
+    "Le tafakkur prolonge le tadabbur : là où le tadabbur pose des questions, le tafakkur contemple les implications spirituelles. Le tadabbur demande « pourquoi ? », le tafakkur demande « et alors ? ».",
+    "Ayat an-Nur est le verset parfait pour le tafakkur car il est lui-même une métaphore de la contemplation : chaque couche de la métaphore (niche, lampe, verre, olivier) correspond à une couche de notre être spirituel.",
+    "La contemplation transforme la vision : après le tafakkur, on ne voit plus le monde de la même manière. Chaque chose visible devient un signe (aya) qui renvoie à l'Invisible.",
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "Quand je contemple la création, est-ce que je vois la Lumière derrière les formes ?",
+      meditation:
+        "Regardez un arbre, le ciel, l'eau — et demandez-vous : quelle est la source de la beauté que je perçois ? La forme ou la Lumière qui la traverse ?",
+    },
+    {
+      question:
+        "Ma niche (cœur) est-elle protégée ou exposée aux vents de la distraction ?",
+      meditation:
+        "Identifiez les vents qui éteignent votre lampe : les réseaux sociaux, les conversations futiles, l'anxiété. Comment construire des murs autour de votre niche ?",
+    },
+    {
+      question:
+        "Qu'est-ce que l'huile « presque lumineuse » (fitrah) dans ma propre vie ?",
+      meditation:
+        "Avant même la révélation, y a-t-il en vous une inclination naturelle vers la vérité, la beauté, la justice ? C'est votre fitrah — l'huile qui n'attend que l'étincelle.",
+    },
+    {
+      question:
+        "Le tafakkur change-t-il mon comportement concret, ou reste-t-il dans le domaine de la pensée ?",
+      meditation:
+        "La contemplation authentique transforme l'action. Si vous contemplez que Dieu est Lumière, cela doit changer la façon dont vous marchez dans l'obscurité du monde.",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Nur (Lumière), illumine les recoins obscurs de mon cœur — ceux que je cache même à moi-même.",
+    "Ya Allah, fais que ma contemplation ne soit pas un exercice intellectuel, mais une véritable rencontre avec Ta lumière.",
+    "Ya Fattah, ouvre les yeux de mon cœur pour que je voie Tes signes dans chaque détail de la création.",
+    "Ya Allah, transforme ma vision du monde — que chaque chose visible me ramène à Toi, l'Invisible.",
+  ],
+  timerMinutes: 25,
+  exercises: [
+    {
+      question:
+        "Contemplez Ayat an-Nur en silence pendant 10 minutes. Puis dessinez ou décrivez la « niche » de votre propre cœur : qu'y a-t-il dedans ? Est-ce que la lampe brille ? L'huile est-elle pure ?",
+      placeholder:
+        "Description de la niche de mon cœur et l'état de sa lumière...",
+    },
+    {
+      question:
+        "Pendant 24 heures, pratiquez le tafakkur sur la création : chaque chose belle que vous voyez, dites intérieurement « Subhan Allah » et cherchez le signe qui renvoie au Créateur. Notez vos 3 plus fortes impressions.",
+      placeholder:
+        "Mes 3 impressions les plus fortes de tafakkur sur la création...",
+    },
+    {
+      question:
+        "Prenez une métaphore du Coran (la niche, le olivier, la lumière) et écrivez comment elle s'applique à une situation concrète de votre vie actuelle.",
+      placeholder:
+        "Application concrète de la métaphore coranique à ma vie...",
+    },
+  ],
+  metaphorTable: [
+    {
+      element: "La niche (mishkat)",
+      metaphor: "Le cœur protégé",
+      interpretation:
+        "Le cœur qui préserve sa lumière des vents de la distraction et de l'oubli",
+    },
+    {
+      element: "La lampe (misbah)",
+      metaphor: "La foi contemplative",
+      interpretation:
+        "Non pas la foi qui croit sans voir, mais celle qui voit à travers la contemplation",
+    },
+    {
+      element: "Le verre (zujajah)",
+      metaphor: "L'intelligence transparente",
+      interpretation:
+        "Un intellect pur qui laisse passer la lumière sans la déformer",
+    },
+  ],
+  callouts: [
+    {
+      type: "gold",
+      title: "Une heure de tafakkur vaut mieux que 60 ans d'adoration",
+      content:
+        "Le Prophète ﷺ a dit : « Une heure de contemplation (tafakkur) vaut mieux que soixante ans d'adoration. » Cette parole souligne que la qualité de la présence intérieure est plus précieuse que la quantité d'actes extérieurs.",
+    },
+    {
+      type: "warning",
+      title: "Le danger de la contemplation sans ancrage",
+      content:
+        "Le tafakkur doit rester ancré dans le Coran et la Sunna. Sans cet ancrage, la contemplation peut dériver vers l'imagination ou l'illusion. Revenez toujours au texte révélé comme boussole.",
+    },
+  ],
+};
+
+// ---- Chapter C5 — Tazakkur (Rappel) ----
+
+const c5: Chapter = {
+  id: "c5",
+  number: "C5",
+  title: "Tazakkur",
+  subtitle: "Rappel — Le dhikr qui réveille le cœur",
+  part: "C",
+  arabicVerse: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ",
+  translation:
+    "C'est par le rappel d'Allah que les cœurs trouvent la paix.",
+  translationSource: "Traduction Hamidullah — Sourate 13, verset 28",
+  wordAnalysis: [
+    {
+      arabic: "تَذَكُّرٌ",
+      transliteration: "Tazakkur",
+      literalMeaning: "Rappel / Souvenir actif",
+      mirrorDimension:
+        "Le tazakkur n'est pas un simple souvenir — c'est un réveil. Se rappeler Dieu, c'est se réveiller de l'oubli (ghafla) qui endort le cœur.",
+    },
+    {
+      arabic: "ذِكْرِ",
+      transliteration: "Dhikr",
+      literalMeaning: "Rappel / Évocation / Mention",
+      mirrorDimension:
+        "Le dhikr est à la fois l'acte de se rappeler et ce dont on se rappelle. Le Coran lui-même est appelé « Dhikr » — il est à la fois le rappel et l'objet du rappel.",
+    },
+    {
+      arabic: "تَطْمَئِنُّ",
+      transliteration: "Tatma'innu",
+      literalMeaning: "Trouvent la paix / Se tranquillisent",
+      mirrorDimension:
+        "La tranquillité (tuma'ninah) n'est pas l'absence de problèmes — c'est la présence de Dieu dans le cœur au milieu des tempêtes.",
+    },
+    {
+      arabic: "الْقُلُوبُ",
+      transliteration: "Al-Qulub",
+      literalMeaning: "Les cœurs",
+      mirrorDimension:
+        "Le pluriel est significatif : la paix du dhikr n'est pas individuelle — elle se partage et se multiplie dans la communauté des croyants.",
+    },
+  ],
+  coherencePoints: [
+    "Le tazakkur est le cœur battant de la spiritualité islamique : la plupart des actes d'adoration (prières, jeûne, pélérinage) sont des formes de dhikr — des rappels organisés de la présence divine.",
+    "La promesse du verset est absolue : « C'est PAR le rappel d'Allah que les cœurs trouvent la paix. » Pas par la richesse, pas par le pouvoir, pas par les relations — uniquement par le dhikr.",
+    "Le tazakkur est le niveau qui relie la compréhension à l'action : après avoir réfléchi (tadabbur) et contemplé (tafakkur), le croyant se rappelle (tazakkur) ce qu'il a compris et l'intègre dans sa vie quotidienne.",
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "Quel est le dhikr qui apaise le plus mon cœur — la prière formelle, le dhikr silencieux, ou la lecture du Coran ?",
+      meditation:
+        "Chaque cœur a sa « porte » préférée vers la paix. Identifiez la vôtre et engagez-vous à la pratiquer davantage.",
+    },
+    {
+      question:
+        "Combien de temps puis-je rester sans me rappeler d'Allah avant que mon cœur ne s'agite ?",
+      meditation:
+        "Testez-vous : au prochain moment de stress, prenez 3 respirations en disant « Subhan Allah, Al-Hamdulillah, Allahu Akbar ». Observez le changement.",
+    },
+    {
+      question:
+        "Est-ce que mon dhikr est mécanique ou conscient ?",
+      meditation:
+        "Le dhikr mécanique a sa valeur, mais le dhikur conscient transforme. La différence est la même qu'entre murmurer « je t'aime » et le dire en regardant dans les yeux.",
+    },
+    {
+      question:
+        "Qu'ai-je oublié de Dieu aujourd'hui ? Qu'est-ce que le tazakkur me rappelle ?",
+      meditation:
+        "L'oubli (nisyan) est la maladie du cœur. Le tazakkur est le remède. Chaque rappel est une guérison.",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Dhakir (Celui qui rappelle), rappelle-moi Ta présence quand je T'oublie — et je T'oublie si souvent.",
+    "Ya Allah, fais que mon dhikr ne soit pas un murmure mécanique, mais un cri du cœur qui a soif de Toi.",
+    "Ya Allah, accorde-moi la tuma'ninah — cette paix profonde que seul Ton rappel peut donner.",
+    "Ya Mudhakkir (Celui qui fait se rappeler), fais que chaque événement de ma vie soit un rappel de Toi.",
+  ],
+  timerMinutes: 18,
+  exercises: [
+    {
+      question:
+        "Pratiquez le dhikr silencieux pendant 15 minutes : asseyez-vous dans le calme, fermez les yeux, et répétez intérieurement « La ilaha illa Allah » avec chaque expiration. Notez votre état avant et après.",
+      placeholder:
+        "Mon état avant et après 15 minutes de dhikr silencieux...",
+    },
+    {
+      question:
+        "Pendant une journée, chaque fois que vous ressentez de l'anxiété ou de l'agitation, arrêtez-vous et dites « Hasbuna Allah wa ni'ma al-wakil » (Allah nous suffit et quel excellent protecteur). Notez les moments où le dhikr a calmé votre cœur.",
+      placeholder:
+        "Les moments où le dhikr a calmé mon cœur aujourd'hui...",
+    },
+    {
+      question:
+        "Créez un « agenda de dhikr » : associez un dhikr à chaque activité quotidienne (au réveil, avant de manger, en conduisant, avant de dormir). Pratiquez-le pendant une semaine et décrivez le changement.",
+      placeholder:
+        "Mon agenda de dhikr et l'impact après une semaine...",
+    },
+  ],
+  bulletPoints: [
+    "Le dhikr est la respiration du cœur : Comme les poumons ont besoin d'oxygène, le cœur a besoin du dhikr. Sans dhikr, le cœur s'étouffe spirituellement.",
+    "Les formes de dhikr sont infinies : La prière formelle est le dhikr suprême, mais chaque évocation de Dieu — par la langue, le cœur ou l'action — est du dhikr.",
+    "Le dhikr collectif a une puissance spéciale : Le Prophète ﷺ a dit que les anges entourent les cercles de dhikr. La présence d'autres croyants amplifie la lumière du rappel.",
+    "La constance vaut mieux que la quantité : Mieux vaut 5 minutes de dhikr sincère chaque jour qu'une heure exceptionnelle une fois par mois.",
+  ],
+  callouts: [
+    {
+      type: "gold",
+      title: "Le dhikr comme remède universel",
+      content:
+        "Ibn al-Qayyim disait : « Le dhikr est la pharmacie du cœur. » Chaque forme de dhikr soigne une maladie spirituelle : « Subhan Allah » soigne l'orgueil, « Al-Hamdulillah » soigne l'ingratitude, « Allahu Akbar » soigne l'attachement au monde, « La ilaha illa Allah » soigne l'association.",
+    },
+    {
+      type: "info",
+      title: "La différence entre dhikr et tazakkur",
+      content:
+        "Le dhikr est l'acte d'évoquer Dieu. Le tazakkur est le niveau de lecture où le Coran lui-même devient un rappel. Le Coran est appelé « Dhikr » car sa lecture est le rappel suprême — chaque verset est une clé qui ouvre la porte de la présence divine.",
+    },
+  ],
+  quotes: [
+    {
+      text: "Les gens du Paradis ne regretteront rien autant qu'une heure passée sans dhikr d'Allah.",
+      source: "Rapporté par At-Tabarani",
+    },
+  ],
+};
+
+// ---- Chapter C6 — Tahqiq (Vérification) ----
+
+const c6: Chapter = {
+  id: "c6",
+  number: "C6",
+  title: "Tahqiq",
+  subtitle: "Vérification — L'honnêteté radicale envers soi-même",
+  part: "C",
+  arabicVerse: "يَا أَيُّهَا الَّذِينَ آمَنُوا لِمَ تَقُولُونَ مَا لَا تَفْعَلُونَ ۝ كَبُرَ مَقْتًا عِندَ اللَّهِ أَن تَقُولُوا مَا لَا تَفْعَلُوا",
+  translation:
+    "Ô vous qui avez cru, pourquoi dites-vous ce que vous ne faites pas ? C'est chose très détestable auprès d'Allah que vous disiez ce que vous ne faites pas.",
+  translationSource: "Traduction Hamidullah — Sourate 61, versets 2-3",
+  wordAnalysis: [
+    {
+      arabic: "تَحْقِيقٌ",
+      transliteration: "Tahqiq",
+      literalMeaning: "Vérification / Réalisation / Authentification",
+      mirrorDimension:
+        "Le tahqiq vient de « haqqa » (être vrai/véritable). C'est le niveau où l'on vérifie si la vérité que l'on connaît est devenue vérité que l'on vit.",
+    },
+    {
+      arabic: "لِمَ تَقُولُونَ",
+      transliteration: "Lima taqulun",
+      literalMeaning: "Pourquoi dites-vous ?",
+      mirrorDimension:
+        "La question divine est un miroir : « Pourquoi dis-tu ce que tu ne fais pas ? » Chaque croyant doit se regarder dans ce miroir sans détourner le regard.",
+    },
+    {
+      arabic: "مَقْتًا",
+      transliteration: "Maqtan",
+      literalMeaning: "Détestation / Haine",
+      mirrorDimension:
+        "Le mot est fort — Allah déteste (maqt) que l'on dise ce qu'on ne fait pas. L'hypocrisie spirituelle est pire que l'ignorance car elle corrompt la sincérité.",
+    },
+    {
+      arabic: "تَفْعَلُوا",
+      transliteration: "Taf'aluh",
+      literalMeaning: "Vous faites / Vous réalisez",
+      mirrorDimension:
+        "L'écart entre la parole et l'action est la mesure de notre sincérité (ikhlas). Le tahqiq est le niveau de l'alignement : faire ce que l'on dit, dire ce que l'on fait.",
+    },
+  ],
+  coherencePoints: [
+    "Le tahqiq est le niveau le plus inconfortable : il exige une honnêteté radicale envers soi-même. Pas de complaisance, pas d'auto-illusion. Le miroir du tahqiq ne flatte personne.",
+    "Le verset d'ancrage (Sourate 61:2-3) est un réveil : Allah ne condamne pas celui qui ne fait pas — Il condamne celui qui dit sans faire. L'écart entre la parole et l'action est le péché spirituel le plus subtil.",
+    "Le tahqiq est le pont entre la connaissance et la réalisation : les cinq premiers niveaux sont des étapes de compréhension. Le tahqiq demande : cette compréhension a-t-elle changé votre vie ? Si non, que vaut-elle ?",
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "Quelles vérités du Coran connais-je mais ne mets-je pas en pratique ?",
+      meditation:
+        "Soyez spécifique. « Je sais que le dhikr apaise le cœur mais je ne le pratique pas. » « Je sais que la patience est une vertu mais je me mets en colère. » Nommez au moins 3 vérités que vous ne vivez pas.",
+    },
+    {
+      question:
+        "Y a-t-il un écart entre ma vie publique (ce que les autres voient) et ma vie privée (ce que Dieu voit) ?",
+      meditation:
+        "Le tahqiq demande : êtes-vous le même dans le noir que dans la lumière ? Si non, où est la fracture ?",
+    },
+    {
+      question:
+        "Si je devais comparaître devant Allah aujourd'hui, de quelle incohérence aurais-je honte ?",
+      meditation:
+        "Cette question n'est pas pour vous culpabiliser, mais pour vous éveiller. La honte spirituelle (haya') est une vertu — elle est le début de l'alignement.",
+    },
+    {
+      question:
+        "Quelle est la résistance intérieure qui m'empêche de passer du dire au faire ?",
+      meditation:
+        "La résistance a toujours un nom : la peur, la paresse, l'attachement au confort, l'orgueil. Identifiez-la avec précision.",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Allah, montre-moi mes contradictions — pas pour me détruire, mais pour me guérir.",
+    "Ya Haqq (Le Vrai), fais que ma vie devienne une vérification de ce que ma langue professe.",
+    "Ya Allah, je cherche refuge auprès de Toi contre le savoir qui ne bénéficie pas, le cœur qui ne s'humilie pas, et l'âme qui ne se satisfait pas.",
+    "Ya Musabbib al-Asbab, donne-moi la force de passer de l'intention à l'action, de la parole à la réalisation.",
+  ],
+  timerMinutes: 20,
+  exercises: [
+    {
+      question:
+        "Faites un audit sincère : listez 5 enseignements du Coran que vous connaissez mais ne mettez pas en pratique. Pour chacun, identifiez la résistance spécifique et écrivez une action concrète pour cette semaine.",
+      placeholder:
+        "Mon audit de 5 enseignements non pratiqués avec résistances et actions...",
+    },
+    {
+      question:
+        "Prenez le verset « LIMA taqulun ma la taf'alun » et écrivez une lettre honnête à vous-même : « Je dis que… mais je fais… » Répétez pour 3 aspects de votre vie. Que ressentez-vous ?",
+      placeholder:
+        "Ma lettre honnête : je dis que… mais je fais…",
+    },
+    {
+      question:
+        "Choisissez UNE vérité coranique que vous allez vérifier (tahqiq) cette semaine — la mettre en pratique concrètement chaque jour. Décrivez votre expérience à la fin de la semaine.",
+      placeholder:
+        "La vérité que j'ai vérifiée cette semaine et mon expérience...",
+    },
+  ],
+  comparisonTable: {
+    headers: ["Aspect", "Niveaux 1-3 (Connaître)", "Niveaux 4-5 (Ressentir)", "Niveau 6 (Vérifier)"],
+    rows: [
+      [
+        "Posture",
+        "L'intellect reçoit",
+        "Le cœur ressent",
+        "La volonté s'aligne",
+      ],
+      [
+        "Question",
+        "Que dit le Coran ?",
+        "Que me dit le Coran ?",
+        "Est-ce que je vis ce que le Coran dit ?",
+      ],
+      [
+        "Danger",
+        "L'illusion de savoir",
+        "L'illusion de ressentir",
+        "L'illusion d'être aligné",
+      ],
+      [
+        "Vertu",
+        "La science ('ilm)",
+        "La saveur (dhawq)",
+        "La réalisation (tahqiq)",
+      ],
+    ],
+  },
+  callouts: [
+    {
+      type: "warning",
+      title: "Le tahqiq n'est pas la culpabilisation",
+      content:
+        "L'honnêteté du tahqiq n'est pas un tribunal qui condamne — c'est un médecin qui diagnostique. Le but n'est pas de se punir, mais de se guérir. La culpabilité mène au désespoir ; la vérification mène au changement.",
+    },
+    {
+      type: "gold",
+      title: "Le miroir du tahqiq",
+      content:
+        "Le tahqiq est comme se regarder dans un miroir sans filtre : on voit chaque ride, chaque tache, chaque imperfection. Mais ce miroir est aussi la promesse que ce qu'on voit, on peut le transformer — avec l'aide d'Allah.",
+    },
+  ],
+  quotes: [
+    {
+      text: "Le sage est celui qui se connaît lui-même et qui œuvre pour ce qui vient après la mort. L'incapable est celui qui se laisse mener par ses passions et qui espère des choses irréalistes d'Allah.",
+      source: "Rapporté par At-Tirmidhi",
+    },
+  ],
+};
+
+// ---- Chapter C7 — Tajalli (Révélation spirituelle) ----
+
+const c7: Chapter = {
+  id: "c7",
+  number: "C7",
+  title: "Tajalli",
+  subtitle: "Révélation spirituelle — La lumière qui se dévoile",
+  part: "C",
+  arabicVerse: "قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ",
+  translation:
+    "Dis : Il est Allah, l'Unique. Allah, Le Seul à être imploré pour ce que nous désirons. Il n'a jamais engendré, n'a pas été engendré non plus. Et nul n'est égal à Lui.",
+  translationSource: "Traduction Hamidullah — Sourate 112, Al-Ikhlas",
+  wordAnalysis: [
+    {
+      arabic: "تَجَلِّي",
+      transliteration: "Tajalli",
+      literalMeaning: "Manifestation / Dévoilement / Apparition",
+      mirrorDimension:
+        "Le tajalli est le dévoilement d'une réalité spirituelle qui était voilée. Ce n'est pas l'esprit qui invente — c'est la lumière qui se révèle quand le voile est levé.",
+    },
+    {
+      arabic: "أَحَدٌ",
+      transliteration: "Ahad",
+      literalMeaning: "L'Unique / L'Un",
+      mirrorDimension:
+        "« Ahad » est au-delà du « un » numérique — c'est l'unicité qui exclut toute multiplicité. Le tajalli d'Al-Ahad est l'expérience où plus rien d'autre n'existe que Lui.",
+    },
+    {
+      arabic: "الصَّمَدُ",
+      transliteration: "As-Samad",
+      literalMeaning: "Le Seul à être imploré / L'Indépendant",
+      mirrorDimension:
+        "Au niveau du tajalli, on comprend « As-Samad » non par l'intellect mais par l'expérience : quand tout s'effondre, Il reste. Il est le seul Refuge qui ne s'effondre jamais.",
+    },
+    {
+      arabic: "كُفُوًا",
+      transliteration: "Kufuwan",
+      literalMeaning: "Égal / Semblable / Comparables",
+      mirrorDimension:
+        "L'expérience du tajalli confirme : rien dans la création n'est comparable au Créateur. Chaque tentative de comparaison est un voile qui se lève.",
+    },
+  ],
+  coherencePoints: [
+    "Le tajalli est le sommet des sept niveaux : c'est le niveau où le croyant passe de la connaissance sur Dieu à la connaissance par Dieu. La connaissance devient expérience.",
+    "Al-Ikhlas est la sourate du tajalli par excellence : en 4 versets, elle résume l'unicité absolue. Méditée au niveau 7, chaque verset devient une porte d'illumination.",
+    "Le tajalli est un don (fadl), pas un droit : on ne l'obtient pas par l'effort seul. Mais on le prépare en nettoyant le cœur par les six premiers niveaux. Le cœur purifié est comme un miroir sans tache — il reflète la lumière divine.",
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "Ai-je déjà vécu un moment de clarté spirituelle soudaine — où une vérité du Coran est devenue une expérience vécue ?",
+      meditation:
+        "Ce moment n'est pas le produit du hasard. C'est un tajalli — un dévoilement. Remerciez Allah pour ce don et demandez-Lui de le renouveler.",
+    },
+    {
+      question:
+        "Qu'est-ce qui voile mon cœur et empêche le tajalli ?",
+      meditation:
+        "Les voiles sont nombreux : les péchés, l'attachement au monde, l'orgueil intellectuel, la négligence. Chaque voile levé est une lumière qui entre.",
+    },
+    {
+      question:
+        "Suis-je prêt à recevoir le tajalli, ou est-ce que je cherche seulement à comprendre ?",
+      meditation:
+        "La compréhension est le bateau, le tajalli est le rivage. Êtes-vous prêt à descendre du bateau ? Cela demande du lâcher-prise.",
+    },
+    {
+      question:
+        "Comment le tajalli changerait-il ma vie si je le vivais chaque jour ?",
+      meditation:
+        "Celui qui vit dans le tajalli ne voit plus le monde de la même manière. Chaque chose est un signe, chaque moment est une rencontre, chaque souffle est une prière.",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Allah, dévoile-moi une lumière de Ton Livre que je n'ai jamais vue — même si elle me transforme.",
+    "Ya Wajid (Celui qui trouve), fais que je Te trouve dans les replis de ma méditation, quand mon cœur est silencieux.",
+    "Ya Allah, lève les voiles entre moi et Ta Parole — les voiles de mon ego, de mes passions, de mon orgueil.",
+    "Ya Tajalli, manifeste-Ta beauté dans mon cœur — non pas pour que je m'attribue cette lumière, mais pour que je Te la rende en gratitude.",
+  ],
+  timerMinutes: 25,
+  exercises: [
+    {
+      question:
+        "Récitez Al-Ikhlas au niveau 7 : après chaque verset, arrêtez-vous et attendez dans le silence. Que vous dit le cœur entre les versets ? Notez chaque impression, même fugace.",
+      placeholder:
+        "Mes impressions entre les versets d'Al-Ikhlas au niveau 7...",
+    },
+    {
+      question:
+        "Choisissez un moment de la journée (aube ou nuit) pour une méditation silencieuse de 20 minutes. Pas de texte, pas de dhikr verbal — juste l'attente silencieuse de la lumière. Décrivez votre expérience.",
+      placeholder:
+        "Mon expérience de méditation silencieuse en attente du tajalli...",
+    },
+    {
+      question:
+        "Résumez votre voyage à travers les 7 niveaux de lecture : quel est le niveau où vous vous sentez le plus en phase aujourd'hui ? Lequel vous demande le plus de travail ? Écrivez un plan personnel de progression spirituelle.",
+      placeholder:
+        "Mon bilan des 7 niveaux et mon plan de progression spirituelle...",
+    },
+  ],
+  bulletPoints: [
+    "Le tajalli ne se force pas : Il est comme l'aube — on ne peut pas la précipiter, mais on peut se préparer à la recevoir. La préparation, ce sont les six premiers niveaux.",
+    "Les formes du tajalli sont variées : Une paix soudaine, des larmes sans raison apparente, une compréhension intuitive d'un verset, un amour qui inonde le cœur — tous sont des manifestations du tajalli.",
+    "Le danger de la prétention : Prétendre avoir atteint le tajalli est pire que de ne l'avoir pas atteint. L'orgueil spirituel est le voile le plus épais. La véritable lumière rend humble.",
+    "Le tajalli est le commencement, pas la fin : L'illumination n'est pas la destination — c'est le début d'une nouvelle étape du voyage. Après le tajalli, le croyant doit revenir au niveau 1 avec de nouveaux yeux.",
+  ],
+  callouts: [
+    {
+      type: "gold",
+      title: "Le miroir sans tache",
+      content:
+        "Al-Ghazali comparait le cœur à un miroir : quand il est purifié de toute rouille (les péchés, les attachements, l'ego), il reflète la lumière divine comme un miroir reflète le soleil. Le tajalli, c'est ce moment où le miroir est assez pur pour refléter la vérité. Mais attention : le miroir ne produit pas la lumière — il la reçoit.",
+    },
+    {
+      type: "warning",
+      title: "Le tajalli n'est pas l'objectif",
+      content:
+        "Chercher le tajalli pour lui-même est une forme subtile d'ego spirituel. Le but de la méditation coranique n'est pas l'expérience mystique — c'est la proximité avec Allah (qurb). Le tajalli est un sous-produit de cette proximité, pas son but. Cherchez le Proche, pas l'expérience.",
+    },
+  ],
+  quotes: [
+    {
+      text: "Si les voiles étaient levés, cela n'ajouterait rien à ce qui m'est déjà manifesté.",
+      source: "Attribué au Prophète ﷺ (hadith qudsi)",
+    },
+    {
+      text: "La connaissance de Dieu n'est pas une acquisition de l'intellect par l'étude — c'est une lumière qu'Allah dépose dans le cœur de celui qu'Il veut parmi Ses serviteurs.",
+      source: "Al-Harith al-Muhasibi",
+    },
+  ],
+  comparisonTable: {
+    headers: ["Niveau", "Nom", "Acte", "Fruit", "Obstacle"],
+    rows: [
+      [
+        "1",
+        "Tilawa",
+        "Réciter",
+        "La lettre comme lumière",
+        "La négligence (alfa)",
+      ],
+      [
+        "2",
+        "Tarjamah",
+        "Comprendre",
+        "Le sens comme guide",
+        "La superficialité",
+      ],
+      [
+        "3",
+        "Tadabbur",
+        "Questionner",
+        "La profondeur comme trésor",
+        "Les cadenas du cœur",
+      ],
+      [
+        "4",
+        "Tafakkur",
+        "Contempler",
+        "La vision intérieure",
+        "L'imagination sans ancrage",
+      ],
+      [
+        "5",
+        "Tazakkur",
+        "Se rappeler",
+        "La paix du cœur (tuma'ninah)",
+        "L'oubli (ghafla)",
+      ],
+      [
+        "6",
+        "Tahqiq",
+        "Vérifier",
+        "L'alignement parole-acte",
+        "L'hypocrisie subtile",
+      ],
+      [
+        "7",
+        "Tajalli",
+        "Recevoir",
+        "L'illumination (fadl)",
+        "L'orgueil spirituel",
+      ],
+    ],
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -1241,7 +2069,7 @@ export const siteContent: SiteContent = {
       letter: "C",
       title: "Les Sept Niveaux de Lecture",
       description: partCDescription,
-      chapters: [c1],
+      chapters: [c1, c2, c3, c4, c5, c6, c7],
     },
   ],
   appendices,
@@ -1254,7 +2082,7 @@ export const siteContent: SiteContent = {
 export const allChapters: Chapter[] = [
   a1, a2, a3, a4, a5, a6, a7,
   b1, b2, b3to10,
-  c1,
+  c1, c2, c3, c4, c5, c6, c7,
 ];
 
 // ---------------------------------------------------------------------------

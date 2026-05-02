@@ -32,10 +32,10 @@ import { CompletionSummaryCard } from '@/components/shared/completion-summary-ca
 // Decorative divider component
 function DecorativeDivider() {
   return (
-    <div className="flex items-center justify-center gap-3 py-2">
-      <span className="h-px flex-1 bg-gradient-to-r from-transparent to-amber-300/40 dark:to-amber-600/30" />
+    <div className="flex items-center justify-center gap-3 py-3">
+      <span className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-300/30 to-amber-400/50 dark:via-amber-600/20 dark:to-amber-600/30" />
       <span className="text-amber-400/50 dark:text-amber-500/40 text-xs tracking-[0.3em] select-none">✦</span>
-      <span className="h-px flex-1 bg-gradient-to-l from-transparent to-amber-300/40 dark:to-amber-600/30" />
+      <span className="h-px flex-1 bg-gradient-to-l from-transparent via-amber-300/30 to-amber-400/50 dark:via-amber-600/20 dark:to-amber-600/30" />
     </div>
   )
 }
@@ -97,12 +97,12 @@ function AnimatedSection({ children, className, id }: { children: React.ReactNod
 function SectionHeader({ children, id, part = 'A', icon }: { children: React.ReactNode; id?: string; part?: string; icon?: React.ReactNode }) {
   const iconColor = partIconColor[part] || partIconColor.A
   return (
-    <div className="mb-1" id={id}>
+    <div className="mb-2" id={id}>
       <div className="flex items-center gap-2">
         {icon && <span className={iconColor}>{icon}</span>}
         {children}
       </div>
-      <div className="mt-1 h-0.5 w-16 rounded-full bg-gradient-to-r from-amber-500/60 to-transparent dark:from-amber-400/40" />
+      <div className="mt-1.5 h-0.5 w-20 rounded-full bg-gradient-to-r from-amber-500/50 to-transparent dark:from-amber-400/30" />
     </div>
   )
 }
@@ -223,7 +223,7 @@ export function ChapterView() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -60, opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="fixed top-14 left-0 right-0 z-30 border-b bg-background/80 backdrop-blur-md dark:bg-background/70 lg:left-72"
+            className="fixed top-14 left-0 right-0 z-30 border-b bg-background/85 backdrop-blur-lg dark:bg-background/75 lg:left-72"
           >
             <div className="mx-auto flex h-10 max-w-3xl items-center gap-3 px-4">
               <Badge variant="outline" className="text-[10px] text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700 shrink-0">
@@ -312,7 +312,7 @@ export function ChapterView() {
         )}
       </AnimatePresence>
 
-      <div className={`max-w-3xl mx-auto px-4 py-6 space-y-6 scroll-smooth bg-gradient-to-b ${partBgGradient[partLetter] || partBgGradient.A} min-h-screen`}>
+      <div className={`max-w-3xl mx-auto px-4 md:px-8 py-6 space-y-6 scroll-smooth bg-gradient-to-b ${partBgGradient[partLetter] || partBgGradient.A} min-h-screen`}>
         {/* Back button and Bookmark */}
         <AnimatedSection>
           <div className="flex items-center justify-between">
@@ -377,7 +377,7 @@ export function ChapterView() {
 
         {/* Bismillah header */}
         <AnimatedSection>
-          <div className="rounded-xl border-2 border-amber-200/60 dark:border-amber-700/40 bg-gradient-to-r from-amber-50 via-amber-100/60 to-amber-50 dark:from-amber-950/30 dark:via-amber-900/20 dark:to-amber-950/30 px-6 py-5 text-center animate-border-glow relative overflow-hidden">
+          <div className="rounded-xl border-2 border-amber-200/60 dark:border-amber-700/40 bg-gradient-to-r from-amber-50 via-amber-100/60 to-amber-50 dark:from-amber-950/30 dark:via-amber-900/20 dark:to-amber-950/30 px-6 py-5 text-center relative overflow-hidden shadow-[inset_0_0_30px_rgba(217,169,99,0.08)] dark:shadow-[inset_0_0_30px_rgba(217,169,99,0.05)]">
             {/* Decorative corner accents */}
             <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-amber-300/40 dark:border-amber-600/30 rounded-tl-sm" />
             <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-amber-300/40 dark:border-amber-600/30 rounded-tr-sm" />
@@ -416,7 +416,7 @@ export function ChapterView() {
           <AnimatedSection id="section-words">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Sparkles className="h-4 w-4" />}>
-              <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Analyse des mots</h2>
+              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Analyse des mots</h2>
             </SectionHeader>
             <WordAnalysisTable words={chapter.wordAnalysis} />
           </AnimatedSection>
@@ -427,7 +427,7 @@ export function ChapterView() {
           <AnimatedSection id="section-comparison">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Eye className="h-4 w-4" />}>
-              <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Tableau comparatif</h2>
+              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Tableau comparatif</h2>
             </SectionHeader>
             <ComparisonTableBlock
               headers={chapter.comparisonTable.headers}
@@ -441,7 +441,7 @@ export function ChapterView() {
           <AnimatedSection id="section-coherence">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Lightbulb className="h-4 w-4" />}>
-              <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Cohérence</h2>
+              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Cohérence</h2>
             </SectionHeader>
             <CoherencePoints points={chapter.coherencePoints} />
           </AnimatedSection>
@@ -467,7 +467,7 @@ export function ChapterView() {
           <AnimatedSection id="section-bullets">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Sparkles className="h-4 w-4" />}>
-              <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Points clés</h2>
+              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Points clés</h2>
             </SectionHeader>
             <BulletPointsList points={chapter.bulletPoints} />
           </AnimatedSection>
@@ -478,7 +478,7 @@ export function ChapterView() {
           <AnimatedSection id="section-treasures">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Gem className="h-4 w-4" />}>
-              <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Trésors</h2>
+              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Trésors</h2>
             </SectionHeader>
             <TreasuresList treasures={chapter.treasuresList} />
           </AnimatedSection>
@@ -489,7 +489,7 @@ export function ChapterView() {
           <AnimatedSection id="section-metaphors">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Eye className="h-4 w-4" />}>
-              <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Métaphores</h2>
+              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Métaphores</h2>
             </SectionHeader>
             <MetaphorTable metaphors={chapter.metaphorTable} />
           </AnimatedSection>
@@ -500,7 +500,7 @@ export function ChapterView() {
           <AnimatedSection id="section-mirror">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Lightbulb className="h-4 w-4" />}>
-              <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Questions miroir</h2>
+              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Questions miroir</h2>
             </SectionHeader>
             <MirrorQuestionsTable questions={chapter.mirrorQuestions} />
           </AnimatedSection>
@@ -511,7 +511,7 @@ export function ChapterView() {
           <AnimatedSection id="section-munajat">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<BookOpen className="h-4 w-4" />}>
-              <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Munajat — Méditation intime</h2>
+              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Munajat — Méditation intime</h2>
             </SectionHeader>
             <MunajatSection
               chapterId={chapterId}
@@ -525,7 +525,7 @@ export function ChapterView() {
           <AnimatedSection id="section-timer">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Clock className="h-4 w-4" />}>
-              <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Méditation silencieuse</h2>
+              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Méditation silencieuse</h2>
             </SectionHeader>
             <TimerSection
               chapterId={chapterId}
@@ -539,7 +539,7 @@ export function ChapterView() {
           <AnimatedSection id="section-exercises">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Lightbulb className="h-4 w-4" />}>
-              <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Exercices</h2>
+              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Exercices</h2>
             </SectionHeader>
             <ExerciseSection
               chapterId={chapterId}
@@ -553,7 +553,7 @@ export function ChapterView() {
           <AnimatedSection id="section-extra">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<BookOpen className="h-4 w-4" />}>
-              <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Sections supplémentaires</h2>
+              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Sections supplémentaires</h2>
             </SectionHeader>
             <ExtraSections
               chapterId={chapterId}

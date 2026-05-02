@@ -61,7 +61,7 @@ export function VerseDisplay({ arabicVerse, translation, translationSource, chap
             <p
               dir="rtl"
               lang="ar"
-              className="arabic-verse text-4xl md:text-5xl text-center text-amber-900 dark:text-amber-100 dark:[text-shadow:0_0_20px_rgba(251,191,36,0.15)] relative z-10"
+              className="arabic-verse text-4xl md:text-5xl text-center text-amber-950 dark:text-amber-100 [text-shadow:0_1px_2px_rgba(180,83,9,0.06)] dark:[text-shadow:0_0_20px_rgba(251,191,36,0.15)] relative z-10"
             >
               {arabicVerse}
             </p>

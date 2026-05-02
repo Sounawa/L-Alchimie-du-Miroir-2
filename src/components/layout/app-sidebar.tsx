@@ -35,6 +35,8 @@ import {
   Settings,
   Hash,
   GraduationCap,
+  Calendar,
+  ArrowLeftRight,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -84,7 +86,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
     uncompletedByPart[part.letter] = count
   }
 
-  const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization', chapterId?: string) => {
+  const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization' | 'reading-plan' | 'comparison', chapterId?: string) => {
     navigate(view, chapterId ?? null)
     // Only close sidebar on mobile
     if (isMobile) onClose()
@@ -98,6 +100,8 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
     { icon: PenLine, label: 'Journal', view: 'journal' as const },
     { icon: Bookmark, label: 'Favoris', view: 'bookmarks' as const },
     { icon: GraduationCap, label: 'Mémorisation', view: 'memorization' as const },
+    { icon: Calendar, label: 'Plan de Lecture', view: 'reading-plan' as const },
+    { icon: ArrowLeftRight, label: 'Comparaison', view: 'comparison' as const },
     { icon: Hash, label: 'Tasbih', view: 'tasbih' as const },
     { icon: Settings, label: 'Paramètres', view: 'settings' as const },
   ]
@@ -157,10 +161,10 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
               onClick={() => handleNavigate(item.view)}
               className={`
                 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium
-                transition-all duration-300 mb-0.5
+                transition-all duration-200 mb-0.5
                 ${isActive
-                  ? 'bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200 shadow-[inset_3px_0_8px_-2px_rgba(217,119,6,0.3)] dark:shadow-[inset_3px_0_8px_-2px_rgba(217,119,6,0.2)]'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                  ? 'bg-amber-100/80 text-amber-900 dark:bg-amber-900/25 dark:text-amber-200 border-l-[3px] border-l-amber-500 dark:border-l-amber-400'
+                  : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground border-l-[3px] border-l-transparent'
                 }
               `}
               whileHover={{ x: 2 }}
@@ -215,10 +219,10 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
                           onClick={() => handleNavigate('chapter', chapter.id)}
                           className={`
                             group flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm
-                            transition-all duration-150 mb-0.5
+                            transition-all duration-200 mb-0.5
                             ${isActive
-                              ? `bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200 border-l-[3px] ${partBorderColor[partLetter] || 'border-l-amber-500'} sidebar-active-glow animate-border-glow`
-                              : 'text-foreground/80 hover:bg-muted border-l-[3px] border-l-transparent'
+                              ? `bg-amber-100/80 text-amber-900 dark:bg-amber-900/25 dark:text-amber-200 border-l-[3px] ${partBorderColor[partLetter] || 'border-l-amber-500'}`
+                              : 'text-foreground/80 hover:bg-muted/60 border-l-[3px] border-l-transparent'
                             }
                           `}
                           whileHover={{ x: 3 }}

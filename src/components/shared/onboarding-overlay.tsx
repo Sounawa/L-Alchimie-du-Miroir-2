@@ -100,10 +100,10 @@ export function OnboardingOverlay() {
           <AnimatePresence mode="wait">
             <motion.div
               key={step.id}
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -30 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
+              initial={{ opacity: 0, x: 30, scale: 0.96 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: -30, scale: 0.96 }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
               className="flex flex-col items-center text-center"
             >
               {/* Emoji illustration with glow */}
@@ -167,26 +167,11 @@ export function OnboardingOverlay() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Navigation */}
-          <div className="mt-6 flex items-center justify-between">
-            {/* Previous button */}
-            <div className="w-20">
-              {!isFirstStep && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handlePrev}
-                  className="text-stone-500 hover:text-amber-600 dark:text-stone-400 dark:hover:text-amber-300"
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Retour
-                </Button>
-              )}
-            </div>
-
-            {/* Progress dots */}
+          {/* Navigation - centered layout with dots above buttons */}
+          <div className="mt-6 flex flex-col items-center gap-4">
+            {/* Progress dots - enlarged, gold active */}
             <div className="flex flex-col items-center gap-1.5">
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-3">
                 {steps.map((_, idx) => (
                   <button
                     key={idx}
@@ -197,10 +182,10 @@ export function OnboardingOverlay() {
                     <div
                       className={`rounded-full transition-all duration-300 ${
                         idx === currentStep
-                          ? 'h-4 w-4 bg-amber-600 dark:bg-amber-400 animate-active-dot-pulse'
+                          ? 'h-5 w-5 bg-amber-500 dark:bg-amber-400 animate-active-dot-pulse shadow-md shadow-amber-400/30'
                           : idx < currentStep
-                            ? 'w-3 h-3 bg-amber-400 dark:bg-amber-500'
-                            : 'w-3 h-3 bg-stone-300 dark:bg-stone-600'
+                            ? 'w-3.5 h-3.5 bg-amber-400/70 dark:bg-amber-500/70'
+                            : 'w-3.5 h-3.5 bg-stone-300 dark:bg-stone-600'
                       }`}
                     />
                   </button>
@@ -209,15 +194,34 @@ export function OnboardingOverlay() {
               <span className="text-[10px] text-stone-400 dark:text-stone-500">Étape {currentStep + 1} sur {steps.length}</span>
             </div>
 
-            {/* Next / Start button */}
-            <div className="w-20 flex justify-end">
+            {/* Navigation buttons row */}
+            <div className="flex items-center gap-4 w-full max-w-xs">
+              {/* Previous button */}
+              <div className="w-20">
+                {!isFirstStep && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handlePrev}
+                    className="text-stone-500 hover:text-amber-600 dark:text-stone-400 dark:hover:text-amber-300 transition-colors duration-200"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    Retour
+                  </Button>
+                )}
+              </div>
+
+              {/* Spacer */}
+              <div className="flex-1" />
+
+              {/* Next / Start button */}
               <Button
                 onClick={handleNext}
                 size="sm"
                 className={
                   isLastStep
-                    ? 'bg-gradient-to-r from-amber-600 to-amber-500 px-5 text-amber-50 shadow-lg shadow-amber-600/30 hover:from-amber-500 hover:to-amber-400 relative overflow-hidden'
-                    : 'bg-gradient-to-r from-amber-700 to-amber-600 text-amber-50 hover:from-amber-600 hover:to-amber-500'
+                    ? 'bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 px-5 text-amber-50 shadow-lg shadow-amber-600/30 hover:from-amber-600 hover:via-amber-500 hover:to-amber-600 relative overflow-hidden transition-all duration-300'
+                    : 'bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 text-amber-50 hover:from-amber-600 hover:via-amber-500 hover:to-amber-600 transition-all duration-300'
                 }
               >
                 {isLastStep ? (

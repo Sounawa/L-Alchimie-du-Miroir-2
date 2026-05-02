@@ -124,7 +124,7 @@ export function CoverView() {
   const navigate = useAppStore((s) => s.navigate);
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-amber-50/80 via-amber-50/40 to-amber-100/50 dark:from-stone-950 dark:via-stone-900 dark:to-amber-950/20">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-amber-50/80 via-amber-50/40 to-amber-100/50 dark:from-stone-950 dark:via-stone-900 dark:to-amber-950/20 animate-cover-entrance">
       {/* Decorative Islamic-style border pattern */}
       <div className="pointer-events-none absolute inset-3 sm:inset-5 border border-amber-300/20 dark:border-amber-600/15 rounded-xl sm:rounded-2xl" />
       <div className="pointer-events-none absolute inset-4 sm:inset-6 border border-amber-400/10 dark:border-amber-500/10 rounded-lg sm:rounded-xl" />
@@ -163,7 +163,7 @@ export function CoverView() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="relative z-10 flex flex-col items-center gap-6 px-6 py-12 text-center md:gap-8 md:py-16"
+        className="relative z-10 flex flex-col items-center gap-6 px-6 py-12 text-center max-w-lg md:gap-8 md:py-16 md:max-w-xl"
       >
         {/* Decorative Bismillah calligraphy line */}
         <motion.div variants={item} className="mb-2 opacity-40 dark:opacity-25">
@@ -176,17 +176,21 @@ export function CoverView() {
           </p>
         </motion.div>
 
-        {/* Mirror emoji with dramatic glow and float */}
+        {/* Mirror emoji with dramatic glow and gentle pulse */}
         <motion.div variants={item} className="relative">
           <motion.span
-            className="block text-7xl md:text-8xl"
-            animate={{ y: [0, -8, 0] }}
+            className="block text-8xl md:text-9xl"
+            animate={{ y: [0, -8, 0], scale: [1, 1.04, 1] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           >
             🪞
           </motion.span>
-          {/* Multi-layer glow effect */}
-          <div className="absolute inset-0 rounded-full bg-amber-400/25 blur-2xl dark:bg-amber-400/30" />
+          {/* Multi-layer glow effect with pulse */}
+          <motion.div
+            className="absolute inset-0 rounded-full bg-amber-400/25 blur-2xl dark:bg-amber-400/30"
+            animate={{ opacity: [0.5, 0.8, 0.5], scale: [0.95, 1.1, 0.95] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          />
           <div className="absolute inset-0 rounded-full bg-amber-300/15 blur-3xl dark:bg-amber-300/10" />
           <motion.div
             className="absolute inset-0 rounded-full bg-amber-500/10 blur-xl"
@@ -198,10 +202,10 @@ export function CoverView() {
         {/* Title with shimmer and gentle float */}
         <motion.h1
           variants={item}
-          className="animate-gentle-float relative bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-300 dark:via-yellow-200 dark:to-amber-300 bg-clip-text text-3xl font-serif tracking-wide text-transparent sm:text-4xl md:text-5xl"
+          className="animate-gentle-float relative bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-300 dark:via-yellow-200 dark:to-amber-300 bg-clip-text text-3xl font-serif tracking-widest text-transparent sm:text-4xl md:text-5xl"
           style={{
             backgroundSize: '200% auto',
-            animation: 'shimmer 3s ease-in-out infinite',
+            animation: 'shimmer 5s ease-in-out infinite, gentleFloat 6s ease-in-out infinite',
           }}
         >
           L&apos;Alchimie du Miroir
@@ -214,10 +218,10 @@ export function CoverView() {
           `}</style>
         </motion.h1>
 
-        {/* Subtitle */}
+        {/* Subtitle with serif styling */}
         <motion.p
           variants={item}
-          className="text-lg text-stone-800 dark:text-stone-100 md:text-xl"
+          className="text-lg font-serif text-stone-700/90 dark:text-amber-50/90 md:text-xl tracking-wide italic"
         >
           Méditer le Coran avec l&apos;Âme
         </motion.p>
@@ -260,17 +264,17 @@ export function CoverView() {
         {/* Author line */}
         <motion.p
           variants={item}
-          className="mt-3 text-sm italic text-stone-600 dark:text-stone-300/70"
+          className="mt-3 text-sm font-serif italic text-stone-600 dark:text-stone-300/70 tracking-wide"
         >
           Un guide de tadabbur progressif
         </motion.p>
 
-        {/* Edition */}
+        {/* Edition with decorative separator */}
         <motion.p
           variants={item}
-          className="text-xs text-stone-500 dark:text-stone-400/60"
+          className="text-xs text-stone-500 dark:text-stone-400/60 tracking-wider"
         >
-          Édition 2025 — Pour usage personnel
+          ✦ Édition 2025 — Pour usage personnel ✦
         </motion.p>
 
         {/* Citation du Jour */}
@@ -289,7 +293,7 @@ export function CoverView() {
           <Button
             onClick={() => navigate('toc')}
             size="lg"
-            className="relative rounded-full bg-gradient-to-r from-amber-700 to-amber-600 px-10 py-6 text-base font-medium text-amber-50 shadow-lg shadow-amber-900/30 transition-all hover:from-amber-600 hover:to-amber-500 hover:shadow-amber-800/40 hover:brightness-110 hover:scale-105"
+            className="relative rounded-full bg-gradient-to-r from-amber-800 via-amber-700 to-amber-800 px-10 py-6 text-base font-medium text-amber-50 shadow-lg shadow-amber-900/30 transition-all duration-300 hover:from-amber-700 hover:via-amber-600 hover:to-amber-700 hover:shadow-amber-800/40 hover:brightness-110 hover:scale-[1.03]"
           >
             Commencer la méditation →
           </Button>

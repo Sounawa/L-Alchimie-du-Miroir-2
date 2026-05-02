@@ -120,6 +120,18 @@
     @apply bg-background text-foreground;
     animation: pageLoad 600ms ease-out;
   }
+  /* Smooth transition for all interactive elements */
+  a, button, [role="button"], input, select, textarea {
+    transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+    transition-duration: 200ms;
+    transition-timing-function: ease;
+  }
+  /* Better focus-visible styles */
+  :focus-visible {
+    outline: 2px solid oklch(0.7 0.15 60);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
 }
 
 /* Page load animation */
@@ -132,6 +144,22 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Cover entrance animation */
+@keyframes coverEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-cover-entrance {
+  animation: coverEntrance 0.8s ease-out forwards;
 }
 
 /* Arabic font for Quran verses */
@@ -203,7 +231,7 @@
     #d97706
   );
   background-size: 300% 100%;
-  animation: gradientBorderRotate 8s ease infinite;
+  animation: gradientBorderRotate 12s ease infinite;
 }
 
 .dark .verse-gradient-border {
@@ -218,7 +246,7 @@
     #92400e
   );
   background-size: 300% 100%;
-  animation: gradientBorderRotate 8s ease infinite;
+  animation: gradientBorderRotate 12s ease infinite;
 }
 
 /* Progress circle glow animation */
@@ -414,8 +442,8 @@
 
 /* Elegant scrollbar styles */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -423,20 +451,25 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(168, 162, 158, 0.3);
-  border-radius: 3px;
+  background: rgba(168, 162, 158, 0.25);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(168, 162, 158, 0.5);
+  background: rgba(168, 162, 158, 0.45);
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: rgba(120, 113, 108, 0.3);
+  background: rgba(120, 113, 108, 0.25);
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(120, 113, 108, 0.5);
+  background: rgba(120, 113, 108, 0.45);
+}
+
+/* Thin scrollbar for horizontal scroll areas */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px;
 }
 
 /* Active dot pulse for onboarding */

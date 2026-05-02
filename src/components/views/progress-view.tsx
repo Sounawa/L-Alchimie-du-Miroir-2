@@ -227,7 +227,7 @@ export function ProgressView() {
           <CardContent className="pt-6 relative">
             <div className="flex flex-col items-center gap-4">
               {/* Animated progress circle */}
-              <div className={`relative w-40 h-40 ${progressPercent > 0 ? 'progress-circle-glow' : ''}`}>
+              <div className={`relative w-44 h-44 ${progressPercent > 0 ? 'progress-circle-glow' : ''}`}>
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
                   <circle
                     cx="60"
@@ -235,7 +235,7 @@ export function ProgressView() {
                     r="52"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="8"
+                    strokeWidth="10"
                     className="text-stone-200 dark:text-muted/20"
                   />
                   <circle
@@ -244,14 +244,14 @@ export function ProgressView() {
                     r="52"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="8"
+                    strokeWidth="10"
                     strokeLinecap="round"
                     strokeDasharray={`${2 * Math.PI * 52}`}
                     strokeDashoffset={`${2 * Math.PI * 52 * (1 - progressPercent / 100)}`}
                     className="text-amber-500 dark:text-amber-400"
                     style={{
-                      transition: 'stroke-dashoffset 1.2s ease-out',
-                      animation: progressPercent > 0 ? 'progressStrokeDraw 1.2s ease-out' : undefined,
+                      transition: 'stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                      animation: progressPercent > 0 ? 'progressStrokeDraw 1.5s cubic-bezier(0.4, 0, 0.2, 1)' : undefined,
                       '--circumference': `${2 * Math.PI * 52}`,
                       '--target-offset': `${2 * Math.PI * 52 * (1 - progressPercent / 100)}`,
                     } as React.CSSProperties}
@@ -281,23 +281,23 @@ export function ProgressView() {
       {/* Statistics Cards with gradient backgrounds */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <Card className="border-emerald-200/50 dark:border-emerald-800/30 shadow-sm overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/80 to-emerald-100/30 dark:from-emerald-950/30 dark:to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/80 to-emerald-100/30 dark:from-emerald-950/30 dark:to-transparent pointer-events-none shadow-inner" />
           <CardContent className="pt-4 pb-4 text-center relative">
             <CheckCircle2 className="h-5 w-5 mx-auto mb-1.5 text-emerald-500" />
             <p className="text-2xl font-bold">{completedCount}</p>
             <p className="text-[11px] text-muted-foreground">Complétés</p>
           </CardContent>
         </Card>
-        <Card className="border-amber-200/50 dark:border-amber-800/30 overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-amber-50/80 to-amber-100/30 dark:from-amber-950/30 dark:to-transparent pointer-events-none" />
+        <Card className="border-amber-200/50 dark:border-amber-800/30 overflow-hidden relative shadow-sm">
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-50/80 to-amber-100/30 dark:from-amber-950/30 dark:to-transparent pointer-events-none shadow-inner" />
           <CardContent className="pt-4 pb-4 text-center relative">
             <Circle className="h-5 w-5 mx-auto mb-1.5 text-amber-500" />
             <p className="text-2xl font-bold">{remainingCount}</p>
             <p className="text-[11px] text-muted-foreground">Restants</p>
           </CardContent>
         </Card>
-        <Card className="border-amber-200/50 dark:border-amber-800/30 overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-orange-50/80 to-amber-100/30 dark:from-amber-950/30 dark:to-transparent pointer-events-none" />
+        <Card className="border-amber-200/50 dark:border-amber-800/30 overflow-hidden relative shadow-sm">
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-50/80 to-amber-100/30 dark:from-amber-950/30 dark:to-transparent pointer-events-none shadow-inner" />
           <CardContent className="pt-4 pb-4 text-center relative">
             <Clock className="h-5 w-5 mx-auto mb-1.5 text-amber-500" />
             <p className="text-2xl font-bold">{formatTime(totalMinutes)}</p>

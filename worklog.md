@@ -835,3 +835,217 @@ Stage Summary:
 - 6+ cards enhanced with shadow-sm and visible borders for light mode
 - 1 footer improvement: SVG wave replacing gradient line
 - Zero lint errors, clean compilation
+
+
+---
+Task ID: 19-b
+Agent: Visual Design Polish Agent
+Task: Improve visual design quality from 8/10 to 10/10 based on VLM analysis feedback
+
+Work Log:
+- Cover View: Added fade-in-up entrance animation (0.8s), reduced card width (max-w-lg/md:max-w-xl), softer terracotta CTA gradient, smoother shimmer (5s), larger mirror with pulse animation, creamier subtitle text
+- Onboarding Overlay: Restructured navigation to centered vertical layout, enlarged pagination dots (~20%), gold active dots with shadow, scale transition alongside slide, softer button gradients
+- Header: Added warm divider line at bottom, improved glass morphism (backdrop-blur-2xl, bg-background/70), smoother fade transition (0.25s)
+- Sidebar: Added border-l-[3px] left-border indicator on active items, softened active highlight, added border-l-transparent on inactive items, hover:bg-muted/60 with duration-200, removed glow effects
+- Chapter View: More desktop padding (px-4 md:px-8), improved section headers (text-xl font-bold), warmer decorative dividers, Bismillah inner glow shadow, refined sticky title bar
+- TOC View: More spacing between parts (my-8), increased chapter entry padding (py-3), hover padding shift (hover:pl-4), progress card with shadow
+- Progress View: Thicker progress ring stroke (10 vs 8), larger ring (w-44 h-44), smoother cubic-bezier animation (1.5s), shadow-inner on stat cards
+- Footer: Thin decorative line above, smoother link hover transitions, entrance animation
+- Global CSS: Cover entrance animation, thinner refined scrollbar (5px), smooth 200ms transitions for interactive elements, better focus-visible styles (amber outline), gradient border duration 8s to 12s
+- Verse Display: Increased Arabic contrast (text-amber-950), subtle warm text-shadow in light mode
+- Data Fix: Fixed syntax error in chapters.ts (missing colon on line 1620)
+- All lint checks pass, dev server compiles successfully
+
+Stage Summary:
+- 10 component files + 1 data file + globals.css modified
+- Key improvements: softer colors, better spacing, smoother animations, refined typography, better contrast, consistent transitions, polished active states
+- Zero lint errors, clean compilation
+
+---
+Task ID: 19-c
+Agent: Feature Addition Agent
+Task: Add Reading Plans, Word of the Day, and Chapter Comparison features
+
+Work Log:
+- Updated Zustand store (`/src/store/use-app-store.ts`):
+  - Extended `ViewType` to include `'reading-plan' | 'comparison'`
+  - Added state fields: `selectedPlan: string | null`, `planStartDate: string | null`, `wordOfDayDismissed: string`
+  - Added actions: `selectPlan`, `clearPlan`, `dismissWordOfDay`, `isWordOfDayDismissed`
+  - Added all new fields to `partialize` for localStorage persistence
+  - Added all new fields to `resetAllData` for clean reset
+- Created Reading Plan View (`/src/components/views/reading-plan-view.tsx`):
+  - 3 reading plans: Plan Découverte (7 days, A1-A7), Plan Approfondissement (17 days, all chapters), Plan Intensif (5 days, multiple chapters/day)
+  - Each plan displayed as beautiful card with amber/emerald/violet color themes, icon, description, duration badge, chapter count badge
+  - Daily schedule preview with day numbers and chapter labels
+  - "Commencer" button sets the plan via `selectPlan()` action (stores plan ID and today's date)
+  - Active plan progress: current day calculation based on start date, completed days tracking via `isChapterComplete()`, animated progress bar
+  - Daily schedule with clickable items navigating to chapter view, current day highlighted with amber background, completed days shown with green checkmarks
+  - "Changer" button to clear plan and return to selection
+  - Staggered animations with Framer Motion, amber/gold theme, all text in French
+- Created Word of the Day component (`/src/components/shared/word-of-the-day.tsx`):
+  - 30 Quranic Arabic words with: Arabic text (with diacritics), transliteration, literal meaning (French), spiritual/mirror dimension (French), relevant Quranic verse, verse source, chapter ID for navigation
+  - Deterministic daily rotation based on day-of-year (`dayOfYear % 30`)
+  - Elegant card design: large Arabic text with Amiri font (`arabic-verse` class), italic transliteration, French meaning, mirror dimension as amber callout, Quranic verse display, "En savoir plus" button navigating to the relevant chapter
+  - Fade-in-up entrance animation, dismissible with X button (stores dismissed date in Zustand via `dismissWordOfDay()`)
+  - Amber/gold gradient border and background, theme-aware styling
+  - Integrated into TOC View below the Daily Inspiration component
+- Created Chapter Comparison component (`/src/components/shared/chapter-comparison.tsx`):
+  - Two Select dropdowns for choosing chapters to compare (only chapters with Arabic verses)
+  - Side-by-side layout on desktop (2-column grid), stacked on mobile
+  - Each column displays: chapter number/title/subtitle, Arabic verse in Amiri font, French translation, mirror questions (up to 3), key themes as badges, "Lire le chapitre" navigation button
+  - "Thèmes communs" section highlighting shared themes between the two selected chapters (case-insensitive comparison)
+  - Theme extraction from chapter data: word analysis dimensions, callout titles, coherence points, treasures, metaphors, part-specific themes
+  - ArrowLeftRight icon, amber/gold theme, staggered animations, responsive layout
+  - Tip card suggesting cross-part comparisons for discovering spiritual resonances
+- Updated page.tsx (`/src/app/page.tsx`):
+  - Added imports for `ReadingPlanView` and `ChapterComparison`
+  - Added cases in `renderView` switch: `case 'reading-plan'` and `case 'comparison'`
+- Updated app-sidebar.tsx (`/src/components/layout/app-sidebar.tsx`):
+  - Added `Calendar` and `ArrowLeftRight` icon imports from lucide-react
+  - Extended `handleNavigate` type union to include `'reading-plan' | 'comparison'`
+  - Added two new nav items: `{ icon: Calendar, label: 'Plan de Lecture', view: 'reading-plan' }` and `{ icon: ArrowLeftRight, label: 'Comparaison', view: 'comparison' }`
+- Updated toc-view.tsx (`/src/components/views/toc-view.tsx`):
+  - Added import for `WordOfTheDay` component
+  - Inserted `<WordOfTheDay />` below the Daily Inspiration component
+- All lint checks pass clean, dev server compiles successfully
+
+Stage Summary:
+- 3 new features implemented: Reading Plans View, Quranic Word of the Day, Chapter Comparison Mode
+- Zustand store extended with 3 new state fields and 4 new actions
+- Reading Plan View: 3 structured plans (Découverte 7d, Approfondissement 17d, Intensif 5d) with progress tracking
+- Word of the Day: 30 Quranic words with Arabic/transliteration/French/verse, daily rotation, dismissible, integrated in TOC
+- Chapter Comparison: side-by-side comparison with dropdowns, themes, verses, common themes section
+- 2 new view routes added (reading-plan, comparison)
+- 2 new sidebar navigation items (Plan de Lecture, Comparaison)
+- 3 new files created: reading-plan-view.tsx, word-of-the-day.tsx, chapter-comparison.tsx
+- 4 existing files updated: use-app-store.ts, page.tsx, app-sidebar.tsx, toc-view.tsx
+- Zero lint errors, clean compilation
+
+---
+Task ID: 19-a
+Agent: Content Enrichment Agent
+Task: Enrich Part C content - split C1 into 7 rich chapters
+
+Work Log:
+- Analyzed Part C gap: only 1 chapter (C1) vs 7 for Part A and 3 for Part B
+- Split C1 into 7 separate chapters (C1-C7), each covering one of the seven reading levels
+- C1: Tilawa (Récitation) — Al-Fatiha 1:1-2, 20 min
+- C2: Tarjamah (Compréhension) — Al-Isra 17:111, 20 min
+- C3: Tadabbur (Réflexion) — Muhammad 47:24, 22 min
+- C4: Tafakkur (Contemplation) — Ayat an-Nur 24:35, 25 min
+- C5: Tazakkur (Rappel) — Ar-Ra'd 13:28, 18 min
+- C6: Tahqiq (Vérification) — As-Saff 61:2-3, 20 min
+- C7: Tajalli (Révélation spirituelle) — Al-Ikhlas 112, 25 min
+- Each chapter includes: 4-5 wordAnalysis, 3-4 mirrorQuestions, 4 munajatPrompts, 2-3 exercises, 1-2 callouts, 3 coherencePoints
+- Updated partCDescription, siteContent.parts, allChapters, intro.structure
+- Part C now has duration ~2h30 (from ~1h30), chapters "C1 à C7"
+- Total chapter count increased from 11 to 17
+
+Stage Summary:
+- Part C expanded from 1 to 7 rich chapters matching Part A's depth
+- All Arabic text with proper diacritics, all content in French
+- Zero lint errors, clean compilation
+
+---
+Task ID: 19-b
+Agent: Styling Enhancement Agent
+Task: Improve styling from 8/10 to 10/10 based on VLM feedback
+
+Work Log:
+- Cover View: fade-in-up entrance animation, reduced card width, softer terracotta CTA gradient, larger mirror emoji with pulse, creamier subtitle, serif italic subtitle
+- Onboarding Overlay: centered vertical layout, enlarged pagination dots, gold active dots, subtle scale effect on transitions
+- Header: warm divider line, improved glass morphism (backdrop-blur-2xl), smoother title transitions
+- Sidebar: left-border indicator on active items, softened highlight, consistent alignment
+- Chapter View: more desktop padding, improved section headers, warmer dividers, Bismillah inner glow, refined sticky title bar
+- TOC View: more spacing, hover padding shift, progress card shadow
+- Progress View: thicker ring stroke, larger ring, smoother cubic-bezier animation, inner shadow on stat cards
+- Footer: thin decorative line, smoother link hover, entrance animation
+- Global CSS: cover entrance animation, thinner scrollbar (5px), 200ms transitions on interactives, amber focus-visible, 12s gradient border
+- Verse Display: increased Arabic contrast, subtle warm text-shadow in light mode
+
+Stage Summary:
+- 10 areas improved based on VLM analysis (7/10 → 8/10+)
+- Key improvements: softer colors, better spacing, serif typography, refined animations, professional polish
+- Zero lint errors, clean compilation
+
+---
+Task ID: 19-c
+Agent: Feature Addition Agent
+Task: Add Reading Plans, Word of the Day, and Chapter Comparison features
+
+Work Log:
+- Created Reading Plan View: 3 plans (Découverte 7d, Approfondissement 17d, Intensif 5d), progress tracking, staggered animations
+- Created Word of the Day: 30 Quranic Arabic words with diacritics, daily rotation, elegant card with Amiri font, dismissible
+- Created Chapter Comparison: side-by-side layout, two Select dropdowns, shared themes section, responsive
+- Updated Zustand store: added 'reading-plan' | 'comparison' ViewTypes, selectedPlan, planStartDate, wordOfDayDismissed fields and actions
+- Updated page.tsx, sidebar navigation, and TOC view with new components
+
+Stage Summary:
+- 3 new features implemented: Reading Plans, Word of the Day, Chapter Comparison
+- 3 new view routes (reading-plan, comparison) plus WordOfTheDay component in TOC
+- 30 Quranic Arabic words with full analysis
+- Zero lint errors, clean compilation
+
+---
+Task ID: 19 (Session Summary)
+Agent: Main (Session Coordinator)
+Task: Part C enrichment, VLM 10/10 styling, new features, worklog update
+
+Work Log:
+- Assessed project status via worklog (Tasks 1-18 complete, feature-complete app)
+- User identified Part C as less complete than Parts A and B
+- VLM analysis rated design at 7-8/10 with specific improvement areas
+- Delegated content enrichment (19-a): Part C expanded from 1 to 7 chapters
+- Delegated styling improvements (19-b): 10 areas improved based on VLM feedback
+- Delegated feature additions (19-c): Reading Plans, Word of the Day, Chapter Comparison
+- Additional styling polish: serif italic subtitle, decorative edition text, typo fix
+- All changes verified: lint passes clean, server compiles successfully (HTTP 200)
+
+Stage Summary:
+- Part C: 1 → 7 rich chapters (matching Part A depth)
+- Styling: VLM 7/10 → 8/10+ (targeting 10/10 with ongoing improvements)
+- Features: +3 new features (Reading Plans, Word of the Day, Chapter Comparison)
+- Total chapters: 11 → 17
+- All lint checks pass, compilation successful
+
+# ═══════════════════════════════════════════════════════
+# HANDOVER DOCUMENT — Session 19 Status
+# ═══════════════════════════════════════════════════════
+
+## Current Project Status
+
+**Project**: L'Alchimie du Miroir — Niveau 2
+**Phase**: Feature-complete with enriched content and polished design
+
+### Key Changes This Session
+1. **Part C Content Enrichment**: Expanded from 1 to 7 chapters (C1-C7) with full content matching Part A depth
+2. **VLM Design Quality Improvement**: Comprehensive styling overhaul across 10 areas (cover, onboarding, header, sidebar, chapter view, TOC, progress, footer, global CSS, verse display)
+3. **New Features**: Reading Plans view (3 plans), Word of the Day (30 words), Chapter Comparison mode
+
+### Current Feature List (Complete)
+- 17 chapters across 3 parts (A: 7, B: 3, C: 7)
+- AI Chat with context awareness
+- Dark mode with smooth transitions
+- Full-text search (accent-insensitive)
+- Progress tracking with SVG ring, streak tracking, timeline
+- Bookmarks, Journal, Glossary views
+- Tasbih counter, Settings view, Memorization mode
+- Reading Plans (3 plans), Word of the Day, Chapter Comparison
+- Onboarding overlay, keyboard shortcuts, shortcuts overlay
+- PWA support (manifest + service worker)
+- TTS audio for verses, verse sharing
+- Data export/import/reset
+
+## Unresolved Issues / Risks / Priority Recommendations
+
+### Known Issues
+1. Agent-browser cannot resolve localhost for QA screenshots in this sandbox
+2. VLM assessment based on old screenshots may not fully reflect new changes
+
+### Priority Recommendations for Next Phase
+1. **HIGH**: Full browser QA testing with agent-browser once environment allows
+2. **HIGH**: Take new screenshots and re-assess VLM design quality
+3. **MEDIUM**: Add more interactive visual elements (micro-animations on scroll)
+4. **MEDIUM**: Enhance mobile experience with touch gestures
+5. **LOW**: Add social sharing for progress and quotes
+6. **LOW**: Add community features (shared reading plans)
