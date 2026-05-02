@@ -198,7 +198,7 @@ export function CoverView() {
         {/* Title with shimmer and gentle float */}
         <motion.h1
           variants={item}
-          className="animate-gentle-float relative bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-300 dark:via-yellow-200 dark:to-amber-300 bg-clip-text text-4xl font-serif tracking-wide text-transparent sm:text-5xl md:text-6xl"
+          className="animate-gentle-float relative bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-300 dark:via-yellow-200 dark:to-amber-300 bg-clip-text text-3xl font-serif tracking-wide text-transparent sm:text-4xl md:text-5xl"
           style={{
             backgroundSize: '200% auto',
             animation: 'shimmer 3s ease-in-out infinite',
@@ -217,13 +217,13 @@ export function CoverView() {
         {/* Subtitle */}
         <motion.p
           variants={item}
-          className="text-lg text-stone-700 dark:text-stone-200/90 md:text-xl"
+          className="text-lg text-stone-800 dark:text-stone-100 md:text-xl"
         >
           Méditer le Coran avec l&apos;Âme
         </motion.p>
 
         {/* Level badge */}
-        <motion.div variants={item}>
+        <motion.div variants={item} className="mt-4">
           <Badge
             variant="outline"
             className="border-amber-500/40 bg-amber-100/60 px-4 py-1.5 text-sm text-amber-700 dark:border-amber-600/50 dark:bg-amber-950/40 dark:text-amber-300/90"
@@ -239,19 +239,19 @@ export function CoverView() {
         >
           <Badge
             variant="outline"
-            className="border-stone-300/50 bg-stone-100/70 px-3 py-1 text-xs text-stone-600 dark:border-stone-600/40 dark:bg-stone-800/50 dark:text-stone-300/70"
+            className="border-stone-300/50 bg-stone-100/70 px-4 py-1.5 text-xs text-stone-700 dark:border-stone-600/40 dark:bg-stone-800/50 dark:text-stone-200"
           >
             Partie A — Al-Fatiha
           </Badge>
           <Badge
             variant="outline"
-            className="border-stone-300/50 bg-stone-100/70 px-3 py-1 text-xs text-stone-600 dark:border-stone-600/40 dark:bg-stone-800/50 dark:text-stone-300/70"
+            className="border-stone-300/50 bg-stone-100/70 px-4 py-1.5 text-xs text-stone-700 dark:border-stone-600/40 dark:bg-stone-800/50 dark:text-stone-200"
           >
             Partie B — Trésors du Coran
           </Badge>
           <Badge
             variant="outline"
-            className="border-stone-300/50 bg-stone-100/70 px-3 py-1 text-xs text-stone-600 dark:border-stone-600/40 dark:bg-stone-800/50 dark:text-stone-300/70"
+            className="border-stone-300/50 bg-stone-100/70 px-4 py-1.5 text-xs text-stone-700 dark:border-stone-600/40 dark:bg-stone-800/50 dark:text-stone-200"
           >
             Partie C — Les Sept Niveaux
           </Badge>

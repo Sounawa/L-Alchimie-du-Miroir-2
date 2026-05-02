@@ -185,25 +185,28 @@ export function OnboardingOverlay() {
             </div>
 
             {/* Progress dots */}
-            <div className="flex items-center gap-2.5">
-              {steps.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentStep(idx)}
-                  className="transition-all duration-300"
-                  aria-label={`Étape ${idx + 1}`}
-                >
-                  <div
-                    className={`rounded-full transition-all duration-300 ${
-                      idx === currentStep
-                        ? 'h-3 w-7 bg-amber-600 dark:bg-amber-400 animate-active-dot-pulse'
-                        : idx < currentStep
-                          ? 'h-3 w-3 bg-amber-400 dark:bg-amber-500'
-                          : 'h-3 w-3 bg-stone-300 dark:bg-stone-600'
-                    }`}
-                  />
-                </button>
-              ))}
+            <div className="flex flex-col items-center gap-1.5">
+              <div className="flex items-center gap-2.5">
+                {steps.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentStep(idx)}
+                    className="transition-all duration-300"
+                    aria-label={`Étape ${idx + 1}`}
+                  >
+                    <div
+                      className={`rounded-full transition-all duration-300 ${
+                        idx === currentStep
+                          ? 'h-4 w-4 bg-amber-600 dark:bg-amber-400 animate-active-dot-pulse'
+                          : idx < currentStep
+                            ? 'w-3 h-3 bg-amber-400 dark:bg-amber-500'
+                            : 'w-3 h-3 bg-stone-300 dark:bg-stone-600'
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+              <span className="text-[10px] text-stone-400 dark:text-stone-500">Étape {currentStep + 1} sur {steps.length}</span>
             </div>
 
             {/* Next / Start button */}

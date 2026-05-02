@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React from 'react'
 import { useAppStore } from '@/store/use-app-store'
 import { getChapterById } from '@/data/chapters'
 import { Button } from '@/components/ui/button'
@@ -13,14 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
 import {
   Menu,
   Moon,
@@ -35,19 +27,7 @@ import {
 import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
-
-// View label map in French
-const viewLabels: Record<string, string> = {
-  cover: 'Accueil',
-  toc: 'Table des matières',
-  intro: 'Introduction',
-  progress: 'Ma progression',
-  search: 'Recherche',
-  glossary: 'Glossaire',
-  journal: 'Journal',
-  settings: 'Paramètres',
-  tasbih: 'Tasbih',
-}
+import { BreadcrumbNav } from '@/components/shared/breadcrumb-nav'
 
 export function AppHeader() {
   const {
@@ -69,25 +49,6 @@ export function AppHeader() {
     currentView === 'chapter' && chapter
       ? `${chapter.number} — ${chapter.title}`
       : "L'Alchimie du Miroir"
-
-  // Build breadcrumb path
-  const breadcrumbItems = useMemo(() => {
-    const items: { label: string; view?: string; chapterId?: string }[] = [
-      { label: 'Accueil', view: 'cover' },
-    ]
-
-    if (currentView === 'cover') return items
-
-    if (currentView === 'chapter' && chapter) {
-      items.push({ label: 'Table des matières', view: 'toc' })
-      items.push({ label: `Chapitre ${chapter.number}`, chapterId: currentChapterId ?? undefined })
-    } else {
-      const label = viewLabels[currentView] || currentView
-      items.push({ label })
-    }
-
-    return items
-  }, [currentView, currentChapterId, chapter])
 
   // Font size controls
   const handleFontSizeDecrease = () => {
@@ -230,46 +191,8 @@ export function AppHeader() {
         </div>
       </div>
 
-      {/* Breadcrumb navigation */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={breadcrumbItems.map((i) => i.label).join('/')}
-          initial={{ opacity: 0, x: -8 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -8 }}
-          transition={{ duration: 0.25, ease: 'easeOut' }}
-          className="px-3 md:px-4 pb-1.5 -mt-0.5"
-        >
-          <Breadcrumb>
-            <BreadcrumbList className="text-[11px]">
-              {breadcrumbItems.map((item, idx) => {
-                const isLast = idx === breadcrumbItems.length - 1
-                return (
-                  <React.Fragment key={`${item.label}-${idx}`}>
-                    <BreadcrumbItem>
-                      {isLast ? (
-                        <BreadcrumbPage className="text-[11px] text-foreground/80 font-medium">
-                          {item.label}
-                        </BreadcrumbPage>
-                      ) : (
-                        <BreadcrumbLink
-                          className="text-[11px] text-muted-foreground/70 hover:text-amber-600 dark:hover:text-amber-400 cursor-pointer transition-colors"
-                          onClick={() => {
-                            if (item.view) navigate(item.view as Parameters<typeof navigate>[0], item.chapterId ?? null)
-                          }}
-                        >
-                          {item.label}
-                        </BreadcrumbLink>
-                      )}
-                    </BreadcrumbItem>
-                    {!isLast && <BreadcrumbSeparator />}
-                  </React.Fragment>
-                )
-              })}
-            </BreadcrumbList>
-          </Breadcrumb>
-        </motion.div>
-      </AnimatePresence>
+      {/* Breadcrumb navigation below the main header bar */}
+      <BreadcrumbNav />
     </header>
   )
 }

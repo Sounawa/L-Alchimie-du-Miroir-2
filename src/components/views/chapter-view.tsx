@@ -26,15 +26,8 @@ import { TimerSection } from '@/components/chapter/timer-section'
 import { ExerciseSection } from '@/components/chapter/exercise-section'
 import { ExtraSections } from '@/components/chapter/extra-sections'
 import { QuoteBlock } from '@/components/chapter/quote-block'
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.05, duration: 0.4, ease: 'easeOut' },
-  }),
-}
+import { ChapterProgressIndicator } from '@/components/shared/chapter-progress-indicator'
+import { CompletionSummaryCard } from '@/components/shared/completion-summary-card'
 
 // Decorative divider component
 function DecorativeDivider() {
@@ -81,23 +74,22 @@ const partIconColor: Record<string, string> = {
   C: 'text-violet-500 dark:text-violet-400',
 }
 
-// Animated section wrapper using IntersectionObserver
-function AnimatedSection({ children, className }: { children: React.ReactNode; className?: string }) {
+// Animated section wrapper using framer-motion useInView
+function AnimatedSection({ children, className, id }: { children: React.ReactNode; className?: string; id?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-50px' })
 
   return (
-    <div
+    <motion.div
       ref={ref}
+      id={id}
       className={className}
-      style={{
-        opacity: isInView ? 1 : 0,
-        transform: isInView ? 'translateY(0)' : 'translateY(16px)',
-        transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
-      }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
     >
       {children}
-    </div>
+    </motion.div>
   )
 }
 
@@ -195,8 +187,6 @@ export function ChapterView() {
       </div>
     )
   }
-
-  let sectionIndex = 0
 
   const handleToggleComplete = () => {
     toggleChapterComplete(chapterId)
@@ -324,13 +314,13 @@ export function ChapterView() {
 
       <div className={`max-w-3xl mx-auto px-4 py-6 space-y-6 scroll-smooth bg-gradient-to-b ${partBgGradient[partLetter] || partBgGradient.A} min-h-screen`}>
         {/* Back button and Bookmark */}
-        <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+        <AnimatedSection>
           <div className="flex items-center justify-between">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('toc')}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground transition-all duration-200 active:scale-[0.97]"
             >
               <ArrowLeft className="h-4 w-4 mr-1" />
               Table des matières
@@ -339,16 +329,16 @@ export function ChapterView() {
               variant="ghost"
               size="sm"
               onClick={handleToggleBookmark}
-              className={bookmarked ? 'text-amber-500' : 'text-muted-foreground'}
+              className={`${bookmarked ? 'text-amber-500' : 'text-muted-foreground'} transition-all duration-200 active:scale-[0.97]`}
             >
               {bookmarked ? <BookmarkCheck className="h-4 w-4 mr-1" /> : <Bookmark className="h-4 w-4 mr-1" />}
               {bookmarked ? 'Favoris' : 'Ajouter aux favoris'}
             </Button>
           </div>
-        </motion.div>
+        </AnimatedSection>
 
         {/* Chapter header */}
-        <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="text-center space-y-2">
+        <AnimatedSection className="text-center space-y-2">
           <Badge variant="outline" className="text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700 mb-2">
             Chapitre {chapter.number}
           </Badge>
@@ -366,27 +356,27 @@ export function ChapterView() {
               {getChapterReadingTime(chapter)} min de lecture
             </Badge>
           </div>
-        </motion.div>
+        </AnimatedSection>
 
         {/* Mini TOC in chapter */}
         {sectionsList.length > 3 && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <AnimatedSection>
             <div className="flex flex-wrap gap-1.5 justify-center">
               {sectionsList.map((section) => (
                 <button
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
-                  className="rounded-full border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800/50 px-2.5 py-1 text-[10px] text-stone-600 dark:text-stone-400 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700 dark:hover:border-amber-700 dark:hover:bg-amber-950/30 dark:hover:text-amber-300"
+                  className="rounded-full border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800/50 px-2.5 py-1 text-[10px] text-stone-600 dark:text-stone-400 transition-all duration-200 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700 dark:hover:border-amber-700 dark:hover:bg-amber-950/30 dark:hover:text-amber-300"
                 >
                   {section.label}
                 </button>
               ))}
             </div>
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Bismillah header */}
-        <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+        <AnimatedSection>
           <div className="rounded-xl border-2 border-amber-200/60 dark:border-amber-700/40 bg-gradient-to-r from-amber-50 via-amber-100/60 to-amber-50 dark:from-amber-950/30 dark:via-amber-900/20 dark:to-amber-950/30 px-6 py-5 text-center animate-border-glow relative overflow-hidden">
             {/* Decorative corner accents */}
             <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-amber-300/40 dark:border-amber-600/30 rounded-tl-sm" />
@@ -404,37 +394,37 @@ export function ChapterView() {
               Au nom de Dieu, le Tout-Miséricordieux, le Très-Miséricordieux
             </p>
           </div>
-        </motion.div>
+        </AnimatedSection>
 
         {/* Decorative divider */}
         <DecorativeDivider />
 
         {/* Verse display */}
         {chapter.arabicVerse && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-verse">
+          <AnimatedSection id="section-verse">
             <VerseDisplay
               arabicVerse={chapter.arabicVerse}
               translation={chapter.translation}
               translationSource={chapter.translationSource}
               chapterTitle={`${chapter.number} — ${chapter.title}`}
             />
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Word analysis table */}
         {chapter.wordAnalysis.length > 0 && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-words">
+          <AnimatedSection id="section-words">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Sparkles className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Analyse des mots</h2>
             </SectionHeader>
             <WordAnalysisTable words={chapter.wordAnalysis} />
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Comparison table */}
         {chapter.comparisonTable && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-comparison">
+          <AnimatedSection id="section-comparison">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Eye className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Tableau comparatif</h2>
@@ -443,23 +433,23 @@ export function ChapterView() {
               headers={chapter.comparisonTable.headers}
               rows={chapter.comparisonTable.rows}
             />
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Coherence points */}
         {chapter.coherencePoints && chapter.coherencePoints.length > 0 && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-coherence">
+          <AnimatedSection id="section-coherence">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Lightbulb className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Cohérence</h2>
             </SectionHeader>
             <CoherencePoints points={chapter.coherencePoints} />
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Callout blocks */}
         {chapter.callouts && chapter.callouts.length > 0 && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="space-y-3" id="section-callouts">
+          <AnimatedSection className="space-y-3" id="section-callouts">
             <DecorativeDivider />
             {chapter.callouts.map((callout, i) => (
               <CalloutBlock
@@ -469,56 +459,56 @@ export function ChapterView() {
                 content={callout.content}
               />
             ))}
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Bullet points */}
         {chapter.bulletPoints && chapter.bulletPoints.length > 0 && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-bullets">
+          <AnimatedSection id="section-bullets">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Sparkles className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Points clés</h2>
             </SectionHeader>
             <BulletPointsList points={chapter.bulletPoints} />
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Treasures list */}
         {chapter.treasuresList && chapter.treasuresList.length > 0 && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-treasures">
+          <AnimatedSection id="section-treasures">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Gem className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Trésors</h2>
             </SectionHeader>
             <TreasuresList treasures={chapter.treasuresList} />
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Metaphor table */}
         {chapter.metaphorTable && chapter.metaphorTable.length > 0 && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-metaphors">
+          <AnimatedSection id="section-metaphors">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Eye className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Métaphores</h2>
             </SectionHeader>
             <MetaphorTable metaphors={chapter.metaphorTable} />
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Mirror questions */}
         {chapter.mirrorQuestions.length > 0 && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-mirror">
+          <AnimatedSection id="section-mirror">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Lightbulb className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Questions miroir</h2>
             </SectionHeader>
             <MirrorQuestionsTable questions={chapter.mirrorQuestions} />
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Munajat section */}
         {chapter.munajatPrompts.length > 0 && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-munajat">
+          <AnimatedSection id="section-munajat">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<BookOpen className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Munajat — Méditation intime</h2>
@@ -527,12 +517,12 @@ export function ChapterView() {
               chapterId={chapterId}
               prompts={chapter.munajatPrompts}
             />
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Timer section */}
         {chapter.timerMinutes > 0 && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-timer">
+          <AnimatedSection id="section-timer">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Clock className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Méditation silencieuse</h2>
@@ -541,12 +531,12 @@ export function ChapterView() {
               chapterId={chapterId}
               minutes={chapter.timerMinutes}
             />
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Exercise section */}
         {chapter.exercises.length > 0 && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-exercises">
+          <AnimatedSection id="section-exercises">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<Lightbulb className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Exercices</h2>
@@ -555,12 +545,12 @@ export function ChapterView() {
               chapterId={chapterId}
               exercises={chapter.exercises}
             />
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Extra sections (B3-B10) */}
         {chapter.extraSections && chapter.extraSections.length > 0 && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-extra">
+          <AnimatedSection id="section-extra">
             <DecorativeDivider />
             <SectionHeader part={partLetter} icon={<BookOpen className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Sections supplémentaires</h2>
@@ -569,12 +559,12 @@ export function ChapterView() {
               chapterId={chapterId}
               sections={chapter.extraSections}
             />
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Quotes */}
         {chapter.quotes && chapter.quotes.length > 0 && (
-          <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="space-y-3" id="section-quotes">
+          <AnimatedSection className="space-y-3" id="section-quotes">
             <DecorativeDivider />
             {chapter.quotes.map((quote, i) => (
               <QuoteBlock
@@ -583,19 +573,19 @@ export function ChapterView() {
                 source={quote.source}
               />
             ))}
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* Decorative end divider */}
         <DecorativeDivider />
 
         {/* Chapter Notes Summary */}
-        <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+        <AnimatedSection>
           <ChapterNotesSummary chapterId={chapterId} />
-        </motion.div>
+        </AnimatedSection>
 
         {/* Chapter navigation with titles */}
-        <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="pt-4 border-t border-stone-200/60 dark:border-stone-700/30">
+        <AnimatedSection className="pt-4 border-t border-stone-200/60 dark:border-stone-700/30">
           <div className="flex items-stretch justify-between gap-3">
             {prevChapter ? (
               <button
@@ -641,18 +631,14 @@ export function ChapterView() {
               <div className="flex-1 max-w-[48%]" />
             )}
           </div>
-        </motion.div>
+        </AnimatedSection>
 
         {/* Complete chapter section — enhanced with celebration */}
-        <motion.div
-          custom={sectionIndex++}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          className={`rounded-xl border p-4 transition-all duration-500 ${
+        <AnimatedSection
+          className={`rounded-xl border p-4 transition-all duration-500 shadow-sm ${
             completed
               ? 'border-emerald-300/50 bg-emerald-50/50 dark:border-emerald-700/30 dark:bg-emerald-950/20'
-              : 'border-stone-200/60 dark:border-stone-700/30'
+              : 'border-stone-200 dark:border-stone-700/30 bg-white dark:bg-stone-900/30'
           }`}
         >
           <div className="flex items-center gap-3">
@@ -673,13 +659,16 @@ export function ChapterView() {
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
-              className="mt-3 flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-300/80"
+              className="mt-4"
             >
-              <span>🎉</span>
-              <span className="italic">Félicitations ! Ce chapitre est maintenant complété.</span>
+              <CompletionSummaryCard
+                chapterId={chapterId}
+                chapterTitle={chapter.title}
+                chapterNumber={chapter.number}
+              />
             </motion.div>
           )}
-        </motion.div>
+        </AnimatedSection>
 
         {/* Back to top floating button */}
         {showBackToTop && (
@@ -694,6 +683,9 @@ export function ChapterView() {
             <ArrowUp className="h-5 w-5" />
           </motion.button>
         )}
+
+        {/* Chapter scroll progress indicator */}
+        <ChapterProgressIndicator />
       </div>
     </>
   )

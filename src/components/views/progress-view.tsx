@@ -155,7 +155,7 @@ export function ProgressView() {
 
       {/* Timeline / Roadmap */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
-        <Card className="overflow-hidden">
+        <Card className="border-stone-200 shadow-sm overflow-hidden relative">
           <CardContent className="pt-4 pb-4">
             <div className="flex items-center gap-1 overflow-x-auto pb-2 scrollbar-thin">
               {allChapters.map((ch, idx) => {
@@ -221,7 +221,7 @@ export function ProgressView() {
 
       {/* Progress Ring / Bar */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
-        <Card className="border-amber-200/50 dark:border-amber-800/30 overflow-hidden relative">
+        <Card className="border-amber-200/50 dark:border-amber-800/30 shadow-sm overflow-hidden relative">
           {/* Subtle gradient bg */}
           <div className="absolute inset-0 bg-gradient-to-br from-amber-50/50 to-transparent dark:from-amber-950/20 dark:to-transparent pointer-events-none" />
           <CardContent className="pt-6 relative">
@@ -280,7 +280,7 @@ export function ProgressView() {
 
       {/* Statistics Cards with gradient backgrounds */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Card className="border-emerald-200/50 dark:border-emerald-800/30 overflow-hidden relative">
+        <Card className="border-emerald-200/50 dark:border-emerald-800/30 shadow-sm overflow-hidden relative">
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/80 to-emerald-100/30 dark:from-emerald-950/30 dark:to-transparent pointer-events-none" />
           <CardContent className="pt-4 pb-4 text-center relative">
             <CheckCircle2 className="h-5 w-5 mx-auto mb-1.5 text-emerald-500" />
@@ -305,7 +305,7 @@ export function ProgressView() {
           </CardContent>
         </Card>
         {/* Streak card */}
-        <Card className="border-orange-200/50 dark:border-orange-800/30 overflow-hidden relative">
+        <Card className="border-orange-200/50 dark:border-orange-800/30 shadow-sm overflow-hidden relative">
           <div className="absolute inset-0 bg-gradient-to-br from-orange-50/80 to-amber-100/30 dark:from-orange-950/30 dark:to-transparent pointer-events-none" />
           <CardContent className="pt-4 pb-4 text-center relative">
             <Flame className="h-5 w-5 mx-auto mb-1.5 text-orange-500" />
@@ -326,7 +326,7 @@ export function ProgressView() {
 
       {/* Chapter List */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
-        <Card>
+        <Card className="shadow-sm border-stone-200 dark:border-stone-700/30">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
               <BookOpen className="h-5 w-5 text-amber-600 dark:text-amber-400" />
@@ -391,7 +391,7 @@ export function ProgressView() {
 
       {/* Chapter Completion Checklist */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
-        <Card>
+        <Card className="shadow-sm border-stone-200 dark:border-stone-700/30">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-amber-600 dark:text-amber-400" />

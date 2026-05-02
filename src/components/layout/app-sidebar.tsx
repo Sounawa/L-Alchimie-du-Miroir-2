@@ -157,9 +157,9 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
               onClick={() => handleNavigate(item.view)}
               className={`
                 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium
-                transition-colors duration-150 mb-0.5
+                transition-all duration-300 mb-0.5
                 ${isActive
-                  ? 'bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200'
+                  ? 'bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200 shadow-[inset_3px_0_8px_-2px_rgba(217,119,6,0.3)] dark:shadow-[inset_3px_0_8px_-2px_rgba(217,119,6,0.2)]'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }
               `}

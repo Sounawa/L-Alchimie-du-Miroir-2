@@ -1,0 +1,16 @@
+{
+  "name": "L'Alchimie du Miroir",
+  "short_name": "AlchimieMiroir",
+  "description": "Guide Pratique Interactif Avancé — Méditer le Coran avec l'Âme",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1c1917",
+  "theme_color": "#d97706",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ],
+  "categories": ["education", "lifestyle"],
+  "lang": "fr",
+  "dir": "ltr"
+}

@@ -187,7 +187,7 @@ export function TocView() {
         <motion.div variants={slideIn}>
           <button
             onClick={() => navigate('intro')}
-            className="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-all hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10"
+            className="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:translate-x-1"
           >
             <span className="shrink-0 text-amber-500 dark:text-amber-400/60">Intro</span>
             <span className="flex-1 text-stone-700 dark:text-stone-200/80">Introduction</span>
@@ -231,7 +231,7 @@ export function TocView() {
                 <motion.div key={entry.id} variants={slideIn}>
                   <button
                     onClick={() => navigate('chapter', entry.id)}
-                    className={`group flex w-full items-center gap-2 rounded-xl border-l-2 ${partBorderColor[part.letter] || 'border-l-amber-500'} px-3 py-2.5 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:border-l-[3px] ${currentChapterId === entry.id ? 'bg-amber-50/80 dark:bg-amber-900/15 border-l-[3px]' : ''}`}
+                    className={`group flex w-full items-center gap-2 rounded-xl border-l-2 ${partBorderColor[part.letter] || 'border-l-amber-500'} px-3 py-2.5 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:border-l-[3px] hover:translate-x-1 ${currentChapterId === entry.id ? 'bg-amber-50/80 dark:bg-amber-900/15 border-l-[3px]' : ''}`}
                   >
                     {/* Completion icon */}
                     <span className="w-5 shrink-0">
@@ -291,7 +291,7 @@ export function TocView() {
           <motion.div key={entry.id} variants={slideIn}>
             <button
               onClick={() => navigate('chapter', entry.id)}
-              className="group flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left transition-all hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10"
+              className="group flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:translate-x-1"
             >
               <span className="w-5 shrink-0">
                 <span className="block size-4 rounded-full border border-stone-300 dark:border-stone-600/30" />

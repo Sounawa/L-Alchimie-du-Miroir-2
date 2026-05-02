@@ -23,8 +23,24 @@ export function AppFooter() {
 
   return (
     <footer className="border-t border-amber-200/30 dark:border-amber-800/20 bg-gradient-to-b from-amber-50/40 via-stone-50/30 to-amber-50/60 dark:from-amber-950/20 dark:via-stone-900/30 dark:to-amber-950/10">
-      {/* Animated gradient wave divider at top */}
-      <div className="h-1.5 w-full bg-gradient-to-r from-amber-300 via-amber-500 to-amber-300 dark:from-amber-800 dark:via-amber-600 dark:to-amber-800 animate-gradient-wave opacity-60" />
+      {/* SVG Wave divider at top */}
+      <div className="w-full overflow-hidden leading-[0]">
+        <svg
+          className="w-full h-8"
+          viewBox="0 0 1200 40"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0 20 C200 35 400 5 600 20 C800 35 1000 5 1200 20 L1200 40 L0 40 Z"
+            className="fill-amber-200/20 dark:fill-amber-800/10"
+          />
+          <path
+            d="M0 25 C200 38 400 10 600 25 C800 38 1000 10 1200 25 L1200 40 L0 40 Z"
+            className="fill-amber-200/10 dark:fill-amber-800/5"
+          />
+        </svg>
+      </div>
 
       <div className="max-w-5xl mx-auto px-6 py-5">
         {/* Résumé rapide section */}
