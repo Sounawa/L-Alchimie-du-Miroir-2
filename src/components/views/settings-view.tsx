@@ -29,6 +29,7 @@ import {
   Sparkles,
   Volume2,
   VolumeX,
+  Moon,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
@@ -43,6 +44,7 @@ const readingModeOptions = [
   { value: 'normal' as const, label: 'Normal', description: 'Affichage par défaut' },
   { value: 'focus' as const, label: 'Focus', description: 'Barre latérale masquée, contenu plein écran' },
   { value: 'soothing' as const, label: 'Sombre apaisant', description: 'Tons chauds sombres, contraste réduit' },
+  { value: 'night' as const, label: 'Lecture nocturne', description: 'Tons chauds très doux, idéal pour la nuit' },
 ]
 
 const languageOptions = [
@@ -59,6 +61,8 @@ export function SettingsView() {
     setReadingMode,
     resetAllData,
     exportAllData,
+    nightModeEnabled,
+    toggleNightMode,
     importData,
   } = useAppStore()
 
@@ -303,6 +307,53 @@ export function SettingsView() {
                 )}
               </button>
             ))}
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Night Reading Mode Toggle */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.15 }}
+      >
+        <Card className="border-amber-200/60 dark:border-amber-800/30">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Moon className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              Mode lecture nocturne
+            </CardTitle>
+            <CardDescription>
+              Tons chauds et doux pour la lecture tardive — réduit la lumière bleue
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <span className="text-sm font-medium">
+                  {nightModeEnabled ? 'Activé' : 'Désactivé'}
+                </span>
+                <p className="text-xs text-muted-foreground">
+                  Raccourci clavier : N
+                </p>
+              </div>
+              <button
+                onClick={toggleNightMode}
+                className={`
+                  relative inline-flex h-6 w-11 items-center rounded-full transition-colors
+                  ${nightModeEnabled ? 'bg-amber-500' : 'bg-stone-300 dark:bg-stone-600'}
+                `}
+                role="switch"
+                aria-checked={nightModeEnabled}
+              >
+                <span
+                  className={`
+                    inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm
+                    ${nightModeEnabled ? 'translate-x-6' : 'translate-x-1'}
+                  `}
+                />
+              </button>
+            </div>
           </CardContent>
         </Card>
       </motion.div>

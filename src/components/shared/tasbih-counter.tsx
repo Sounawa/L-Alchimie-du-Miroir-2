@@ -309,11 +309,12 @@ export function TasbihCounter() {
           className={`
             relative w-full py-8 rounded-2xl font-semibold text-lg
             transition-all duration-150 select-none
-            active:scale-[0.97]
+            active:scale-[0.96]
             ${isComplete
               ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-200 dark:shadow-emerald-900/30'
               : 'bg-gradient-to-b from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white shadow-lg shadow-amber-200 dark:shadow-amber-900/30'
             }
+            ${showPulse ? 'haptic-pulse' : ''}
           `}
           aria-label="Incrémenter le compteur"
         >

@@ -140,7 +140,7 @@ export function VerseDisplay({ arabicVerse, translation, translationSource, chap
         {/* Animated gradient border layer */}
         <div className={`${partGradientBorderClass[pk]} rounded-xl p-[2px]`}>
           {/* Inner border to create the "border" effect */}
-          <div className={`rounded-[10px] border ${partFrameBorder[pk]} bg-gradient-to-b ${partFrameBg[pk]} p-6 md:p-10 relative overflow-hidden verse-frame-breathing ink-wash`}>
+          <div className={`rounded-[10px] border ${partFrameBorder[pk]} bg-gradient-to-b ${partFrameBg[pk]} p-6 md:p-10 relative overflow-hidden verse-frame-breathing ink-wash parchment-texture`}>
  
             {/* Subtle background pattern */}
             <div

@@ -36,14 +36,18 @@ const partDividerLine: Record<string, string> = {
   C: 'via-violet-300/30 to-violet-400/50 dark:via-violet-600/20 dark:to-violet-600/30',
 }
 
-// Decorative divider component — part-aware with pulsing gradient
+// Decorative divider component — part-aware with pulsing gradient and Islamic pattern
 function DecorativeDivider({ part = 'A' }: { part?: string }) {
   const line = partDividerLine[part] || partDividerLine.A
   const ornament = partOrnamentColor[part] || partOrnamentColor.A
   return (
     <div className="flex items-center justify-center gap-3 my-6 divider-pulse-animate">
       <span className={`h-px flex-1 bg-gradient-to-r from-transparent ${line}`} />
-      <span className={`${ornament} text-xs tracking-[0.3em] select-none`}>✦</span>
+      <span className="flex items-center gap-1">
+        <span className={`h-1.5 w-1.5 rounded-full ${part === 'A' ? 'bg-amber-400/40 dark:bg-amber-500/30' : part === 'B' ? 'bg-emerald-400/40 dark:bg-emerald-500/30' : 'bg-violet-400/40 dark:bg-violet-500/30'}`} />
+        <span className={`${ornament} text-xs tracking-[0.3em] select-none`}>✦</span>
+        <span className={`h-1.5 w-1.5 rounded-full ${part === 'A' ? 'bg-amber-400/40 dark:bg-amber-500/30' : part === 'B' ? 'bg-emerald-400/40 dark:bg-emerald-500/30' : 'bg-violet-400/40 dark:bg-violet-500/30'}`} />
+      </span>
       <span className={`h-px flex-1 bg-gradient-to-l from-transparent ${line}`} />
     </div>
   )
@@ -549,6 +553,8 @@ export function ChapterView() {
   const addBookmark = useAppStore((s) => s.addBookmark)
   const removeBookmark = useAppStore((s) => s.removeBookmark)
   const isBookmarked = useAppStore((s) => s.isBookmarked)
+  const saveQuickNote = useAppStore((s) => s.saveQuickNote)
+  const getQuickNote = useAppStore((s) => s.getQuickNote)
   const { toast } = useToast()
 
   const chapter = chapterId ? (getChapterById(chapterId) as Chapter | undefined) : undefined
@@ -562,6 +568,28 @@ export function ChapterView() {
   const [showCelebration, setShowCelebration] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [activeSection, setActiveSection] = useState<string>('')
+  const [quickNoteText, setQuickNoteText] = useState('')
+  const [showQuickNote, setShowQuickNote] = useState(false)
+
+  // Load existing quick note when chapter changes
+  useEffect(() => {
+    if (chapterId) {
+      setQuickNoteText(getQuickNote(chapterId))
+    }
+  }, [chapterId, getQuickNote])
+
+  // Build sections list for mini-TOC (must be before useEffect that uses it)
+  const sectionsList = useMemo(() => chapter ? buildSectionsList(chapter) : [], [chapter])
+
+  // Find prev/next chapters
+  const { prevChapter, nextChapter } = useMemo(() => {
+    if (!chapterId) return { prevChapter: null, nextChapter: null }
+    const idx = allChapters.findIndex((c) => c.id === chapterId)
+    return {
+      prevChapter: idx > 0 ? allChapters[idx - 1] : null,
+      nextChapter: idx < allChapters.length - 1 ? allChapters[idx + 1] : null,
+    }
+  }, [chapterId])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -589,19 +617,6 @@ export function ChapterView() {
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [sectionsList])
-
-  // Find prev/next chapters
-  const { prevChapter, nextChapter } = useMemo(() => {
-    if (!chapterId) return { prevChapter: null, nextChapter: null }
-    const idx = allChapters.findIndex((c) => c.id === chapterId)
-    return {
-      prevChapter: idx > 0 ? allChapters[idx - 1] : null,
-      nextChapter: idx < allChapters.length - 1 ? allChapters[idx + 1] : null,
-    }
-  }, [chapterId])
-
-  // Build sections list for mini-TOC
-  const sectionsList = useMemo(() => chapter ? buildSectionsList(chapter) : [], [chapter])
 
   const scrollToSection = useCallback((id: string) => {
     const el = document.getElementById(id)
@@ -645,6 +660,12 @@ export function ChapterView() {
       addBookmark(chapterId, `${chapter.number} — ${chapter.title}`)
       toast({ description: 'Ajouté aux favoris ★' })
     }
+  }
+
+  const handleSaveQuickNote = () => {
+    if (!chapterId) return
+    saveQuickNote(chapterId, quickNoteText)
+    toast({ description: 'Note rapide sauvegardée' })
   }
 
   return (
@@ -850,14 +871,42 @@ export function ChapterView() {
           </AnimatedSection>
         )}
 
-        {/* Bismillah header */}
+        {/* Bismillah header — enhanced with golden corner ornaments and ornamental border */}
         <AnimatedSection>
           <div className={`rounded-xl border-2 ${partBismillahBorder[partLetter] || partBismillahBorder.A} bg-gradient-to-r ${partBismillahBg[partLetter] || partBismillahBg.A} px-6 py-5 text-center relative overflow-hidden shadow-[inset_0_0_30px_rgba(217,169,99,0.08)] dark:shadow-[inset_0_0_30px_rgba(217,169,99,0.05)]`}>
-            {/* Decorative corner accents */}
-            <div className={`absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 ${partCornerBorder[partLetter] || partCornerBorder.A} rounded-tl-sm`} />
-            <div className={`absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 ${partCornerBorder[partLetter] || partCornerBorder.A} rounded-tr-sm`} />
-            <div className={`absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 ${partCornerBorder[partLetter] || partCornerBorder.A} rounded-bl-sm`} />
-            <div className={`absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 ${partCornerBorder[partLetter] || partCornerBorder.A} rounded-br-sm`} />
+            {/* Outer ornamental golden corners with glow */}
+            <div className={`absolute top-0 left-0 w-10 h-10 golden-corner-glow`}>
+              <svg viewBox="0 0 40 40" className="w-full h-full" fill="none">
+                <path d="M0 0 L16 0 L16 3 L3 3 L3 16 L0 16 Z" fill="currentColor" className="text-amber-400/60 dark:text-amber-500/40" />
+                <circle cx="8" cy="8" r="2" fill="currentColor" className="text-amber-500/40 dark:text-amber-400/30" />
+              </svg>
+            </div>
+            <div className={`absolute top-0 right-0 w-10 h-10 golden-corner-glow`}>
+              <svg viewBox="0 0 40 40" className="w-full h-full [transform:scaleX(-1)]" fill="none">
+                <path d="M0 0 L16 0 L16 3 L3 3 L3 16 L0 16 Z" fill="currentColor" className="text-amber-400/60 dark:text-amber-500/40" />
+                <circle cx="8" cy="8" r="2" fill="currentColor" className="text-amber-500/40 dark:text-amber-400/30" />
+              </svg>
+            </div>
+            <div className={`absolute bottom-0 left-0 w-10 h-10 golden-corner-glow`}>
+              <svg viewBox="0 0 40 40" className="w-full h-full [transform:scaleY(-1)]" fill="none">
+                <path d="M0 0 L16 0 L16 3 L3 3 L3 16 L0 16 Z" fill="currentColor" className="text-amber-400/60 dark:text-amber-500/40" />
+                <circle cx="8" cy="8" r="2" fill="currentColor" className="text-amber-500/40 dark:text-amber-400/30" />
+              </svg>
+            </div>
+            <div className={`absolute bottom-0 right-0 w-10 h-10 golden-corner-glow`}>
+              <svg viewBox="0 0 40 40" className="w-full h-full [transform:scale(-1)]" fill="none">
+                <path d="M0 0 L16 0 L16 3 L3 3 L3 16 L0 16 Z" fill="currentColor" className="text-amber-400/60 dark:text-amber-500/40" />
+                <circle cx="8" cy="8" r="2" fill="currentColor" className="text-amber-500/40 dark:text-amber-400/30" />
+              </svg>
+            </div>
+            {/* Inner ornamental border line */}
+            <div className={`absolute inset-3 border ${partCornerBorder[partLetter] || partCornerBorder.A} rounded-lg pointer-events-none`} />
+            {/* Decorative ✦ ornaments at top and bottom center */}
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <span className={`h-px w-12 bg-gradient-to-r from-transparent ${partDividerLine[partLetter] || partDividerLine.A}`} />
+              <span className={`${partOrnamentColor[partLetter] || partOrnamentColor.A} text-xs`}>✦</span>
+              <span className={`h-px w-12 bg-gradient-to-l from-transparent ${partDividerLine[partLetter] || partDividerLine.A}`} />
+            </div>
             <p
               dir="rtl"
               lang="ar"
@@ -868,6 +917,12 @@ export function ChapterView() {
             <p className={`text-sm italic ${partBismillahSub[partLetter] || partBismillahSub.A} relative z-10`}>
               Au nom de Dieu, le Tout-Miséricordieux, le Très-Miséricordieux
             </p>
+            {/* Bottom ornamental line */}
+            <div className="flex items-center justify-center gap-2 mt-3">
+              <span className={`h-px w-12 bg-gradient-to-r from-transparent ${partDividerLine[partLetter] || partDividerLine.A}`} />
+              <span className={`${partOrnamentColor[partLetter] || partOrnamentColor.A} text-xs`}>✦</span>
+              <span className={`h-px w-12 bg-gradient-to-l from-transparent ${partDividerLine[partLetter] || partDividerLine.A}`} />
+            </div>
           </div>
         </AnimatedSection>
 
@@ -1157,6 +1212,61 @@ export function ChapterView() {
               />
             </motion.div>
           )}
+        </AnimatedSection>
+
+        {/* Quick Note Section — inline note directly in chapter view */}
+        <AnimatedSection>
+          <div className="rounded-xl border border-amber-200/50 dark:border-amber-800/30 bg-gradient-to-r from-amber-50/40 via-stone-50/30 to-amber-50/40 dark:from-amber-950/10 dark:via-stone-900/20 dark:to-amber-950/10 p-4 shadow-sm">
+            <button
+              onClick={() => setShowQuickNote(!showQuickNote)}
+              className="w-full flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <Lightbulb className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+                <span className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                  Note rapide
+                </span>
+                {quickNoteText && (
+                  <Badge variant="outline" className="text-[9px] border-amber-300/50 dark:border-amber-700/40 text-amber-600 dark:text-amber-400">
+                    Enregistrée
+                  </Badge>
+                )}
+              </div>
+              <ChevronDown className={`h-4 w-4 text-amber-500 dark:text-amber-400 transition-transform ${showQuickNote ? 'rotate-180' : ''}`} />
+            </button>
+            <AnimatePresence>
+              {showQuickNote && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="mt-3 space-y-2">
+                    <textarea
+                      value={quickNoteText}
+                      onChange={(e) => setQuickNoteText(e.target.value)}
+                      placeholder="Écrivez une note rapide sur ce chapitre..."
+                      className="quick-note-input w-full min-h-[80px] px-3 py-2 rounded-lg border border-amber-200/60 dark:border-amber-800/40 bg-white/60 dark:bg-stone-800/30 text-sm text-foreground placeholder:text-muted-foreground/50 resize-y focus:outline-none"
+                    />
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] text-muted-foreground/60">
+                        Sauvegardée automatiquement dans vos notes
+                      </p>
+                      <Button
+                        size="sm"
+                        onClick={handleSaveQuickNote}
+                        className="h-7 px-3 text-xs bg-amber-500 hover:bg-amber-600 text-white"
+                      >
+                        Sauvegarder
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </AnimatedSection>
 
         {/* Back to top floating button */}

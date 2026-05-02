@@ -38,6 +38,7 @@ import {
   Calendar,
   ArrowLeftRight,
   Clock,
+  Moon,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -175,25 +176,27 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
     completedByPart[part.letter] = completed
   }
 
-  const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization' | 'reading-plan' | 'comparison' | 'stats', chapterId?: string) => {
+  const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization' | 'reading-plan' | 'comparison' | 'stats' | 'streak-calendar', chapterId?: string) => {
     navigate(view, chapterId ?? null)
     // Only close sidebar on mobile
     if (isMobile) onClose()
   }
 
   const navItems = [
-    { icon: Home, label: 'Accueil', view: 'cover' as const },
-    { icon: List, label: 'Table des matières', view: 'toc' as const },
-    { icon: BarChart3, label: 'Ma progression', view: 'progress' as const },
-    { icon: BookOpen, label: 'Glossaire', view: 'glossary' as const },
-    { icon: PenLine, label: 'Journal', view: 'journal' as const },
-    { icon: Bookmark, label: 'Favoris', view: 'bookmarks' as const },
-    { icon: GraduationCap, label: 'Mémorisation', view: 'memorization' as const },
-    { icon: Calendar, label: 'Plan de Lecture', view: 'reading-plan' as const },
-    { icon: ArrowLeftRight, label: 'Comparaison', view: 'comparison' as const },
-    { icon: BarChart3, label: 'Statistiques', view: 'stats' as const },
-    { icon: Hash, label: 'Tasbih', view: 'tasbih' as const },
-    { icon: Settings, label: 'Paramètres', view: 'settings' as const },
+    { icon: Home, label: 'Accueil', view: 'cover' as const, shortcut: '' },
+    { icon: List, label: 'Table des matières', view: 'toc' as const, shortcut: '' },
+    { icon: BarChart3, label: 'Ma progression', view: 'progress' as const, shortcut: '' },
+    { icon: Calendar, label: 'Calendrier de série', view: 'streak-calendar' as const, shortcut: '' },
+    { icon: BookOpen, label: 'Glossaire', view: 'glossary' as const, shortcut: 'G' },
+    { icon: PenLine, label: 'Journal', view: 'journal' as const, shortcut: 'J' },
+    { icon: Bookmark, label: 'Favoris', view: 'bookmarks' as const, shortcut: 'B' },
+    { icon: GraduationCap, label: 'Mémorisation', view: 'memorization' as const, shortcut: '' },
+    { icon: Calendar, label: 'Plan de Lecture', view: 'reading-plan' as const, shortcut: '' },
+    { icon: ArrowLeftRight, label: 'Comparaison', view: 'comparison' as const, shortcut: '' },
+    { icon: BarChart3, label: 'Statistiques', view: 'stats' as const, shortcut: '' },
+    { icon: Hash, label: 'Tasbih', view: 'tasbih' as const, shortcut: 'T' },
+    { icon: Moon, label: 'Mode nuit', view: 'settings' as const, shortcut: 'N' },
+    { icon: Settings, label: 'Paramètres', view: 'settings' as const, shortcut: '' },
   ]
 
   return (
@@ -276,7 +279,12 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
               transition={{ delay: idx * 0.03, duration: 0.2 }}
             >
               <item.icon className="h-4 w-4 shrink-0" />
-              <span>{item.label}</span>
+              <span className="flex-1 text-left">{item.label}</span>
+              {item.shortcut && (
+                <kbd className="hidden lg:inline-flex items-center justify-center h-5 min-w-5 px-1.5 text-[10px] font-mono text-muted-foreground/60 bg-muted/50 border border-border/40 rounded">
+                  {item.shortcut}
+                </kbd>
+              )}
               {isActive && (
                 <ChevronRight className="h-3.5 w-3.5 ml-auto text-amber-600 dark:text-amber-400" />
               )}
@@ -455,6 +463,7 @@ export function AppSidebar() {
         fixed left-0 top-14 z-30 h-[calc(100vh-3.5rem)] w-72
         border-r bg-gradient-to-b from-amber-50/50 via-background to-background
         dark:from-amber-950/10 dark:via-background dark:to-background
+        sidebar-islamic-border relative
       "
     >
       <SidebarContent onClose={handleClose} isMobile={isMobile} />

@@ -163,6 +163,8 @@ export function CoverView() {
 
   return (
     <div ref={containerRef} className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-amber-50/80 via-amber-50/40 to-amber-100/50 dark:from-stone-950 dark:via-stone-900 dark:to-amber-950/20 animate-cover-entrance noise-overlay">
+      {/* Mood lighting effect — slowly shifting warm amber tones */}
+      <div className="pointer-events-none absolute inset-0 mood-lighting" />
       {/* Decorative Islamic-style border pattern */}
       <div className="pointer-events-none absolute inset-3 sm:inset-5 border border-amber-300/20 dark:border-amber-600/15 rounded-xl sm:rounded-2xl" />
       <div className="pointer-events-none absolute inset-4 sm:inset-6 border border-amber-400/10 dark:border-amber-500/10 rounded-lg sm:rounded-xl" />

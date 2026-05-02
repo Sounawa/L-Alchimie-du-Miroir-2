@@ -1,10 +1,10 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-type ViewType = 'cover' | 'toc' | 'intro' | 'chapter' | 'progress' | 'search' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization' | 'reading-plan' | 'comparison' | 'stats';
+type ViewType = 'cover' | 'toc' | 'intro' | 'chapter' | 'progress' | 'search' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization' | 'reading-plan' | 'comparison' | 'stats' | 'streak-calendar';
 
 type FontFamily = 'system' | 'serif' | 'reading';
-type ReadingMode = 'normal' | 'focus' | 'soothing';
+type ReadingMode = 'normal' | 'focus' | 'soothing' | 'night';
 
 interface JournalEntry {
   id: string;
@@ -122,6 +122,12 @@ interface AppState {
   // Activity log for heatmap
   activityLog: string[]; // Array of YYYY-MM-DD date strings
 
+  // Night reading mode
+  nightModeEnabled: boolean;
+
+  // Quick notes (inline notes from chapter view)
+  quickNotes: NoteData[];
+
   // Keyboard shortcuts overlay (transient - not persisted)
   showShortcuts: boolean;
 
@@ -202,6 +208,13 @@ interface AppState {
 
   // Keyboard shortcuts overlay actions
   toggleShortcuts: () => void;
+
+  // Night reading mode actions
+  toggleNightMode: () => void;
+
+  // Quick notes actions
+  saveQuickNote: (chapterId: string, content: string) => void;
+  getQuickNote: (chapterId: string) => string;
 
   // Hash routing actions
   syncFromHash: () => void;
@@ -312,6 +325,12 @@ export const useAppStore = create<AppState>()(
 
       // ── Activity Log ─────────────────────────────────────────────────
       activityLog: [],
+
+      // ── Night Reading Mode ──────────────────────────────────────────
+      nightModeEnabled: false,
+
+      // ── Quick Notes ──────────────────────────────────────────────────
+      quickNotes: [],
 
       // ── Keyboard Shortcuts Overlay ────────────────────────────────
       showShortcuts: false,
@@ -748,6 +767,45 @@ export const useAppStore = create<AppState>()(
         }));
       },
 
+      // ── Night Reading Mode Actions ──────────────────────────────────
+
+      toggleNightMode: () => {
+        set((state) => ({ nightModeEnabled: !state.nightModeEnabled }));
+      },
+
+      // ── Quick Notes Actions ──────────────────────────────────────────
+
+      saveQuickNote: (chapterId: string, content: string) => {
+        set((state) => {
+          const existingIndex = state.quickNotes.findIndex(
+            (n) => n.chapterId === chapterId && n.fieldId === 'quick-note'
+          );
+          if (existingIndex >= 0) {
+            const updated = [...state.quickNotes];
+            updated[existingIndex] = {
+              ...updated[existingIndex],
+              content,
+              updatedAt: Date.now(),
+            };
+            return { quickNotes: updated };
+          }
+          return {
+            quickNotes: [
+              ...state.quickNotes,
+              { chapterId, fieldId: 'quick-note', content, updatedAt: Date.now() },
+            ],
+          };
+        });
+        get().recordActivity();
+      },
+
+      getQuickNote: (chapterId: string) => {
+        const note = get().quickNotes.find(
+          (n) => n.chapterId === chapterId && n.fieldId === 'quick-note'
+        );
+        return note?.content ?? '';
+      },
+
       // ── Keyboard Shortcuts Overlay Actions ────────────────────────
 
       toggleShortcuts: () => {
@@ -763,7 +821,7 @@ export const useAppStore = create<AppState>()(
         if (!hash) return;
 
         // Parse hash format: "toc", "chapter/c1", "progress", "glossary", etc.
-        const validViews: ViewType[] = ['cover', 'toc', 'intro', 'chapter', 'progress', 'search', 'glossary', 'journal', 'settings', 'tasbih', 'bookmarks', 'memorization', 'reading-plan', 'comparison', 'stats'];
+        const validViews: ViewType[] = ['cover', 'toc', 'intro', 'chapter', 'progress', 'search', 'glossary', 'journal', 'settings', 'tasbih', 'bookmarks', 'memorization', 'reading-plan', 'comparison', 'stats', 'streak-calendar'];
 
         if (hash.startsWith('chapter/')) {
           const chapterId = hash.replace('chapter/', '');
@@ -882,6 +940,8 @@ export const useAppStore = create<AppState>()(
           verseOfDayDismissed: '',
           activityLog: [],
           showShortcuts: false,
+          nightModeEnabled: false,
+          quickNotes: [],
         });
       },
     }),
@@ -921,6 +981,8 @@ export const useAppStore = create<AppState>()(
         dailyReflectionIndex: state.dailyReflectionIndex,
         verseOfDayDismissed: state.verseOfDayDismissed,
         activityLog: state.activityLog,
+        nightModeEnabled: state.nightModeEnabled,
+        quickNotes: state.quickNotes,
       }),
     }
   )

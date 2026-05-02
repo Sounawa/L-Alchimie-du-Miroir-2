@@ -128,6 +128,14 @@ export function useKeyboardShortcuts() {
         setTheme(theme === 'dark' ? 'light' : 'dark')
         return
       }
+
+      // N → Toggle night reading mode
+      if (e.key === 'n' || e.key === 'N') {
+        e.preventDefault()
+        const store = useAppStore.getState()
+        store.toggleNightMode()
+        return
+      }
     }
 
     window.addEventListener('keydown', handleKeyDown)

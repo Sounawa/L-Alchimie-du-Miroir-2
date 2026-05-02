@@ -16,6 +16,7 @@ import { GlossaryView } from '@/components/views/glossary-view'
 import { JournalView } from '@/components/views/journal-view'
 import { SettingsView } from '@/components/views/settings-view'
 import { BookmarksView } from '@/components/views/bookmarks-view'
+import { StreakCalendarView } from '@/components/views/streak-calendar-view'
 import { TasbihCounter } from '@/components/shared/tasbih-counter'
 import { MemorizationView } from '@/components/views/memorization-view'
 import { ReadingPlanView } from '@/components/views/reading-plan-view'
@@ -36,6 +37,7 @@ export default function Home() {
   const sidebarOpen = useAppStore((s) => s.sidebarOpen)
   const fontFamily = useAppStore((s) => s.fontFamily)
   const readingMode = useAppStore((s) => s.readingMode)
+  const nightModeEnabled = useAppStore((s) => s.nightModeEnabled)
   const syncFromHash = useAppStore((s) => s.syncFromHash)
   const syncToHash = useAppStore((s) => s.syncToHash)
   const mainRef = useRef<HTMLDivElement>(null)
@@ -89,6 +91,7 @@ export default function Home() {
   // Reading mode flags
   const isFocusMode = readingMode === 'focus'
   const isSoothingMode = readingMode === 'soothing'
+  const isNightMode = nightModeEnabled
 
   const renderView = () => {
     switch (currentView) {
@@ -114,6 +117,8 @@ export default function Home() {
         return <TasbihCounter />
       case 'bookmarks':
         return <BookmarksView />
+      case 'streak-calendar':
+        return <StreakCalendarView />
       case 'memorization':
         return <MemorizationView />
       case 'reading-plan':
@@ -143,7 +148,7 @@ export default function Home() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col ${fontClass} ${isSoothingMode ? 'reading-soothing' : ''}`} style={{ fontSize: `${fontSize}px` }}>
+    <div className={`min-h-screen flex flex-col ${fontClass} ${isSoothingMode ? 'reading-soothing' : ''} ${isNightMode ? 'reading-night' : ''}`} style={{ fontSize: `${fontSize}px` }}>
       {/* Header: hidden in focus mode */}
       {!isFocusMode && <AppHeader />}
       <ReadingProgressBar />
