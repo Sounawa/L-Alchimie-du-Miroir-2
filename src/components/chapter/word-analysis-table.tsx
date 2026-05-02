@@ -31,7 +31,7 @@ export function WordAnalysisTable({ words }: WordAnalysisTableProps) {
           </TableHeader>
           <TableBody>
             {words.map((word, i) => (
-              <TableRow key={i}>
+              <TableRow key={i} className="group transition-all duration-200 hover:bg-amber-50/60 dark:hover:bg-amber-950/20 hover:scale-[1.005]">
                 <TableCell dir="rtl" lang="ar" className="text-lg font-arabic">
                   {word.arabic}
                 </TableCell>

@@ -6,11 +6,12 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle2, Bookmark, ChevronRight, BookOpen, Flame, Trophy, Clock, Eye } from 'lucide-react';
+import { CheckCircle2, Bookmark, ChevronRight, BookOpen, Flame, Trophy, Clock, Eye, Mountain } from 'lucide-react';
 import { DailyInspiration } from '@/components/shared/daily-inspiration';
 import { WordOfTheDay } from '@/components/shared/word-of-the-day';
 import { DuaOfTheDay } from '@/components/shared/dua-of-the-day';
 import { StudyReminder } from '@/components/shared/study-reminder';
+import { ReflectionCard } from '@/components/shared/reflection-card';
 import { useRef, useEffect, useState } from 'react';
 
 const toc = getTableOfContents();
@@ -172,6 +173,11 @@ export function TocView() {
           <DuaOfTheDay />
         </motion.div>
 
+        {/* Reflection Card - Carte de réflexion quotidienne */}
+        <motion.div variants={fadeIn} className="mb-6">
+          <ReflectionCard />
+        </motion.div>
+
         {/* Dernière lecture indicator */}
         {lastReadChapter && (
           <motion.div variants={fadeIn} className="mb-6">
@@ -250,6 +256,32 @@ export function TocView() {
                 <span className="h-px flex-1 bg-gradient-to-l from-amber-500/40 to-transparent dark:from-amber-600/40" />
               </div>
             </div>
+
+            {/* Partie C: Mini vertical step indicator for Seven Levels */}
+            {part.letter === 'C' && (
+              <div className="mb-4 ml-2 flex items-start gap-2">
+                <Mountain className="h-4 w-4 text-violet-500 dark:text-violet-400 shrink-0 mt-0.5" />
+                <div className="flex flex-wrap gap-1.5">
+                  {['Tilawa', 'Tarjamah', 'Tadabbur', 'Tafakkur', 'Tazakkur', 'Tahqiq', 'Tajalli'].map((name, idx) => {
+                    const chapterId = `c${idx + 1}`
+                    const isComplete = isChapterComplete(chapterId)
+                    return (
+                      <span
+                        key={name}
+                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium transition-all ${
+                          isComplete
+                            ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 border border-violet-300/50 dark:border-violet-700/40'
+                            : 'bg-stone-100 dark:bg-stone-800/50 text-stone-400 dark:text-stone-500 border border-stone-200 dark:border-stone-700/40'
+                        }`}
+                      >
+                        {isComplete && <CheckCircle2 className="h-2.5 w-2.5" />}
+                        {idx + 1}. {name}
+                      </span>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Chapter entries with left border color */}
             {part.entries.map((entry) => {

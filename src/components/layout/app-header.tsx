@@ -28,6 +28,7 @@ import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BreadcrumbNav } from '@/components/shared/breadcrumb-nav'
+import { PrayerTimesBadge } from '@/components/shared/prayer-times-badge'
 
 export function AppHeader() {
   const {
@@ -115,6 +116,9 @@ export function AppHeader() {
 
         {/* Right-side actions */}
         <div className="flex items-center gap-1 shrink-0">
+          {/* Prayer Times Badge */}
+          <PrayerTimesBadge />
+
           {/* Search */}
           <Button
             variant="ghost"

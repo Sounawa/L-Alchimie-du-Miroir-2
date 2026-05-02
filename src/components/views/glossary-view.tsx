@@ -226,7 +226,7 @@ export function GlossaryView() {
                       </span>
                       <Separator className="flex-1" />
                       <Badge variant="secondary" className="text-[10px] border-0 bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400">
-                        {items.length}
+                        {items.length} terme{items.length > 1 ? 's' : ''}
                       </Badge>
                     </motion.div>
 

@@ -29,7 +29,7 @@ export function MirrorQuestionsTable({ questions }: MirrorQuestionsTableProps) {
           </TableHeader>
           <TableBody>
             {questions.map((q, i) => (
-              <TableRow key={i}>
+              <TableRow key={i} className="group transition-all duration-200 hover:bg-amber-50/60 dark:hover:bg-amber-950/20">
                 <TableCell className="font-semibold whitespace-normal leading-relaxed">{q.question}</TableCell>
                 <TableCell className="italic text-muted-foreground whitespace-normal leading-relaxed">
                   {q.meditation}

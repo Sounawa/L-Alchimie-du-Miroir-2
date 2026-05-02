@@ -1,7 +1,9 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import { VerseAudioPlayer } from '@/components/shared/verse-audio-player'
 import { ShareVerseCard } from '@/components/shared/share-verse-card'
+import { BookOpen } from 'lucide-react'
 
 interface VerseDisplayProps {
   arabicVerse: string;
@@ -13,6 +15,16 @@ interface VerseDisplayProps {
 export function VerseDisplay({ arabicVerse, translation, translationSource, chapterTitle }: VerseDisplayProps) {
   return (
     <div className="space-y-6">
+      {/* Decorative header label */}
+      <div className="flex items-center justify-center gap-2">
+        <div className="h-px flex-1 max-w-16 bg-gradient-to-r from-transparent to-amber-300/40 dark:to-amber-600/30" />
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/40 dark:border-amber-800/30">
+          <BookOpen className="h-3 w-3 text-amber-600 dark:text-amber-400" />
+          <span className="text-[10px] font-semibold tracking-wider uppercase text-amber-700 dark:text-amber-400">Verset d&apos;ancrage</span>
+        </div>
+        <div className="h-px flex-1 max-w-16 bg-gradient-to-l from-transparent to-amber-300/40 dark:to-amber-600/30" />
+      </div>
+
       {/* Illuminated manuscript frame with animated gradient border + breathing */}
       <div className="relative">
         {/* Animated gradient border layer */}
@@ -62,14 +74,23 @@ export function VerseDisplay({ arabicVerse, translation, translationSource, chap
             <div className="absolute bottom-5 left-5 w-5 h-5 border-b border-l border-amber-300/30 dark:border-amber-600/20 rounded-bl-sm" />
             <div className="absolute bottom-5 right-5 w-5 h-5 border-b border-r border-amber-300/30 dark:border-amber-600/20 rounded-br-sm" />
 
-            {/* Arabic verse */}
-            <p
+            {/* Arabic verse with subtle breathing animation */}
+            <motion.p
               dir="rtl"
               lang="ar"
               className="arabic-verse text-4xl md:text-5xl text-center text-amber-950 dark:text-amber-100 [text-shadow:0_1px_2px_rgba(180,83,9,0.06)] dark:[text-shadow:0_0_20px_rgba(251,191,36,0.15)] relative z-10 leading-[2.5]"
+              animate={{
+                scale: [1, 1.008, 1],
+                opacity: [1, 0.96, 1],
+              }}
+              transition={{
+                duration: 6,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
             >
               {arabicVerse}
-            </p>
+            </motion.p>
 
             {/* Bottom ornamental line */}
             <div className="text-center mt-6 text-amber-500 dark:text-amber-400 tracking-[0.5em] text-sm select-none">

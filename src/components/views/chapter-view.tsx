@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
-import { ArrowLeft, ArrowUp, ChevronLeft, ChevronRight, CheckCircle2, Bookmark, BookmarkCheck, List, ChevronDown, Clock, Sparkles, BookOpen, Eye, Lightbulb, Gem } from 'lucide-react'
+import { ArrowLeft, ArrowUp, ChevronLeft, ChevronRight, CheckCircle2, Bookmark, BookmarkCheck, List, ChevronDown, Clock, Sparkles, BookOpen, Eye, Lightbulb, Gem, Mountain, Award } from 'lucide-react'
 import { useAppStore } from '@/store/use-app-store'
 import { allChapters, getChapterById } from '@/data/chapters'
 import type { Chapter } from '@/data/chapters'
@@ -74,6 +74,31 @@ const partIconColor: Record<string, string> = {
   C: 'text-violet-500 dark:text-violet-400',
 }
 
+// Part-based section header color
+const partHeaderColor: Record<string, string> = {
+  A: 'text-amber-700 dark:text-amber-300/80',
+  B: 'text-emerald-700 dark:text-emerald-300/80',
+  C: 'text-violet-700 dark:text-violet-300/80',
+}
+
+// Part-based gradient underline
+const partGradientLine: Record<string, string> = {
+  A: 'from-amber-500/50 to-transparent dark:from-amber-400/30',
+  B: 'from-emerald-500/50 to-transparent dark:from-emerald-400/30',
+  C: 'from-violet-500/50 to-transparent dark:from-violet-400/30',
+}
+
+// Seven Levels data for Partie C
+const sevenLevels = [
+  { id: 'c1', name: 'Tilawa', label: 'Récitation', description: 'La lettre comme lumière — Déchiffrement et prononciation sacrée' },
+  { id: 'c2', name: 'Tarjamah', label: 'Compréhension', description: 'Le sens caché dans les mots — Traduction et premiers sens' },
+  { id: 'c3', name: 'Tadabbur', label: 'Réflexion', description: 'Questionner le texte sacré — Méditation profonde des sens' },
+  { id: 'c4', name: 'Tafakkur', label: 'Contemplation', description: 'Voir au-delà du visible — Vision intérieure et liens cosmiques' },
+  { id: 'c5', name: 'Tazakkur', label: 'Rappel', description: 'Le dhikr qui réveille le cœur — Intégration et mémorisation vivante' },
+  { id: 'c6', name: 'Tahqiq', label: 'Vérification', description: "L'honnêteté radicale envers soi-même — Confrontation et vérité" },
+  { id: 'c7', name: 'Tajalli', label: 'Révélation', description: 'La lumière qui se dévoile — Illumination spirituelle et transformation' },
+] as const
+
 // Animated section wrapper using framer-motion useInView
 function AnimatedSection({ children, className, id }: { children: React.ReactNode; className?: string; id?: string }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -96,13 +121,203 @@ function AnimatedSection({ children, className, id }: { children: React.ReactNod
 // Section header with gradient underline and colored icon
 function SectionHeader({ children, id, part = 'A', icon }: { children: React.ReactNode; id?: string; part?: string; icon?: React.ReactNode }) {
   const iconColor = partIconColor[part] || partIconColor.A
+  const headerColor = partHeaderColor[part] || partHeaderColor.A
+  const gradientLine = partGradientLine[part] || partGradientLine.A
   return (
     <div className="mb-2" id={id}>
       <div className="flex items-center gap-2">
         {icon && <span className={iconColor}>{icon}</span>}
-        {children}
+        <div className={headerColor}>{children}</div>
       </div>
-      <div className="mt-1.5 h-0.5 w-20 rounded-full bg-gradient-to-r from-amber-500/50 to-transparent dark:from-amber-400/30" />
+      <div className={`mt-1.5 h-0.5 w-20 rounded-full bg-gradient-to-r ${gradientLine}`} />
+    </div>
+  )
+}
+
+// Seven Levels Progress Indicator for Partie C
+function SevenLevelsProgress({ currentChapterId }: { currentChapterId: string }) {
+  const isChapterComplete = useAppStore((s) => s.isChapterComplete)
+  const currentLevelIndex = sevenLevels.findIndex((l) => l.id === currentChapterId)
+
+  return (
+    <div className="rounded-xl border border-violet-200/60 dark:border-violet-700/30 bg-gradient-to-r from-violet-50/60 via-stone-50/30 to-violet-50/40 dark:from-violet-950/20 dark:via-stone-900/20 dark:to-violet-950/10 p-4 shadow-sm">
+      <div className="flex items-center gap-2 mb-3">
+        <Mountain className="h-4 w-4 text-violet-500 dark:text-violet-400" />
+        <span className="text-xs font-semibold tracking-wider uppercase text-violet-600 dark:text-violet-400">Les Sept Niveaux de Lecture</span>
+      </div>
+      <div className="flex items-center justify-between gap-0">
+        {sevenLevels.map((level, i) => {
+          const isComplete = isChapterComplete(level.id)
+          const isCurrent = level.id === currentChapterId
+          const isPast = i < currentLevelIndex
+          const isFuture = i > currentLevelIndex
+
+          return (
+            <div key={level.id} className="flex items-center flex-1 last:flex-none">
+              <div className="flex flex-col items-center gap-1">
+                <motion.div
+                  className={`flex items-center justify-center rounded-full border-2 transition-all duration-500 ${
+                    isCurrent
+                      ? 'h-8 w-8 border-violet-500 bg-violet-100 dark:border-violet-400 dark:bg-violet-900/40 shadow-[0_0_12px_rgba(139,92,246,0.35)] dark:shadow-[0_0_16px_rgba(139,92,246,0.25)]'
+                      : isComplete || isPast
+                        ? 'h-7 w-7 border-violet-400 bg-violet-400 dark:border-violet-500 dark:bg-violet-500'
+                        : 'h-6 w-6 border-stone-300 bg-stone-50 dark:border-stone-600 dark:bg-stone-800'
+                  }`}
+                  animate={isCurrent ? { scale: [1, 1.1, 1] } : {}}
+                  transition={isCurrent ? { duration: 2, repeat: Infinity, ease: 'easeInOut' } : {}}
+                >
+                  {(isComplete || isPast) ? (
+                    <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+                  ) : isCurrent ? (
+                    <span className="text-xs font-bold text-violet-700 dark:text-violet-200">{i + 1}</span>
+                  ) : (
+                    <span className="text-[10px] text-stone-400 dark:text-stone-500">{i + 1}</span>
+                  )}
+                </motion.div>
+                <span className={`text-[9px] leading-tight text-center max-w-[48px] ${
+                  isCurrent
+                    ? 'font-bold text-violet-700 dark:text-violet-300'
+                    : isFuture
+                      ? 'text-stone-400 dark:text-stone-500'
+                      : 'text-violet-600/80 dark:text-violet-400/70'
+                }`}>
+                  {level.name}
+                </span>
+              </div>
+              {i < sevenLevels.length - 1 && (
+                <div className={`flex-1 h-0.5 mx-0.5 mt-[-14px] rounded-full transition-all duration-500 ${
+                  (isComplete || isPast) && isChapterComplete(sevenLevels[i + 1].id)
+                    ? 'bg-violet-400 dark:bg-violet-500'
+                    : (isComplete || isPast)
+                      ? 'bg-violet-300/50 dark:bg-violet-600/30'
+                      : 'bg-stone-200 dark:bg-stone-700'
+                }`} />
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// Level Badge for Partie C chapters
+function LevelBadge({ chapterNumber }: { chapterNumber: string }) {
+  const levelMatch = chapterNumber.match(/C(\d)/)
+  if (!levelMatch) return null
+  const levelNum = parseInt(levelMatch[1])
+  const level = sevenLevels[levelNum - 1]
+
+  return (
+    <div className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-violet-500 to-violet-600 dark:from-violet-600 dark:to-violet-700 px-3 py-1 text-white shadow-sm shadow-violet-300/30 dark:shadow-violet-900/30">
+      <Award className="h-3.5 w-3.5" />
+      <span className="text-xs font-bold">Niveau {levelNum}</span>
+      <span className="text-[10px] opacity-80">— {level?.label}</span>
+    </div>
+  )
+}
+
+// Seven Levels Overview Card (collapsible)
+function SevenLevelsOverview({ currentChapterId }: { currentChapterId: string }) {
+  const [isOpen, setIsOpen] = useState(false)
+  const isChapterComplete = useAppStore((s) => s.isChapterComplete)
+  const currentLevelIndex = sevenLevels.findIndex((l) => l.id === currentChapterId)
+
+  return (
+    <div className="rounded-xl border border-violet-200/60 dark:border-violet-700/30 bg-gradient-to-b from-violet-50/40 via-stone-50/20 to-violet-50/30 dark:from-violet-950/15 dark:via-stone-900/10 dark:to-violet-950/10 overflow-hidden shadow-sm">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between p-4 hover:bg-violet-50/50 dark:hover:bg-violet-900/10 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <Mountain className="h-4 w-4 text-violet-500 dark:text-violet-400" />
+          <span className="text-sm font-semibold text-violet-700 dark:text-violet-300">Vue d&apos;ensemble des 7 niveaux</span>
+        </div>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ChevronDown className="h-4 w-4 text-violet-500 dark:text-violet-400" />
+        </motion.div>
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 space-y-0">
+              {sevenLevels.map((level, i) => {
+                const isComplete = isChapterComplete(level.id)
+                const isCurrent = level.id === currentChapterId
+                const isPast = i < currentLevelIndex
+                const isFuture = i > currentLevelIndex
+
+                return (
+                  <div key={level.id} className="flex items-start gap-3 relative">
+                    {/* Timeline connector */}
+                    <div className="flex flex-col items-center">
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: i * 0.05 }}
+                        className={`flex items-center justify-center rounded-full border-2 shrink-0 transition-all duration-500 ${
+                          isCurrent
+                            ? 'h-8 w-8 border-violet-500 bg-violet-100 dark:border-violet-400 dark:bg-violet-900/40 shadow-[0_0_12px_rgba(139,92,246,0.35)]'
+                            : isComplete || isPast
+                              ? 'h-7 w-7 border-violet-400 bg-violet-400 dark:border-violet-500 dark:bg-violet-500'
+                              : 'h-6 w-6 border-stone-300 bg-stone-50 dark:border-stone-600 dark:bg-stone-800'
+                        }`}
+                      >
+                        {(isComplete || isPast) ? (
+                          <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+                        ) : (
+                          <span className={`text-[10px] ${isCurrent ? 'font-bold text-violet-700 dark:text-violet-200' : 'text-stone-400 dark:text-stone-500'}`}>{i + 1}</span>
+                        )}
+                      </motion.div>
+                      {i < sevenLevels.length - 1 && (
+                        <div className={`w-0.5 h-8 rounded-full transition-all ${
+                          (isComplete || isPast)
+                            ? 'bg-violet-300/60 dark:bg-violet-600/40'
+                            : 'bg-stone-200 dark:bg-stone-700'
+                        }`} />
+                      )}
+                    </div>
+                    {/* Level info */}
+                    <motion.div
+                      initial={{ x: -8, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: i * 0.05 + 0.1 }}
+                      className={`pb-4 flex-1 min-w-0 ${isFuture ? 'opacity-50' : ''} ${isCurrent ? 'opacity-100' : ''}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className={`font-semibold text-sm ${
+                          isCurrent
+                            ? 'text-violet-700 dark:text-violet-300'
+                            : isFuture
+                              ? 'text-stone-400 dark:text-stone-500'
+                              : 'text-violet-600/80 dark:text-violet-400/70'
+                        }`}>
+                          {level.name}
+                        </span>
+                        {isCurrent && (
+                          <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-violet-300 dark:border-violet-600 text-violet-600 dark:text-violet-300 bg-violet-50 dark:bg-violet-950/30">
+                            Vous êtes ici
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-snug">{level.description}</p>
+                    </motion.div>
+                  </div>
+                )
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
@@ -353,9 +568,13 @@ export function ChapterView() {
 
         {/* Chapter header */}
         <AnimatedSection className="text-center space-y-2">
-          <Badge variant="outline" className="text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700 mb-2">
-            Chapitre {chapter.number}
-          </Badge>
+          {partLetter === 'C' ? (
+            <LevelBadge chapterNumber={chapter.number} />
+          ) : (
+            <Badge variant="outline" className="text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700 mb-2">
+              Chapitre {chapter.number}
+            </Badge>
+          )}
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
             {chapter.title}
           </h1>
@@ -364,13 +583,20 @@ export function ChapterView() {
           <div className="flex justify-center mt-1">
             <Badge
               variant="outline"
-              className="text-[11px] border-amber-300/60 dark:border-amber-700/40 bg-amber-50/60 dark:bg-amber-950/20 text-amber-700 dark:text-amber-300 gap-1"
+              className={`text-[11px] gap-1 ${partLetter === 'C' ? 'border-violet-300/60 dark:border-violet-700/40 bg-violet-50/60 dark:bg-violet-950/20 text-violet-700 dark:text-violet-300' : 'border-amber-300/60 dark:border-amber-700/40 bg-amber-50/60 dark:bg-amber-950/20 text-amber-700 dark:text-amber-300'}`}
             >
               <Clock className="h-3 w-3" />
               {getChapterReadingTime(chapter)} min de lecture
             </Badge>
           </div>
         </AnimatedSection>
+
+        {/* Seven Levels Progress Indicator — only for Partie C */}
+        {partLetter === 'C' && (
+          <AnimatedSection>
+            <SevenLevelsProgress currentChapterId={chapterId} />
+          </AnimatedSection>
+        )}
 
         {/* Mini TOC in chapter */}
         {sectionsList.length > 3 && (
@@ -592,6 +818,13 @@ export function ChapterView() {
 
         {/* Decorative end divider */}
         <DecorativeDivider />
+
+        {/* Seven Levels Overview — only for Partie C */}
+        {partLetter === 'C' && (
+          <AnimatedSection>
+            <SevenLevelsOverview currentChapterId={chapterId} />
+          </AnimatedSection>
+        )}
 
         {/* Chapter Notes Summary */}
         <AnimatedSection>

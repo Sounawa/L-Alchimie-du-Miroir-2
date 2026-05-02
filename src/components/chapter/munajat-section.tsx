@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useRef } from 'react'
+import { motion } from 'framer-motion'
 import { useAppStore } from '@/store/use-app-store'
 import { Textarea } from '@/components/ui/textarea'
 
@@ -39,13 +40,15 @@ export function MunajatSection({ chapterId, prompts }: MunajatSectionProps) {
       {prompts.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {prompts.map((prompt, i) => (
-            <button
+            <motion.button
               key={i}
               onClick={() => handleChipClick(prompt)}
-              className="rounded-full border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 px-3 py-1.5 text-sm text-amber-800 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="rounded-full border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 px-3 py-1.5 text-sm text-amber-800 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/50 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-[0_0_12px_rgba(245,158,11,0.2)] dark:hover:shadow-[0_0_12px_rgba(245,158,11,0.15)] transition-all duration-200 cursor-pointer"
             >
               {prompt}
-            </button>
+            </motion.button>
           ))}
         </div>
       )}

@@ -109,6 +109,12 @@ interface AppState {
   // Du'a of the day
   duaOfDayDismissed: string; // ISO date string of when it was last dismissed
 
+  // Meditation time tracking
+  totalMeditationMinutes: number;
+
+  // Daily reflection card
+  dailyReflectionIndex: number;
+
   // Keyboard shortcuts overlay (transient - not persisted)
   showShortcuts: boolean;
 
@@ -178,6 +184,9 @@ interface AppState {
   // Du'a of the day actions
   dismissDuaOfDay: () => void;
   isDuaOfDayDismissed: () => boolean;
+
+  // Meditation time actions
+  incrementMeditationTime: (minutes: number) => void;
 
   // Keyboard shortcuts overlay actions
   toggleShortcuts: () => void;
@@ -278,6 +287,12 @@ export const useAppStore = create<AppState>()(
 
       // ── Du'a of the Day ─────────────────────────────────────────────
       duaOfDayDismissed: '',
+
+      // ── Meditation Time ──────────────────────────────────────────────
+      totalMeditationMinutes: 0,
+
+      // ── Daily Reflection Index ────────────────────────────────────────
+      dailyReflectionIndex: 0,
 
       // ── Keyboard Shortcuts Overlay ────────────────────────────────
       showShortcuts: false,
@@ -681,6 +696,14 @@ export const useAppStore = create<AppState>()(
         return get().duaOfDayDismissed === getTodayDateString();
       },
 
+      // ── Meditation Time Actions ─────────────────────────────────────
+
+      incrementMeditationTime: (minutes: number) => {
+        set((state) => ({
+          totalMeditationMinutes: state.totalMeditationMinutes + minutes,
+        }));
+      },
+
       // ── Keyboard Shortcuts Overlay Actions ────────────────────────
 
       toggleShortcuts: () => {
@@ -809,6 +832,8 @@ export const useAppStore = create<AppState>()(
           planStartDate: null,
           wordOfDayDismissed: '',
           duaOfDayDismissed: '',
+          totalMeditationMinutes: 0,
+          dailyReflectionIndex: 0,
           showShortcuts: false,
         });
       },
@@ -842,6 +867,8 @@ export const useAppStore = create<AppState>()(
         planStartDate: state.planStartDate,
         wordOfDayDismissed: state.wordOfDayDismissed,
         duaOfDayDismissed: state.duaOfDayDismissed,
+        totalMeditationMinutes: state.totalMeditationMinutes,
+        dailyReflectionIndex: state.dailyReflectionIndex,
       }),
     }
   )

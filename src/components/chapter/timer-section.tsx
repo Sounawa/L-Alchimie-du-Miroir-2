@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
+import { useAppStore } from '@/store/use-app-store'
 
 interface TimerSectionProps {
   chapterId: string;
@@ -12,6 +13,8 @@ export function TimerSection({ chapterId, minutes }: TimerSectionProps) {
   const [timeLeft, setTimeLeft] = useState(minutes * 60)
   const [isRunning, setIsRunning] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const hasRecordedRef = useRef(false)
+  const incrementMeditationTime = useAppStore((s) => s.incrementMeditationTime)
 
   const clearTimer = useCallback(() => {
     if (intervalRef.current) {
@@ -27,6 +30,11 @@ export function TimerSection({ chapterId, minutes }: TimerSectionProps) {
           if (prev <= 1) {
             setIsRunning(false)
             clearTimer()
+            // Record meditation time when timer completes
+            if (!hasRecordedRef.current) {
+              hasRecordedRef.current = true
+              incrementMeditationTime(minutes)
+            }
             return 0
           }
           return prev - 1
@@ -36,7 +44,7 @@ export function TimerSection({ chapterId, minutes }: TimerSectionProps) {
       clearTimer()
     }
     return clearTimer
-  }, [isRunning, clearTimer])
+  }, [isRunning, clearTimer, minutes, incrementMeditationTime])
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60)
@@ -47,6 +55,7 @@ export function TimerSection({ chapterId, minutes }: TimerSectionProps) {
   const handleStart = () => {
     if (timeLeft === 0) {
       setTimeLeft(minutes * 60)
+      hasRecordedRef.current = false
     }
     setIsRunning(true)
   }
@@ -59,6 +68,7 @@ export function TimerSection({ chapterId, minutes }: TimerSectionProps) {
     setIsRunning(false)
     clearTimer()
     setTimeLeft(minutes * 60)
+    hasRecordedRef.current = false
   }
 
   const isComplete = timeLeft === 0

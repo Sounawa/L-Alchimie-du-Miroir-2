@@ -35,6 +35,7 @@ import {
   BarChart3,
 } from 'lucide-react'
 import { StudyStats } from '@/components/shared/study-stats'
+import { ReadingStatsPanel } from '@/components/shared/reading-stats-panel'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -161,6 +162,10 @@ export function ProgressView() {
               {allChapters.map((ch, idx) => {
                 const isComplete = completedChapters.some((c) => c.chapterId === ch.id)
                 const isCurrent = currentChapterId === ch.id
+                const isPartC = ch.part === 'C'
+                const cLevelMatch = ch.number.match(/C(\d)/)
+                const cLevel = cLevelMatch ? parseInt(cLevelMatch[1]) : 0
+
                 return (
                   <div key={ch.id} className="flex items-center shrink-0">
                     <button
@@ -168,23 +173,52 @@ export function ProgressView() {
                       className="flex flex-col items-center gap-0.5"
                       title={`${ch.number} — ${ch.title}`}
                     >
-                      <div
-                        className={`flex items-center justify-center rounded-full border-2 transition-all duration-300 ${
-                          isComplete
-                            ? 'h-7 w-7 border-emerald-400 bg-emerald-400 dark:border-emerald-500 dark:bg-emerald-500'
-                            : isCurrent
-                              ? 'h-7 w-7 border-amber-500 bg-amber-100 dark:border-amber-400 dark:bg-amber-950/40'
-                              : 'h-6 w-6 border-stone-300 bg-stone-50 dark:border-stone-600 dark:bg-stone-800'
-                        }`}
-                      >
-                        {isComplete ? (
-                          <CheckCircle2 className="h-3.5 w-3.5 text-white" />
-                        ) : isCurrent ? (
-                          <div className="h-2 w-2 rounded-full bg-amber-500 dark:bg-amber-400" />
-                        ) : null}
-                      </div>
+                      {isPartC && cLevel > 0 ? (
+                        /* Staircase metaphor for Partie C — ascending diamond shape */
+                        <div
+                          className={`flex items-center justify-center transition-all duration-300 ${
+                            isComplete
+                              ? 'w-7 h-7 rounded-sm rotate-45 border-2 border-violet-400 bg-violet-400 dark:border-violet-500 dark:bg-violet-500'
+                              : isCurrent
+                                ? 'w-7 h-7 rounded-sm rotate-45 border-2 border-violet-500 bg-violet-100 dark:border-violet-400 dark:bg-violet-900/40 shadow-[0_0_10px_rgba(139,92,246,0.3)]'
+                                : 'w-6 h-6 rounded-sm rotate-45 border border-stone-300 bg-stone-50 dark:border-stone-600 dark:bg-stone-800'
+                          }`}
+                          style={{ marginTop: `${(7 - cLevel) * 1.5}px` }}
+                        >
+                          <div className="rotate-[-45deg]">
+                            {isComplete ? (
+                              <CheckCircle2 className="h-3 w-3 text-white" />
+                            ) : isCurrent ? (
+                              <span className="text-[8px] font-bold text-violet-700 dark:text-violet-200">{cLevel}</span>
+                            ) : (
+                              <span className="text-[7px] text-stone-400 dark:text-stone-500">{cLevel}</span>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        /* Standard circle for Part A & B */
+                        <div
+                          className={`flex items-center justify-center rounded-full border-2 transition-all duration-300 ${
+                            isComplete
+                              ? 'h-7 w-7 border-emerald-400 bg-emerald-400 dark:border-emerald-500 dark:bg-emerald-500'
+                              : isCurrent
+                                ? 'h-7 w-7 border-amber-500 bg-amber-100 dark:border-amber-400 dark:bg-amber-950/40'
+                                : 'h-6 w-6 border-stone-300 bg-stone-50 dark:border-stone-600 dark:bg-stone-800'
+                          }`}
+                        >
+                          {isComplete ? (
+                            <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+                          ) : isCurrent ? (
+                            <div className="h-2 w-2 rounded-full bg-amber-500 dark:bg-amber-400" />
+                          ) : null}
+                        </div>
+                      )}
                       <span className={`text-[9px] leading-tight ${
-                        isCurrent ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-stone-400 dark:text-stone-500'
+                        isCurrent
+                          ? isPartC
+                            ? 'text-violet-600 dark:text-violet-400 font-bold'
+                            : 'text-amber-600 dark:text-amber-400 font-bold'
+                          : 'text-stone-400 dark:text-stone-500'
                       }`}>
                         {ch.number}
                       </span>
@@ -192,13 +226,30 @@ export function ProgressView() {
                     {idx < allChapters.length - 1 && (
                       <div className={`h-0.5 w-3 ${
                         isComplete && completedChapters.some((c) => c.chapterId === allChapters[idx + 1].id)
-                          ? 'bg-emerald-400 dark:bg-emerald-500'
+                          ? isPartC
+                            ? 'bg-violet-400 dark:bg-violet-500'
+                            : 'bg-emerald-400 dark:bg-emerald-500'
                           : 'bg-stone-200 dark:bg-stone-700'
                       }`} />
                     )}
                   </div>
                 )
               })}
+            </div>
+            {/* Legend */}
+            <div className="flex items-center justify-center gap-4 mt-2 pt-2 border-t border-stone-100 dark:border-stone-800">
+              <div className="flex items-center gap-1.5">
+                <div className="h-3 w-3 rounded-full border border-emerald-400 bg-emerald-400" />
+                <span className="text-[9px] text-stone-500">Complété</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="h-3 w-3 rounded-sm rotate-45 border border-violet-400 bg-violet-100" />
+                <span className="text-[9px] text-stone-500">Partie C (ascension)</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="h-3 w-3 rounded-full border border-stone-300 bg-stone-50" />
+                <span className="text-[9px] text-stone-500">À lire</span>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -322,6 +373,15 @@ export function ProgressView() {
           <h2 className="text-lg font-semibold">Statistiques détaillées</h2>
         </div>
         <StudyStats />
+      </motion.div>
+
+      {/* Panneau de statistiques de lecture */}
+      <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+        <div className="flex items-center gap-2 mb-3">
+          <BarChart3 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+          <h2 className="text-lg font-semibold">Panneau de lecture</h2>
+        </div>
+        <ReadingStatsPanel />
       </motion.div>
 
       {/* Chapter List */}

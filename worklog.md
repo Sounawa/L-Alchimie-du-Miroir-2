@@ -1397,3 +1397,179 @@ Stage Summary:
 2. **LOW**: Add touch gesture support (swipe for chapter navigation)
 3. **LOW**: Add community features (shared reading plans)
 4. **LOW**: Add more Arabic calligraphy decorative elements
+
+---
+Task ID: 19-b
+Agent: Feature Addition Agent
+Task: Add reflection cards, prayer times, reading stats, audio player enhancements
+
+Work Log:
+- Updated Zustand store (`/src/store/use-app-store.ts`): Added `totalMeditationMinutes: number` and `dailyReflectionIndex: number` fields, added `incrementMeditationTime(minutes: number)` action, added both new fields to `partialize` for localStorage persistence, added both fields to `resetAllData()` defaults
+- Created Reflection Card component (`/src/components/shared/reflection-card.tsx`): Builds a pool of reflection items from all chapter data (Arabic verses, mirror questions, munajat prompts, gold callouts, quotes), deterministic daily rotation based on day-of-year offset by `dailyReflectionIndex`, beautiful amber/gold gradient card with Arabic calligraphy styling, decorative ✦ corner ornaments and ❋ dividers, type badge (Citation/Question miroir/Munajat) with color coding (amber/violet/emerald), share button copies text to clipboard with toast feedback, reflect button navigates to corresponding chapter, "Nouvelle" button increments `dailyReflectionIndex` for cycling through cards, Islamic pattern overlay and theme-aware styling
+- Created Prayer Times Badge component (`/src/components/shared/prayer-times-badge.tsx`): Shows current prayer time period (Fajr, Dhuhr, Asr, Maghrib, Isha) based on approximate times, displayed as a small badge with Moon/Sun icon in the header, violet/amber gradient design, click shows tooltip with all 5 prayer times including Arabic names, highlights current prayer with emerald dot and next prayer with amber dot, countdown to next prayer shown when between prayer times
+- Created Reading Stats Panel component (`/src/components/shared/reading-stats-panel.tsx`): Shows 6 stat cards (chapters completed, total meditation time, current streak, longest streak, notes written, journal entries) with emerald/amber/orange gradient backgrounds, CSS-only bar chart for weekly activity (last 7 days) with animated bars, day labels in French (Lun-Dim), today's bar highlighted with amber gradient, active bars pulse with Framer Motion scaleY animation, uses `totalMeditationMinutes` from store alongside estimated time from completed chapters
+- Enhanced Verse Audio Player (`/src/components/shared/verse-audio-player.tsx`): Added 24-bar waveform visualization with deterministic heights based on Arabic text (seeded PRNG), bars pulse with Framer Motion scaleY animation when playing, progress-highlighted bars change color (amber active, past, stone inactive), replaced Volume2/Play icons with proper Play/Pause icons, expanded speed control to 5 options (0.5x, 0.75x, 1x, 1.25x, 1.5x) via cycle button, active speed shown with amber background highlight, waveform heights generated via `useMemo` for performance
+- Updated Timer Section (`/src/components/chapter/timer-section.tsx`): Integrated `incrementMeditationTime` action from Zustand store, timer completion now calls `incrementMeditationTime(minutes)` to track actual meditation time, added `hasRecordedRef` to prevent double-recording, reset on restart/new timer cycle
+- Integrated Reflection Card into TOC View (`toc-view.tsx`): Added import for `ReflectionCard`, placed after Du'a of the Day section with `mb-6` spacing
+- Integrated Prayer Times Badge into Header (`app-header.tsx`): Added import for `PrayerTimesBadge`, placed as first item in right-side actions div before search button
+- Integrated Reading Stats Panel into Progress View (`progress-view.tsx`): Added import for `ReadingStatsPanel`, added new "Panneau de lecture" section after "Statistiques détaillées" section with emerald BarChart3 icon
+- All text in French, all styling theme-aware with dark: variants
+- Lint passes clean, dev server compiles successfully
+
+Stage Summary:
+- 4 new features implemented: Reflection Cards, Prayer Times Badge, Reading Stats Panel, Audio Player Waveform Enhancement
+- 3 new shared components created: reflection-card.tsx, prayer-times-badge.tsx, reading-stats-panel.tsx
+- 1 existing component significantly enhanced: verse-audio-player.tsx (waveform visualization, expanded speed control)
+- Zustand store extended with 2 new persisted fields (totalMeditationMinutes, dailyReflectionIndex) and 1 new action (incrementMeditationTime)
+- Timer section integrated with meditation time tracking
+- All new components properly integrated into existing views (TOC, header, progress)
+- Zero lint errors, clean compilation
+---
+Task ID: 19-a
+Agent: Styling & Partie C Enhancement Agent
+Task: Enhance Partie C visuals and improve styling to 10/10
+
+Work Log:
+- Added SevenLevelsProgress component: horizontal 7-step visual with connected circles, violet glow on current, checkmarks on completed
+- Added LevelBadge component: violet gradient pill showing level number and label for Partie C chapters
+- Added SevenLevelsOverview collapsible card: vertical timeline at end of Partie C chapters
+- Added part-specific section header colors and gradient underlines (amber/emerald/violet)
+- Enhanced WordAnalysisTable with hover background highlight and subtle scale
+- Enhanced MirrorQuestionsTable with hover highlight animations
+- Enhanced MunajatSection prompt chips with Framer Motion hover/tap and glow effect
+- Added Partie C mini step indicator to TOC with Mountain icon and level badges
+- Added Verset dancrage decorative header to VerseDisplay
+- Added subtle breathing animation to Arabic verse text in VerseDisplay
+- Enhanced Progress View: Partie C as ascending diamonds with staircase metaphor
+- Enhanced Glossary letter group count badges with terme(s) text
+- Fixed B3-B10 ExtraSections: replaced font-arabic with arabic-verse, added emerald theme
+- Removed unused imports, all lint checks pass
+
+Stage Summary:
+- 3 new Partie C components: SevenLevelsProgress, LevelBadge, SevenLevelsOverview
+- Partie C has unique visual identity with violet theme and level progression
+- 5 micro-animations added across chapter sub-components
+- TOC, Progress, Verse, Glossary all enhanced
+- B3-B10 ExtraSections fixed and visually improved
+- Zero lint errors, clean compilation
+
+---
+Task ID: 19-main
+Agent: Main (Session Coordinator)
+Task: Fix hydration bug, QA test, enhance Partie C, improve styling, add features
+
+Work Log:
+- Fixed critical hydration mismatch error in SparkleField component (cover-view.tsx): Used useSyncExternalStore for client-only rendering of sparkle particles, converted numeric style values to string px values, made parallax transforms conditional on scrollY > 0 to avoid SSR/CSR style mismatches, removed template literal backgroundImage that caused CSS property name casing differences
+- Fixed React 19 ref handling in Input component (input.tsx): QA agent added explicit ref destructuring
+- QA tested with agent-browser: all features verified working, Partie C found to be MORE feature-rich than A/B
+- Delegated Partie C enhancement and styling improvements to Task 19-a subagent
+- Delegated new feature additions to Task 19-b subagent
+- Verified all changes: lint passes clean, dev server compiles successfully, all new features visible via agent-browser QA
+
+Stage Summary:
+- 2 critical bugs fixed: hydration mismatch in SparkleField, React 19 ref error in Input
+- Partie C now has dedicated visual elements: Seven Levels Progress indicator, Level Badge, Seven Levels Overview Card
+- Styling improved to 10/10: micro-animations on hover, part-specific color theming (amber/emerald/violet), enhanced verse display, B3-B10 content fix
+- 4 new features added: Reflection Card, Prayer Times Badge, Reading Stats Panel, Audio Player Enhancement
+- Zustand store extended with totalMeditationMinutes and dailyReflectionIndex
+- All lint checks pass, compilation successful
+
+---
+Task ID: 19-a
+Agent: Styling & Partie C Enhancement Agent
+Task: Enhance Partie C visuals and improve styling to 10/10
+
+Work Log:
+- Created SevenLevelsProgress component: horizontal 7-step visual with connected circles for Partie C chapters
+- Created LevelBadge component: violet gradient pill badge showing "Niveau X — Label" for Partie C
+- Created SevenLevelsOverview component: collapsible vertical timeline at end of Partie C chapters
+- Added part-specific color theming: amber for Part A, emerald for Part B, violet for Part C (section headers, gradient underlines, reading time badges)
+- Added micro-animations: word analysis row hover, mirror question card hover, munajat chip glow, verse breathing animation
+- Enhanced verse display with "Verset d'ancrage" decorative header label
+- Added 7 level badges to TOC Partie C section with mountain icon
+- Enhanced progress view Partie C chapters with ascending diamond shapes (staircase metaphor)
+- Fixed B3-B10 extra sections rendering (font-arabic → arabic-verse class, emerald accordion styling)
+- Enhanced glossary count badges with proper pluralization
+
+Stage Summary:
+- 3 new Partie C visual components: SevenLevelsProgress, LevelBadge, SevenLevelsOverview
+- Part-specific color theming across all chapter sections
+- 5 micro-animation enhancements
+- B3-B10 content now renders properly
+- Zero lint errors, clean compilation
+
+---
+Task ID: 19-b
+Agent: Feature Addition Agent
+Task: Add reflection cards, prayer times, reading stats, audio player enhancements
+
+Work Log:
+- Created Reflection Card component: beautiful amber/gold gradient card with daily rotation, share/reflect/new buttons, integrated into TOC view
+- Created Prayer Times Badge component: shows current prayer period in header with moon/sun icon, tooltip with all 5 prayer times, countdown to next prayer
+- Created Reading Stats Panel component: 6 stat cards (chapters, meditation time, streaks, notes, journal entries), CSS-only weekly activity bar chart, integrated into progress view
+- Enhanced Verse Audio Player: 24-bar waveform visualization with pulsing animation, expanded speed control (0.5x-1.5x), play/pause icons
+- Updated Zustand store: added totalMeditationMinutes and dailyReflectionIndex fields, added incrementMeditationTime action, timer now tracks meditation time
+- All new features work in both light and dark mode, all text in French
+
+Stage Summary:
+- 4 new features: Reflection Card, Prayer Times Badge, Reading Stats Panel, Audio Player Enhancement
+- 2 new persisted store fields, 1 new action
+- Full light/dark mode support
+- Zero lint errors, clean compilation
+
+# ═══════════════════════════════════════════════════════
+# HANDOVER DOCUMENT — Updated Project Status (Task 19)
+# ═══════════════════════════════════════════════════════
+
+## Current Project Status Description
+
+**Project**: L'Alchimie du Miroir — Niveau 2
+**Type**: Next.js 16 SPA with Zustand state management
+**Phase**: Feature-complete with premium styling and extensive interactivity
+
+The application is a Quranic meditation guide with 50+ features fully implemented.
+
+## Current Goals / Completed Modifications / Verification Results
+
+### Bug Fixes (This Session)
+- ✅ Fixed critical hydration mismatch in SparkleField (useSyncExternalStore pattern)
+- ✅ Fixed React 19 ref handling in Input component
+- ✅ Fixed B3-B10 extra sections not rendering
+
+### Partie C Enhancements (This Session)
+- ✅ Seven Levels Progress indicator at top of every Partie C chapter
+- ✅ Violet-themed Level Badge ("Niveau X — Label")
+- ✅ Seven Levels Overview collapsible card at end of Partie C chapters
+- ✅ Part-specific color theming (amber/emerald/violet)
+- ✅ 7 level badges in TOC Partie C section
+- ✅ Ascending diamond shapes in progress timeline for Partie C
+
+### Styling Improvements to 10/10 (This Session)
+- ✅ Micro-animations on word analysis rows, mirror questions, munajat chips
+- ✅ Verse "breathing" animation (6s cycle)
+- ✅ "Verset d'ancrage" decorative header label
+- ✅ Part-specific gradient underlines on section headers
+- ✅ Enhanced glossary count badges with pluralization
+
+### New Features (This Session)
+- ✅ Reflection Card (Carte de réflexion) with daily rotation
+- ✅ Prayer Times Badge in header
+- ✅ Reading Stats Panel with weekly activity chart
+- ✅ Audio Player waveform visualization + expanded speed control
+
+### Verification Results
+- ✅ All lint checks pass
+- ✅ Dev server compiles successfully (200 response)
+- ✅ Agent-browser QA confirmed all features working
+- ✅ Hydration error resolved
+- ✅ No console errors
+
+## Unresolved Issues or Risks, Priority Recommendations for Next Phase
+
+### Potential Improvements
+1. The "Vue d'ensemble des 7 niveaux" button is at the very bottom of long chapter pages — consider adding a floating shortcut
+2. Onboarding overlay persists on every fresh visit — could be more robust
+3. B3-B10 grouped chapter could be split into individual chapters for better granularity
+4. Add more Arabic calligraphy decorative elements throughout
+5. Consider adding TTS (text-to-speech) for Arabic verses via the existing API route
+6. Mobile experience could be further optimized (sidebar gestures, swipe navigation)

@@ -4,7 +4,7 @@ import { useAppStore } from '@/store/use-app-store';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useMemo, useState, useEffect, useRef } from 'react';
+import { useMemo, useState, useEffect, useRef, useSyncExternalStore } from 'react';
 
 // 7 inspiring Islamic/spiritual quotes in French for daily rotation
 const dailyQuotes = [
@@ -89,6 +89,11 @@ function seededRandom(seed: number) {
 }
 
 function SparkleField() {
+  const isClient = useSyncExternalStore(
+    () => () => {}, // noop subscribe
+    () => true,     // client snapshot
+    () => false     // server snapshot
+  );
   const sparkles = useMemo<Sparkle[]>(() => {
     const rng = seededRandom(42);
     return Array.from({ length: 40 }, (_, i) => ({
@@ -101,6 +106,10 @@ function SparkleField() {
     }));
   }, []);
 
+  if (!isClient) {
+    return <div className="pointer-events-none absolute inset-0 overflow-hidden" />;
+  }
+
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       {sparkles.map((s) => (
@@ -110,8 +119,8 @@ function SparkleField() {
           style={{
             left: `${s.x}%`,
             bottom: `${-10 + (s.y % 30)}%`,
-            width: s.size,
-            height: s.size,
+            width: `${s.size}px`,
+            height: `${s.size}px`,
             animation: `starRise ${s.duration}s ${s.delay}s ease-out infinite`,
           }}
         />
@@ -143,41 +152,34 @@ export function CoverView() {
       <div className="pointer-events-none absolute top-5 sm:top-8 right-5 sm:right-8 text-amber-400/30 dark:text-amber-500/20 text-lg select-none">✦</div>
       <div className="pointer-events-none absolute bottom-5 sm:bottom-8 left-5 sm:left-8 text-amber-400/30 dark:text-amber-500/20 text-lg select-none">✦</div>
       <div className="pointer-events-none absolute bottom-5 sm:bottom-8 right-5 sm:right-8 text-amber-400/30 dark:text-amber-500/20 text-lg select-none">✦</div>
-      {/* Secondary warm radial glow for light mode — parallax */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,_rgba(251,191,36,0.10)_0%,_transparent_50%)] dark:bg-none" style={{ transform: `translateY(${scrollY * -0.15}px)` }} />
-      {/* Soft warm vignette in light mode — parallax */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_50%,_rgba(180,130,60,0.08)_100%)] dark:bg-none" style={{ transform: `translateY(${scrollY * -0.1}px)` }} />
-      {/* Subtle Islamic geometric pattern overlay — parallax */}
+      {/* Secondary warm radial glow for light mode — parallax (client-only transform) */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,_rgba(251,191,36,0.10)_0%,_transparent_50%)] dark:bg-none" style={scrollY > 0 ? { transform: `translateY(${scrollY * -0.15}px)` } : undefined} />
+      {/* Soft warm vignette in light mode — parallax (client-only transform) */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_50%,_rgba(180,130,60,0.08)_100%)] dark:bg-none" style={scrollY > 0 ? { transform: `translateY(${scrollY * -0.1}px)` } : undefined} />
+      {/* Subtle Islamic geometric pattern overlay — parallax (client-only transform) */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.08] dark:opacity-[0.04]"
         style={{
-          backgroundImage: `
-            radial-gradient(circle at 25% 25%, rgba(217, 169, 99, 0.3) 1px, transparent 1px),
-            radial-gradient(circle at 75% 75%, rgba(217, 169, 99, 0.3) 1px, transparent 1px),
-            linear-gradient(60deg, rgba(217, 169, 99, 0.15) 12%, transparent 12.5%, transparent 87%, rgba(217, 169, 99, 0.15) 87.5%),
-            linear-gradient(120deg, rgba(217, 169, 99, 0.15) 12%, transparent 12.5%, transparent 87%, rgba(217, 169, 99, 0.15) 87.5%),
-            linear-gradient(60deg, rgba(217, 169, 99, 0.15) 12%, transparent 12.5%, transparent 87%, rgba(217, 169, 99, 0.15) 87.5%),
-            linear-gradient(120deg, rgba(217, 169, 99, 0.15) 12%, transparent 12.5%, transparent 87%, rgba(217, 169, 99, 0.15) 87.5%)
-          `,
+          backgroundImage: 'radial-gradient(circle at 25% 25%, rgba(217, 169, 99, 0.3) 1px, transparent 1px), radial-gradient(circle at 75% 75%, rgba(217, 169, 99, 0.3) 1px, transparent 1px), linear-gradient(60deg, rgba(217, 169, 99, 0.15) 12%, transparent 12.5%, transparent 87%, rgba(217, 169, 99, 0.15) 87.5%), linear-gradient(120deg, rgba(217, 169, 99, 0.15) 12%, transparent 12.5%, transparent 87%, rgba(217, 169, 99, 0.15) 87.5%), linear-gradient(60deg, rgba(217, 169, 99, 0.15) 12%, transparent 12.5%, transparent 87%, rgba(217, 169, 99, 0.15) 87.5%), linear-gradient(120deg, rgba(217, 169, 99, 0.15) 12%, transparent 12.5%, transparent 87%, rgba(217, 169, 99, 0.15) 87.5%)',
           backgroundSize: '80px 140px, 80px 140px, 56px 97px, 56px 97px, 56px 97px, 56px 97px',
-          transform: `translateY(${scrollY * -0.2}px)`,
+          ...(scrollY > 0 ? { transform: `translateY(${scrollY * -0.2}px)` } : {}),
         }}
       />
 
-      {/* Sparkle/particle animation — parallax */}
-      <div style={{ transform: `translateY(${scrollY * -0.25}px)` }}>
+      {/* Sparkle/particle animation — parallax (client-only transform) */}
+      <div style={scrollY > 0 ? { transform: `translateY(${scrollY * -0.25}px)` } : undefined}>
         <SparkleField />
       </div>
 
-      {/* Radial warm glow */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(180,130,60,0.12)_0%,_transparent_70%)] dark:bg-[radial-gradient(ellipse_at_center,_rgba(180,130,60,0.08)_0%,_transparent_70%)]" style={{ transform: `translateY(${scrollY * -0.08}px)` }} />
+      {/* Radial warm glow (client-only transform) */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(180,130,60,0.12)_0%,_transparent_70%)] dark:bg-[radial-gradient(ellipse_at_center,_rgba(180,130,60,0.08)_0%,_transparent_70%)]" style={scrollY > 0 ? { transform: `translateY(${scrollY * -0.08}px)` } : undefined} />
 
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
         className="relative z-10 flex flex-col items-center gap-6 px-6 py-12 text-center max-w-lg md:gap-8 md:py-16 md:max-w-xl"
-        style={{ transform: `translateY(${scrollY * -0.3}px)` }}
+        style={scrollY > 0 ? { transform: `translateY(${scrollY * -0.3}px)` } : undefined}
       >
         {/* Decorative Bismillah calligraphy line — enhanced */}
         <motion.div variants={item} className="mb-2 relative">
