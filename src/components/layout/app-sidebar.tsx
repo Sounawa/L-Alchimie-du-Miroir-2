@@ -28,7 +28,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
 
-function SidebarContent({ onClose }: { onClose: () => void }) {
+function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: boolean }) {
   const {
     navigate,
     currentView,
@@ -44,7 +44,8 @@ function SidebarContent({ onClose }: { onClose: () => void }) {
 
   const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter', chapterId?: string) => {
     navigate(view, chapterId ?? null)
-    onClose()
+    // Only close sidebar on mobile
+    if (isMobile) onClose()
   }
 
   const navItems = [
@@ -205,7 +206,7 @@ function SidebarContent({ onClose }: { onClose: () => void }) {
           className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground"
           onClick={() => {
             toggleChat()
-            onClose()
+            if (isMobile) onClose()
           }}
         >
           <MessageSquare className="h-4 w-4" />
@@ -233,24 +234,22 @@ export function AppSidebar() {
           <SheetHeader className="sr-only">
             <SheetTitle>Navigation</SheetTitle>
           </SheetHeader>
-          <SidebarContent onClose={handleClose} />
+          <SidebarContent onClose={handleClose} isMobile={isMobile} />
         </SheetContent>
       </Sheet>
     )
   }
 
-  // Desktop: render as fixed sidebar
+  // Desktop: render as fixed sidebar (always visible)
   return (
     <aside
-      className={`
+      className="
         fixed left-0 top-14 z-30 h-[calc(100vh-3.5rem)] w-72
         border-r bg-gradient-to-b from-amber-50/50 via-background to-background
         dark:from-amber-950/10 dark:via-background dark:to-background
-        transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}
+      "
     >
-      <SidebarContent onClose={handleClose} />
+      <SidebarContent onClose={handleClose} isMobile={isMobile} />
     </aside>
   )
 }

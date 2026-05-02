@@ -161,3 +161,61 @@ Stage Summary:
 - All features working: navigation, timers, auto-save, AI chat, dark mode, search, progress tracking, export
 - No lint errors
 - Clean compilation
+
+---
+Task ID: 10-12
+Agent: Sub-agent (full-stack-developer) + Main
+Task: Bug fixes, new features, and styling improvements
+
+Work Log:
+- Fixed sidebar closing on desktop after navigation (added isMobile prop, only close on mobile)
+- Fixed main content not scrolling to top on navigation (added mainRef + useEffect)
+- Fixed cover page showing sidebar/header (conditional rendering when currentView === 'cover')
+- Fixed next.config.ts for allowedDevOrigins warning
+- Added ReadingProgressBar component (thin amber gradient bar showing scroll progress)
+- Added bookmark button and floating back-to-top button in chapter view
+- Enhanced Arabic verse display with illuminated manuscript frame, ✦ ✦ ✦ ornamental lines
+- Added Amiri font via next/font/google (initially @import in CSS caused build error, moved to layout.tsx)
+- Added ViewTransition component for smooth page transitions
+- Fixed critical bug: sidebar was always hidden on desktop (translate-x-full when sidebarOpen=false)
+  - Changed sidebar to always be visible on desktop, hidden only on mobile via Sheet
+  - Updated main content to always have lg:ml-72 margin on desktop
+- Fixed CSS build error caused by @import url() being placed after other rules
+  - Moved Amiri font loading to next/font/google in layout.tsx
+  - Changed .arabic-verse class to use var(--font-amiri)
+- Simplified ViewTransition (removed AnimatePresence mode="wait" which was causing navigation issues)
+- Added accent-insensitive search using NFD normalization
+  - "misericorde" now matches "miséricorde"
+  - highlightMatch function also accent-aware
+
+Stage Summary:
+- 3 critical bugs fixed (sidebar visibility, CSS build error, navigation not updating)
+- 5 new features added (reading progress bar, bookmarks, back-to-top, accent-insensitive search, view transitions)
+- 2 styling improvements (Arabic verse ornamental frame, Amiri font)
+- All lint checks pass, dev server compiles cleanly
+
+---
+Task ID: 10-12
+Agent: Main
+Task: Bug fixes and feature enhancements
+
+Work Log:
+- Fixed sidebar closing on desktop after navigation: passed `isMobile` prop to `SidebarContent`, `handleNavigate` only calls `onClose()` on mobile
+- Fixed chat toggle in sidebar also respecting mobile/desktop distinction
+- Fixed main content not scrolling to top on navigation: added `mainRef` with `useEffect` scrolling to top on view/chapter change
+- Fixed next.config.ts: added `allowedDevOrigins: ['.space-z.ai']` to suppress dev origin warning
+- Fixed cover view: hides header and sidebar for immersive full-screen experience
+- Created `reading-progress-bar.tsx`: thin amber gradient progress bar at top showing scroll progress in chapter view
+- Created `view-transition.tsx`: fade/slide transitions using Framer Motion `AnimatePresence` on view changes
+- Enhanced chapter view with bookmark toggle button (Bookmark/BookmarkCheck icons, toast feedback)
+- Enhanced chapter view with floating back-to-top button (appears after scrolling 400px, smooth scroll)
+- Enhanced verse display: illuminated manuscript frame with decorative borders, ornamental corner elements, golden gradient background, ✦ ✦ ✦ decorative lines, larger Arabic text (text-4xl/5xl), `lang="ar"` and `dir="rtl"`, dark mode text glow
+- Added Amiri font for Arabic text in globals.css with `.arabic-verse` class
+- Updated page.tsx to integrate all new components (ViewTransition, ReadingProgressBar)
+- Lint passes clean, dev server compiles successfully
+
+Stage Summary:
+- 3 bug fixes: sidebar desktop behavior, scroll-to-top, dev origin warning
+- 5 new features: reading progress bar, view transitions, bookmark button, back-to-top button, enhanced Arabic verse display
+- 1 styling improvement: Amiri font for Arabic verses
+- All changes lint-clean and compiling

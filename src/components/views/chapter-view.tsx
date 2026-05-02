@@ -1,8 +1,8 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, ArrowUp, ChevronLeft, ChevronRight, CheckCircle2, Bookmark, BookmarkCheck } from 'lucide-react'
 import { useAppStore } from '@/store/use-app-store'
 import { allChapters, getChapterById } from '@/data/chapters'
 import type { Chapter } from '@/data/chapters'
@@ -40,10 +40,24 @@ export function ChapterView() {
   const chapterId = useAppStore((s) => s.currentChapterId)
   const toggleChapterComplete = useAppStore((s) => s.toggleChapterComplete)
   const isChapterComplete = useAppStore((s) => s.isChapterComplete)
+  const addBookmark = useAppStore((s) => s.addBookmark)
+  const removeBookmark = useAppStore((s) => s.removeBookmark)
+  const isBookmarked = useAppStore((s) => s.isBookmarked)
   const { toast } = useToast()
 
   const chapter = chapterId ? (getChapterById(chapterId) as Chapter | undefined) : undefined
   const completed = chapterId ? isChapterComplete(chapterId) : false
+  const bookmarked = chapterId ? isBookmarked(chapterId) : false
+
+  const [showBackToTop, setShowBackToTop] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 400)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // Find prev/next chapters
   const { prevChapter, nextChapter } = useMemo(() => {
@@ -78,19 +92,41 @@ export function ChapterView() {
     })
   }
 
+  const handleToggleBookmark = () => {
+    if (!chapterId || !chapter) return
+    if (bookmarked) {
+      removeBookmark(chapterId)
+      toast({ description: 'Retiré des favoris' })
+    } else {
+      addBookmark(chapterId, `${chapter.number} — ${chapter.title}`)
+      toast({ description: 'Ajouté aux favoris ★' })
+    }
+  }
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 space-y-8">
-      {/* Back button */}
+      {/* Back button and Bookmark */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate('toc')}
-          className="text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          Table des matières
-        </Button>
+        <div className="flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('toc')}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Table des matières
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleToggleBookmark}
+            className={bookmarked ? 'text-amber-500' : 'text-muted-foreground'}
+          >
+            {bookmarked ? <BookmarkCheck className="h-4 w-4 mr-1" /> : <Bookmark className="h-4 w-4 mr-1" />}
+            {bookmarked ? 'Favoris' : 'Ajouter aux favoris'}
+          </Button>
+        </div>
       </motion.div>
 
       {/* Chapter header */}
@@ -280,6 +316,20 @@ export function ChapterView() {
           {completed && <CheckCircle2 className="h-4 w-4 text-green-600" />}
         </label>
       </motion.div>
+
+      {/* Back to top floating button */}
+      {showBackToTop && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-6 right-6 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-amber-600 text-white shadow-lg hover:bg-amber-700 transition-colors"
+          aria-label="Retour en haut"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </motion.button>
+      )}
     </div>
   )
 }

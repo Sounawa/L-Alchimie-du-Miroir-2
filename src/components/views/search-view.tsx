@@ -53,9 +53,16 @@ const matchTypeColors: Record<SearchResult['matchType'], string> = {
   extra: 'bg-stone-100 text-stone-800 dark:bg-stone-900/30 dark:text-stone-300',
 }
 
+function normalizeForSearch(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics for accent-insensitive search
+}
+
 function searchChapter(chapter: Chapter, query: string): SearchResult[] {
   const results: SearchResult[] = []
-  const q = query.toLowerCase()
+  const q = normalizeForSearch(query)
 
   const addResult = (matchType: SearchResult['matchType'], matchText: string, matchContext: string) => {
     results.push({
@@ -70,12 +77,12 @@ function searchChapter(chapter: Chapter, query: string): SearchResult[] {
   }
 
   // Title
-  if (chapter.title.toLowerCase().includes(q)) {
+  if (normalizeForSearch(chapter.title).includes(q)) {
     addResult('title', chapter.title, `Chapitre ${chapter.number}`)
   }
 
   // Subtitle
-  if (chapter.subtitle.toLowerCase().includes(q)) {
+  if (normalizeForSearch(chapter.subtitle).includes(q)) {
     addResult('subtitle', chapter.subtitle, chapter.title)
   }
 
@@ -85,26 +92,26 @@ function searchChapter(chapter: Chapter, query: string): SearchResult[] {
   }
 
   // Translation
-  if (chapter.translation && chapter.translation.toLowerCase().includes(q)) {
+  if (chapter.translation && normalizeForSearch(chapter.translation).includes(q)) {
     addResult('translation', chapter.translation.slice(0, 120) + (chapter.translation.length > 120 ? '...' : ''), 'Traduction')
   }
 
   // Word analysis
   for (const w of chapter.wordAnalysis) {
-    if (w.literalMeaning.toLowerCase().includes(q)) {
+    if (normalizeForSearch(w.literalMeaning).includes(q)) {
       addResult('translation', `${w.transliteration}: ${w.literalMeaning}`, 'Analyse de mot')
     }
-    if (w.mirrorDimension.toLowerCase().includes(q)) {
+    if (normalizeForSearch(w.mirrorDimension).includes(q)) {
       addResult('mirror', w.mirrorDimension.slice(0, 120), `Dimension miroir de ${w.transliteration}`)
     }
   }
 
   // Mirror questions
   for (const mq of chapter.mirrorQuestions) {
-    if (mq.question.toLowerCase().includes(q)) {
+    if (normalizeForSearch(mq.question).includes(q)) {
       addResult('mirror', mq.question, 'Question miroir')
     }
-    if (mq.meditation.toLowerCase().includes(q)) {
+    if (normalizeForSearch(mq.meditation).includes(q)) {
       addResult('mirror', mq.meditation.slice(0, 120), 'Méditation')
     }
   }
@@ -112,7 +119,7 @@ function searchChapter(chapter: Chapter, query: string): SearchResult[] {
   // Coherence points
   if (chapter.coherencePoints) {
     for (const cp of chapter.coherencePoints) {
-      if (cp.toLowerCase().includes(q)) {
+      if (normalizeForSearch(cp).includes(q)) {
         addResult('coherence', cp.slice(0, 120), 'Point de cohérence')
       }
     }
@@ -121,7 +128,7 @@ function searchChapter(chapter: Chapter, query: string): SearchResult[] {
   // Bullet points
   if (chapter.bulletPoints) {
     for (const bp of chapter.bulletPoints) {
-      if (bp.toLowerCase().includes(q)) {
+      if (normalizeForSearch(bp).includes(q)) {
         addResult('bullet', bp.slice(0, 120), 'Point clé')
       }
     }
@@ -130,7 +137,7 @@ function searchChapter(chapter: Chapter, query: string): SearchResult[] {
   // Callouts
   if (chapter.callouts) {
     for (const c of chapter.callouts) {
-      if (c.title.toLowerCase().includes(q) || c.content.toLowerCase().includes(q)) {
+      if (normalizeForSearch(c.title).includes(q) || normalizeForSearch(c.content).includes(q)) {
         addResult('callout', `${c.title}: ${c.content.slice(0, 80)}`, `Encadré ${c.type}`)
       }
     }
@@ -139,7 +146,7 @@ function searchChapter(chapter: Chapter, query: string): SearchResult[] {
   // Treasures
   if (chapter.treasuresList) {
     for (const t of chapter.treasuresList) {
-      if (t.toLowerCase().includes(q)) {
+      if (normalizeForSearch(t).includes(q)) {
         addResult('treasure', t.slice(0, 120), 'Trésor')
       }
     }
@@ -148,7 +155,7 @@ function searchChapter(chapter: Chapter, query: string): SearchResult[] {
   // Metaphor table
   if (chapter.metaphorTable) {
     for (const m of chapter.metaphorTable) {
-      if (m.element.toLowerCase().includes(q) || m.metaphor.toLowerCase().includes(q) || m.interpretation.toLowerCase().includes(q)) {
+      if (normalizeForSearch(m.element).includes(q) || normalizeForSearch(m.metaphor).includes(q) || normalizeForSearch(m.interpretation).includes(q)) {
         addResult('metaphor', `${m.element} → ${m.metaphor}`, 'Métaphore')
       }
     }
@@ -156,14 +163,14 @@ function searchChapter(chapter: Chapter, query: string): SearchResult[] {
 
   // Munajat prompts
   for (const mp of chapter.munajatPrompts) {
-    if (mp.toLowerCase().includes(q)) {
+    if (normalizeForSearch(mp).includes(q)) {
       addResult('munajat', mp, 'Munajat')
     }
   }
 
   // Exercises
   for (const ex of chapter.exercises) {
-    if (ex.question.toLowerCase().includes(q)) {
+    if (normalizeForSearch(ex.question).includes(q)) {
       addResult('exercise', ex.question.slice(0, 120), 'Exercice')
     }
   }
@@ -171,7 +178,7 @@ function searchChapter(chapter: Chapter, query: string): SearchResult[] {
   // Extra sections
   if (chapter.extraSections) {
     for (const es of chapter.extraSections) {
-      if (es.title.toLowerCase().includes(q) || es.translation.toLowerCase().includes(q) || es.commentary.toLowerCase().includes(q)) {
+      if (normalizeForSearch(es.title).includes(q) || normalizeForSearch(es.translation).includes(q) || normalizeForSearch(es.commentary).includes(q)) {
         addResult('extra', `${es.title}: ${es.translation.slice(0, 80)}`, 'Section supplémentaire')
       }
     }
@@ -181,7 +188,7 @@ function searchChapter(chapter: Chapter, query: string): SearchResult[] {
   if (chapter.comparisonTable) {
     for (const row of chapter.comparisonTable.rows) {
       for (const cell of row) {
-        if (cell.toLowerCase().includes(q)) {
+        if (normalizeForSearch(cell).includes(q)) {
           addResult('translation', cell.slice(0, 120), `Table: ${chapter.comparisonTable!.headers[0]}`)
           break
         }
@@ -203,17 +210,39 @@ const fadeUp = {
 
 function highlightMatch(text: string, query: string): React.ReactNode {
   if (!query.trim()) return text
-  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi')
-  const parts = text.split(regex)
-  return parts.map((part, i) =>
-    regex.test(part) ? (
-      <mark key={i} className="bg-amber-200/60 dark:bg-amber-800/40 rounded px-0.5">
-        {part}
+  // Use normalized version for matching to handle accents
+  const normalizedText = normalizeForSearch(text)
+  const normalizedQuery = normalizeForSearch(query)
+  const regex = new RegExp(`(${normalizedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi')
+  
+  // Build result by matching on normalized text but slicing from original
+  const parts: React.ReactNode[] = []
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+  
+  // Reset regex
+  const searchRegex = new RegExp(normalizedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi')
+  
+  while ((match = searchRegex.exec(normalizedText)) !== null) {
+    const start = match.index
+    const end = start + match[0].length
+    
+    if (start > lastIndex) {
+      parts.push(text.slice(lastIndex, start))
+    }
+    parts.push(
+      <mark key={start} className="bg-amber-200/60 dark:bg-amber-800/40 rounded px-0.5">
+        {text.slice(start, end)}
       </mark>
-    ) : (
-      part
     )
-  )
+    lastIndex = end
+  }
+  
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex))
+  }
+  
+  return parts.length > 0 ? <>{parts}</> : text
 }
 
 export function SearchView() {
