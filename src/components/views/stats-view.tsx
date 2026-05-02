@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useCallback, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useAppStore } from '@/store/use-app-store'
 import { allChapters, siteContent } from '@/data/chapters'
@@ -17,6 +17,9 @@ import {
   TrendingUp,
   Award,
   Activity,
+  Download,
+  Heart,
+  Star,
 } from 'lucide-react'
 
 const fadeUp = {
@@ -50,6 +53,8 @@ export function StatsView() {
   const longestStreak = useAppStore((s) => s.longestStreak)
   const activityLog = useAppStore((s) => s.activityLog)
   const getProgressPercentage = useAppStore((s) => s.getProgressPercentage)
+  const bookmarks = useAppStore((s) => s.bookmarks)
+  const [exported, setExported] = useState(false)
 
   const progressPercent = getProgressPercentage()
 
@@ -78,7 +83,7 @@ export function StatsView() {
     return Math.round(totalMinutes / completedChapters.length)
   }, [totalMinutes, completedChapters])
 
-  // Chapters completion by part
+  // Chapters completion by part — with detailed breakdown
   const partStats = useMemo(() => {
     const parts = siteContent.parts
     return parts.map((part) => {
@@ -96,7 +101,7 @@ export function StatsView() {
     })
   }, [completedChapters])
 
-  // Most-read chapters (completed ones, sorted by most recent)
+  // Most-read chapters (completed ones, sorted by most recent) — Favorites
   const mostReadChapters = useMemo(() => {
     return completedChapters
       .slice()
@@ -105,11 +110,43 @@ export function StatsView() {
       .map((cc) => {
         const chapter = allChapters.find((c) => c.id === cc.chapterId)
         return chapter
-          ? { id: chapter.id, number: chapter.number, title: chapter.title, completedAt: cc.completedAt }
+          ? { id: chapter.id, number: chapter.number, title: chapter.title, part: chapter.part, completedAt: cc.completedAt }
           : null
       })
       .filter(Boolean)
   }, [completedChapters])
+
+  // Favorite chapters (most bookmarked/visited)
+  const favoriteChapters = useMemo(() => {
+    // Combine bookmarks + completed chapters to find favorites
+    const chapterScores: Record<string, { id: string; number: string; title: string; part: string; score: number }> = {}
+
+    // Bookmarks add score
+    for (const b of bookmarks) {
+      const chapter = allChapters.find((c) => c.id === b.chapterId)
+      if (chapter) {
+        if (!chapterScores[chapter.id]) {
+          chapterScores[chapter.id] = { id: chapter.id, number: chapter.number, title: chapter.title, part: chapter.part, score: 0 }
+        }
+        chapterScores[chapter.id].score += 2
+      }
+    }
+
+    // Completed chapters add score
+    for (const cc of completedChapters) {
+      const chapter = allChapters.find((c) => c.id === cc.chapterId)
+      if (chapter) {
+        if (!chapterScores[chapter.id]) {
+          chapterScores[chapter.id] = { id: chapter.id, number: chapter.number, title: chapter.title, part: chapter.part, score: 0 }
+        }
+        chapterScores[chapter.id].score += 1
+      }
+    }
+
+    return Object.values(chapterScores)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5)
+  }, [bookmarks, completedChapters])
 
   // Activity heatmap for last 16 weeks (112 days)
   const heatmapData = useMemo(() => {
@@ -177,8 +214,78 @@ export function StatsView() {
     return months
   }, [activityLog])
 
+  // Reading pace: chapters per week over time
+  const readingPace = useMemo(() => {
+    if (completedChapters.length === 0) return { current: 0, average: 0, trend: 'stable' as string }
+    // Current week pace
+    const today = new Date()
+    const weekStart = new Date(today)
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay())
+    const thisWeek = completedChapters.filter(cc => cc.completedAt >= weekStart.getTime()).length
+
+    // Average pace
+    const firstCompleted = completedChapters.length > 0
+      ? completedChapters.reduce((min, cc) => Math.min(min, cc.completedAt), Infinity)
+      : Date.now()
+    const weeksSinceStart = Math.max(1, Math.ceil((Date.now() - firstCompleted) / (7 * 24 * 60 * 60 * 1000)))
+    const average = completedChapters.length / weeksSinceStart
+
+    // Trend
+    const lastWeekStart = new Date(weekStart)
+    lastWeekStart.setDate(lastWeekStart.getDate() - 7)
+    const lastWeek = completedChapters.filter(cc =>
+      cc.completedAt >= lastWeekStart.getTime() && cc.completedAt < weekStart.getTime()
+    ).length
+
+    const trend = thisWeek > lastWeek ? 'en hausse' : thisWeek < lastWeek ? 'en baisse' : 'stable'
+
+    return { current: thisWeek, average: Math.round(average * 10) / 10, trend }
+  }, [completedChapters])
+
   const maxWeeklyCount = Math.max(...weeklyActivity.map((w) => w.count), 1)
   const maxMonthlyCount = Math.max(...monthlyActivity.map((m) => m.count), 1)
+
+  // Export stats as text
+  const handleExport = useCallback(() => {
+    const lines: string[] = []
+    lines.push("═══════════════════════════════════════════")
+    lines.push("  L'Alchimie du Miroir — Statistiques")
+    lines.push("═══════════════════════════════════════════")
+    lines.push("")
+    lines.push(`Progression : ${progressPercent}% (${completedChapters.length}/24 chapitres)`)
+    lines.push(`Temps de méditation : ${formatTime(totalMinutes)}`)
+    lines.push(`Série actuelle : ${currentStreak} jour${currentStreak > 1 ? 's' : ''}`)
+    lines.push(`Meilleure série : ${longestStreak} jour${longestStreak > 1 ? 's' : ''}`)
+    lines.push(`Jours actifs : ${activityLog.length}`)
+    lines.push(`Rythme de lecture : ${readingPace.average} chapitres/semaine (${readingPace.trend})`)
+    lines.push("")
+    lines.push("Complétion par partie :")
+    for (const part of partStats) {
+      lines.push(`  Partie ${part.letter} (${part.title}) : ${part.completed}/${part.total} chapitres (${part.percentage}%)`)
+    }
+    lines.push("")
+    if (favoriteChapters.length > 0) {
+      lines.push("Chapitres favoris :")
+      for (const fav of favoriteChapters) {
+        lines.push(`  ${fav.number} — ${fav.title}`)
+      }
+    }
+    lines.push("")
+    lines.push("═══════════════════════════════════════════")
+    lines.push(`Exporté le ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}`)
+    lines.push("═══════════════════════════════════════════")
+
+    const text = lines.join('\n')
+    const blob = new Blob([text], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `alchimie-stats-${new Date().toISOString().slice(0, 10)}.txt`
+    a.click()
+    URL.revokeObjectURL(url)
+    setExported(true)
+    setTimeout(() => setExported(false), 2000)
+  }, [progressPercent, completedChapters, totalMinutes, currentStreak, longestStreak, activityLog, readingPace, partStats, favoriteChapters])
 
   let sectionIndex = 0
 
@@ -232,8 +339,8 @@ export function StatsView() {
           <div className="absolute inset-0 bg-gradient-to-br from-violet-50/80 to-violet-100/30 dark:from-violet-950/30 dark:to-transparent pointer-events-none" />
           <CardContent className="pt-4 pb-4 text-center relative">
             <TrendingUp className="h-5 w-5 mx-auto mb-1.5 text-violet-500" />
-            <p className="text-2xl font-bold">{avgSessionTime > 0 ? `${avgSessionTime}min` : '—'}</p>
-            <p className="text-[11px] text-muted-foreground">Session moy.</p>
+            <p className="text-2xl font-bold">{readingPace.average > 0 ? `${readingPace.average}` : '—'}</p>
+            <p className="text-[11px] text-muted-foreground">Chap./semaine</p>
           </CardContent>
         </Card>
         <Card className="border-rose-200/50 dark:border-rose-800/30 shadow-sm overflow-hidden relative">
@@ -242,6 +349,36 @@ export function StatsView() {
             <Award className="h-5 w-5 mx-auto mb-1.5 text-rose-500" />
             <p className="text-2xl font-bold">{progressPercent}%</p>
             <p className="text-[11px] text-muted-foreground">Complétion</p>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Reading pace indicator */}
+      <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+        <Card className="border-amber-200/50 dark:border-amber-800/30">
+          <CardContent className="pt-4 pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-amber-100 dark:bg-amber-900/30">
+                  <TrendingUp className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">Rythme de lecture</p>
+                  <p className="text-xs text-muted-foreground">
+                    {readingPace.current} chapitre{readingPace.current > 1 ? 's' : ''} cette semaine · Tendance {readingPace.trend}
+                  </p>
+                </div>
+              </div>
+              <Badge className={`text-[10px] border-0 ${
+                readingPace.trend === 'en hausse'
+                  ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+                  : readingPace.trend === 'en baisse'
+                    ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300'
+                    : 'bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300'
+              }`}>
+                {readingPace.trend === 'en hausse' ? '↑ Hausse' : readingPace.trend === 'en baisse' ? '↓ Baisse' : '→ Stable'}
+              </Badge>
+            </div>
           </CardContent>
         </Card>
       </motion.div>
@@ -269,7 +406,6 @@ export function StatsView() {
               {/* Heatmap grid: 16 weeks x 7 days */}
               <div className="flex gap-0.5 flex-wrap">
                 {(() => {
-                  // Arrange in 7-row x 16-col grid
                   const rows: React.ReactNode[] = []
                   for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
                     const cells: React.ReactNode[] = []
@@ -321,7 +457,7 @@ export function StatsView() {
         </Card>
       </motion.div>
 
-      {/* Chapters completion by part */}
+      {/* Part completion breakdown */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
         <Card className="border-amber-200/50 dark:border-amber-800/30">
           <CardHeader className="pb-2">
@@ -358,7 +494,7 @@ export function StatsView() {
                       <span className="text-sm font-medium">{part.title}</span>
                     </div>
                     <span className="text-xs text-muted-foreground">
-                      {part.completed}/{part.total} chapitres
+                      {part.completed}/{part.total} chapitres ({part.percentage}%)
                     </span>
                   </div>
                   <div className={`h-3 rounded-full ${partBgMap[part.letter]} overflow-hidden`}>
@@ -442,6 +578,57 @@ export function StatsView() {
         </Card>
       </motion.div>
 
+      {/* Favorite chapters */}
+      <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+        <Card className="border-amber-200/50 dark:border-amber-800/30">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Heart className="h-5 w-5 text-rose-500" />
+              Chapitres favoris
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">Basé sur vos favoris et lectures</p>
+          </CardHeader>
+          <CardContent>
+            {favoriteChapters.length > 0 ? (
+              <div className="space-y-2">
+                {favoriteChapters.map((ch, idx) => {
+                  if (!ch) return null
+                  const partColorMap: Record<string, string> = {
+                    A: 'text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/30',
+                    B: 'text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/30',
+                    C: 'text-violet-700 dark:text-violet-300 bg-violet-100 dark:bg-violet-950/30',
+                  }
+                  return (
+                    <button
+                      key={ch.id}
+                      onClick={() => navigate('chapter', ch.id)}
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 w-full text-left hover:bg-amber-50/50 dark:hover:bg-amber-950/10 transition-colors"
+                    >
+                      <span className="text-sm font-bold text-rose-500 dark:text-rose-400 w-6 text-center">
+                        {idx === 0 ? '❤️' : idx + 1}
+                      </span>
+                      <Badge className={`text-[10px] border-0 ${partColorMap[ch.part] || partColorMap.A}`}>
+                        {ch.number}
+                      </Badge>
+                      <span className="text-sm flex-1 truncate">{ch.title}</span>
+                      <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                        <Star className="h-3 w-3 text-amber-400" />
+                        {ch.score}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-muted-foreground text-sm">Aucun favori pour le moment</p>
+                <p className="text-muted-foreground/60 text-xs mt-1">Ajoutez des signets ou complétez des chapitres</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
+
       {/* Most-read chapters */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
         <Card className="border-amber-200/50 dark:border-amber-800/30">
@@ -457,9 +644,10 @@ export function StatsView() {
                 {mostReadChapters.map((ch, idx) => {
                   if (!ch) return null
                   return (
-                    <div
+                    <button
                       key={ch.id}
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-amber-50/50 dark:hover:bg-amber-950/10 transition-colors"
+                      onClick={() => navigate('chapter', ch.id)}
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 w-full text-left hover:bg-amber-50/50 dark:hover:bg-amber-950/10 transition-colors"
                     >
                       <span className="text-sm font-bold text-amber-500 dark:text-amber-400 w-6 text-center">
                         {idx + 1}
@@ -471,7 +659,7 @@ export function StatsView() {
                       <span className="text-[10px] text-muted-foreground">
                         {new Date(ch.completedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                       </span>
-                    </div>
+                    </button>
                   )
                 })}
               </div>
@@ -503,12 +691,24 @@ export function StatsView() {
                 <p className="text-xs text-muted-foreground">Jours actifs</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-rose-600 dark:text-rose-400">{17 - completedChapters.length}</p>
+                <p className="text-2xl font-bold text-rose-600 dark:text-rose-400">{24 - completedChapters.length}</p>
                 <p className="text-xs text-muted-foreground">Chapitres restants</p>
               </div>
             </div>
           </CardContent>
         </Card>
+      </motion.div>
+
+      {/* Export button */}
+      <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="flex justify-center">
+        <Button
+          onClick={handleExport}
+          variant="outline"
+          className="gap-2 border-amber-300/50 dark:border-amber-700/30 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20"
+        >
+          <Download className="h-4 w-4" />
+          {exported ? 'Exporté ✓' : 'Exporter les statistiques'}
+        </Button>
       </motion.div>
     </div>
   )

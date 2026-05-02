@@ -10,9 +10,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import type { PartType } from '@/components/chapter/verse-display'
 
 interface VerseAudioPlayerProps {
   arabicText: string
+  part?: PartType
 }
 
 type PlaybackSpeed = 0.5 | 0.75 | 1 | 1.25 | 1.5
@@ -24,7 +26,70 @@ const REPEAT_CYCLE: RepeatCount[] = [1, 3, 7]
 // Waveform bar count
 const WAVEFORM_BARS = 24
 
-export function VerseAudioPlayer({ arabicText }: VerseAudioPlayerProps) {
+// Resolve part key for color mappings
+function partKey(part?: PartType): 'A' | 'B' | 'C' {
+  if (part === 'B') return 'B'
+  if (part === 'C') return 'C'
+  return 'A'
+}
+
+// Part-aware waveform active bar colors
+const partWaveActive: Record<string, string> = {
+  A: 'bg-amber-500 dark:bg-amber-400',
+  B: 'bg-emerald-500 dark:bg-emerald-400',
+  C: 'bg-violet-500 dark:bg-violet-400',
+}
+
+// Part-aware waveform past bar colors
+const partWavePast: Record<string, string> = {
+  A: 'bg-amber-400/60 dark:bg-amber-500/40',
+  B: 'bg-emerald-400/60 dark:bg-emerald-500/40',
+  C: 'bg-violet-400/60 dark:bg-violet-500/40',
+}
+
+// Part-aware play button glow
+const partPlayGlow: Record<string, string> = {
+  A: 'bg-amber-400/20 dark:bg-amber-500/15',
+  B: 'bg-emerald-400/20 dark:bg-emerald-500/15',
+  C: 'bg-violet-400/20 dark:bg-violet-500/15',
+}
+
+// Part-aware play button color
+const partPlayBtn: Record<string, string> = {
+  A: 'text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30',
+  B: 'text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/30',
+  C: 'text-violet-600 hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300 hover:bg-violet-50 dark:hover:bg-violet-950/30',
+}
+
+// Part-aware progress bar fill
+const partProgressFill: Record<string, string> = {
+  A: 'bg-amber-500 dark:bg-amber-400',
+  B: 'bg-emerald-500 dark:bg-emerald-400',
+  C: 'bg-violet-500 dark:bg-violet-400',
+}
+
+// Part-aware speed/repeat control active colors
+const partControlActive: Record<string, string> = {
+  A: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-950/50',
+  B: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 hover:bg-emerald-100 dark:hover:bg-emerald-950/50',
+  C: 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/30 hover:bg-violet-100 dark:hover:bg-violet-950/50',
+}
+
+// Part-aware speed/repeat control inactive hover colors
+const partControlHover: Record<string, string> = {
+  A: 'hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30',
+  B: 'hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30',
+  C: 'hover:text-violet-600 dark:hover:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-950/30',
+}
+
+// Part-aware repeat progress text
+const partRepeatText: Record<string, string> = {
+  A: 'text-amber-600 dark:text-amber-400',
+  B: 'text-emerald-600 dark:text-emerald-400',
+  C: 'text-violet-600 dark:text-violet-400',
+}
+
+export function VerseAudioPlayer({ arabicText, part }: VerseAudioPlayerProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
@@ -34,6 +99,8 @@ export function VerseAudioPlayer({ arabicText }: VerseAudioPlayerProps) {
   const [progress, setProgress] = useState(0)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const pk = partKey(part)
 
   // Generate deterministic waveform bar heights based on text
   const waveformHeights = useMemo(() => {
@@ -221,9 +288,9 @@ export function VerseAudioPlayer({ arabicText }: VerseAudioPlayerProps) {
               <motion.div
                 className={`absolute bottom-0 w-full rounded-sm ${
                   isActive
-                    ? 'bg-amber-500 dark:bg-amber-400'
+                    ? partWaveActive[pk]
                     : isPast
-                      ? 'bg-amber-400/60 dark:bg-amber-500/40'
+                      ? partWavePast[pk]
                       : 'bg-stone-200 dark:bg-stone-700'
                 }`}
                 style={{ height: `${heightPct}%` }}
@@ -252,7 +319,7 @@ export function VerseAudioPlayer({ arabicText }: VerseAudioPlayerProps) {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1.2 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="absolute inset-0 rounded-lg bg-amber-400/20 dark:bg-amber-500/15 blur-md"
+                className={`absolute inset-0 rounded-lg ${partPlayGlow[pk]} blur-md`}
                 transition={{ duration: 1.5, repeat: Infinity, repeatType: 'reverse' }}
               />
             )}
@@ -263,7 +330,7 @@ export function VerseAudioPlayer({ arabicText }: VerseAudioPlayerProps) {
             size="sm"
             onClick={handleToggle}
             disabled={isLoading}
-            className="relative h-9 w-9 p-0 rounded-lg text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30"
+            className={`relative h-9 w-9 p-0 rounded-lg ${partPlayBtn[pk]}`}
             aria-label={isPlaying ? 'Pause' : 'Écouter le verset'}
           >
             <AnimatePresence mode="wait">
@@ -302,14 +369,14 @@ export function VerseAudioPlayer({ arabicText }: VerseAudioPlayerProps) {
         {/* Progress bar */}
         <div className="flex-1 h-1.5 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden min-w-[60px]">
           <motion.div
-            className="h-full bg-amber-500 dark:bg-amber-400 rounded-full"
+            className={`h-full ${partProgressFill[pk]} rounded-full`}
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.15, ease: 'linear' }}
           />
         </div>
 
-        {/* Speed control - enhanced with more options */}
+        {/* Speed control */}
         <TooltipProvider delayDuration={200}>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -319,8 +386,8 @@ export function VerseAudioPlayer({ arabicText }: VerseAudioPlayerProps) {
                 onClick={cycleSpeed}
                 className={`h-7 min-w-[2.5rem] px-1.5 text-[10px] font-mono font-bold rounded ${
                   playbackSpeed !== 1
-                    ? 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-950/50'
-                    : 'text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30'
+                    ? partControlActive[pk]
+                    : `text-stone-500 dark:text-stone-400 ${partControlHover[pk]}`
                 }`}
                 aria-label={`Vitesse de lecture: ${playbackSpeed}x`}
               >
@@ -343,8 +410,8 @@ export function VerseAudioPlayer({ arabicText }: VerseAudioPlayerProps) {
                 onClick={cycleRepeat}
                 className={`h-7 min-w-[2.25rem] px-1.5 text-[10px] font-bold rounded ${
                   repeatCount > 1
-                    ? 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-950/50'
-                    : 'text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30'
+                    ? partControlActive[pk]
+                    : `text-stone-500 dark:text-stone-400 ${partControlHover[pk]}`
                 }`}
                 aria-label={`Répétition: ${repeatCount} fois`}
               >
@@ -360,7 +427,7 @@ export function VerseAudioPlayer({ arabicText }: VerseAudioPlayerProps) {
 
         {/* Repeat progress indicator */}
         {isPlaying && repeatCount > 1 && (
-          <span className="text-[9px] text-amber-600 dark:text-amber-400 font-medium tabular-nums">
+          <span className={`text-[9px] ${partRepeatText[pk]} font-medium tabular-nums`}>
             {currentRepeat + 1}/{repeatCount}
           </span>
         )}

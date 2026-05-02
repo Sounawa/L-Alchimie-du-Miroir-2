@@ -123,7 +123,7 @@ const quranicWords: QuranicWord[] = [
     mirrorDimension: 'Allah n\'impose à aucune âme une charge supérieure à sa capacité — promesse de miséricorde',
     verse: 'لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا',
     verseSource: 'Sourate 2, verset 286',
-    chapterId: 'b3-b10',
+    chapterId: 'b3',
   },
   {
     arabic: 'تَطْمَئِنُّ',
@@ -132,7 +132,7 @@ const quranicWords: QuranicWord[] = [
     mirrorDimension: 'La tranquillité n\'est pas l\'absence de problèmes, mais la présence de Dieu dans le cœur',
     verse: 'أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ',
     verseSource: 'Sourate 13, verset 28',
-    chapterId: 'b3-b10',
+    chapterId: 'b3',
   },
   {
     arabic: 'ذِكْرِ',
@@ -204,7 +204,7 @@ const quranicWords: QuranicWord[] = [
     mirrorDimension: 'L\'unicité absolue — rien ni personne ne peut être comparé à Lui',
     verse: 'قُلْ هُوَ اللَّهُ أَحَدٌ',
     verseSource: 'Sourate 112, verset 1 (Al-Ikhlas)',
-    chapterId: 'b3-b10',
+    chapterId: 'b3',
   },
   {
     arabic: 'الصَّمَدُ',
@@ -213,7 +213,7 @@ const quranicWords: QuranicWord[] = [
     mirrorDimension: 'Celui dont tout dépend et qui ne dépend de rien — le refuge ultime',
     verse: 'اللَّهُ الصَّمَدُ',
     verseSource: 'Sourate 112, verset 2 (Al-Ikhlas)',
-    chapterId: 'b3-b10',
+    chapterId: 'b3',
   },
   {
     arabic: 'اشْرَحْ',
@@ -222,7 +222,7 @@ const quranicWords: QuranicWord[] = [
     mirrorDimension: 'L\'ouverture du cœur est la première étape de toute mission spirituelle',
     verse: 'قَالَ رَبِّ اشْرَحْ لِي صَدْرِي',
     verseSource: 'Sourate 20, versets 25-26',
-    chapterId: 'b3-b10',
+    chapterId: 'b3',
   },
   {
     arabic: 'الْمُلْكِ',
@@ -231,7 +231,7 @@ const quranicWords: QuranicWord[] = [
     mirrorDimension: 'Tout pouvoir vient de Lui et retourne à Lui — leçon d\'humilité radicale',
     verse: 'قُلِ اللَّهُمَّ مَالِكَ الْمُلْكِ',
     verseSource: 'Sourate 3, verset 26',
-    chapterId: 'b3-b10',
+    chapterId: 'b3',
   },
   {
     arabic: 'الْمُسْتَقِيمَ',

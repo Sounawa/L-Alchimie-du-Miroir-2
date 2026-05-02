@@ -26,6 +26,9 @@ import {
   MinusCircle,
   ArrowLeft,
   Lightbulb,
+  Link2,
+  MessageCircle,
+  BookMarked,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -108,6 +111,69 @@ function compareSets(left: string[], right: string[]): { match: string[]; leftOn
   const leftOnly = left.filter((t, i) => !rightLower.includes(leftLower[i]));
   const rightOnly = right.filter((t, i) => !leftLower.includes(rightLower[i]));
   return { match, leftOnly, rightOnly };
+}
+
+/** Find connections between two chapters */
+function findConnections(left: Chapter, right: Chapter): { type: string; description: string; icon: typeof Link2 }[] {
+  const connections: { type: string; description: string; icon: typeof Link2 }[] = [];
+
+  // Same part connection
+  if (left.part === right.part) {
+    const partName = left.part === 'A' ? 'Al-Fatiha' : left.part === 'B' ? 'Trésors du Coran' : 'Niveaux de lecture';
+    connections.push({
+      type: 'Même partie',
+      description: `Les deux chapitres appartiennent à la Partie ${left.part} — ${partName}, partageant le même cadre spirituel.`,
+      icon: BookMarked,
+    });
+  } else {
+    connections.push({
+      type: 'Pont inter-parties',
+      description: `Ces chapitres relient la Partie ${left.part} et la Partie ${right.part}, créant un pont entre différents niveaux de méditation.`,
+      icon: Link2,
+    });
+  }
+
+  // Munajat themes overlap
+  const leftMunajat = left.munajatPrompts.join(' ').toLowerCase();
+  const rightMunajat = right.munajatPrompts.join(' ').toLowerCase();
+  const spiritualKeywords = ['miséricorde', 'lumière', 'cœur', 'guide', 'prière', 'chemin', 'foi', 'gratitude', 'pardon'];
+  const sharedKeywords = spiritualKeywords.filter(k => leftMunajat.includes(k) && rightMunajat.includes(k));
+  if (sharedKeywords.length > 0) {
+    connections.push({
+      type: 'Thèmes de prière partagés',
+      description: `Les munajat des deux chapitres partagent les thèmes : ${sharedKeywords.join(', ')}.`,
+      icon: MessageCircle,
+    });
+  }
+
+  // Timer similarity
+  if (left.timerMinutes === right.timerMinutes) {
+    connections.push({
+      type: 'Durée identique',
+      description: `Les deux chapitres nécessitent ${left.timerMinutes} minutes de méditation — un rythme commun.`,
+      icon: Link2,
+    });
+  }
+
+  // Both have treasures
+  if ((left.treasuresList?.length ?? 0) > 0 && (right.treasuresList?.length ?? 0) > 0) {
+    connections.push({
+      type: 'Trésors spirituels',
+      description: 'Les deux chapitres contiennent des listes de trésors spirituels à contempler.',
+      icon: Sparkles,
+    });
+  }
+
+  // Both have metaphors
+  if ((left.metaphorTable?.length ?? 0) > 0 && (right.metaphorTable?.length ?? 0) > 0) {
+    connections.push({
+      type: 'Richesse métaphorique',
+      description: 'Les deux chapitres utilisent des métaphores pour illustrer les réalités spirituelles.',
+      icon: Eye,
+    });
+  }
+
+  return connections;
 }
 
 interface ComparisonIndicatorProps {
@@ -323,6 +389,23 @@ export function ChapterComparison() {
     };
   }, [leftChapter, rightChapter]);
 
+  // Connections between chapters
+  const connections = useMemo(() => {
+    if (!leftChapter || !rightChapter) return [];
+    return findConnections(leftChapter, rightChapter);
+  }, [leftChapter, rightChapter]);
+
+  // Similarity score
+  const similarityScore = useMemo(() => {
+    if (!themeComparison || !vocabComparison) return 0;
+    const themeTotal = themeComparison.match.length + themeComparison.leftOnly.length + themeComparison.rightOnly.length;
+    const vocabTotal = vocabComparison.match.length + vocabComparison.leftOnly.length + vocabComparison.rightOnly.length;
+    const totalItems = themeTotal + vocabTotal;
+    if (totalItems === 0) return 0;
+    const matchItems = themeComparison.match.length + vocabComparison.match.length;
+    return Math.round((matchItems / totalItems) * 100);
+  }, [themeComparison, vocabComparison]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50/50 via-stone-50 to-stone-100 dark:from-stone-950 dark:via-stone-900 dark:to-stone-950">
       <motion.div
@@ -402,6 +485,29 @@ export function ChapterComparison() {
           </div>
         </motion.div>
 
+        {/* Similarity score */}
+        {leftChapter && rightChapter && (
+          <motion.div variants={fadeIn} className="mb-6">
+            <div className="flex items-center justify-center gap-3">
+              <div className="flex items-center gap-2 rounded-full border border-amber-300/40 dark:border-amber-700/30 bg-amber-50/60 dark:bg-amber-950/20 px-4 py-2">
+                <Link2 className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+                <span className="text-xs font-medium text-stone-600 dark:text-stone-300/80">
+                  Affinité spirituelle
+                </span>
+                <span className={`text-sm font-bold ${
+                  similarityScore >= 50
+                    ? 'text-emerald-600 dark:text-emerald-400'
+                    : similarityScore > 0
+                      ? 'text-amber-600 dark:text-amber-400'
+                      : 'text-stone-400 dark:text-stone-500'
+                }`}>
+                  {similarityScore}%
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Side-by-side comparison */}
         {leftChapter && rightChapter && (
           <>
@@ -419,6 +525,42 @@ export function ChapterComparison() {
                 </Card>
               </div>
             </motion.div>
+
+            {/* Connections between chapters */}
+            {connections.length > 0 && (
+              <motion.div variants={fadeIn} className="mb-6">
+                <Card className="border-amber-300/40 dark:border-amber-700/20 overflow-hidden">
+                  <div className="bg-gradient-to-r from-amber-50/80 via-amber-100/40 to-amber-50/80 dark:from-amber-950/20 dark:via-amber-900/10 dark:to-amber-950/20 p-4">
+                    <div className="flex items-center gap-2">
+                      <Link2 className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+                      <h4 className="font-semibold text-stone-700 dark:text-stone-200">
+                        Connexions entre les chapitres
+                      </h4>
+                    </div>
+                  </div>
+                  <CardContent className="p-4 space-y-3">
+                    {connections.map((conn, idx) => {
+                      const Icon = conn.icon;
+                      return (
+                        <div key={idx} className="flex items-start gap-3 rounded-lg bg-stone-50 dark:bg-stone-800/30 px-3 py-2.5">
+                          <div className="flex items-center justify-center h-6 w-6 rounded-full bg-amber-100 dark:bg-amber-900/30 shrink-0 mt-0.5">
+                            <Icon className="h-3 w-3 text-amber-600 dark:text-amber-400" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-semibold text-stone-700 dark:text-stone-200/80">
+                              {conn.type}
+                            </p>
+                            <p className="text-[11px] text-stone-500 dark:text-stone-400/70 leading-relaxed mt-0.5">
+                              {conn.description}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
 
             {/* Comparison analysis cards */}
             <motion.div variants={fadeIn} className="space-y-4 mb-8">

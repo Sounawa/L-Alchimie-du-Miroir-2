@@ -36,12 +36,12 @@ const partDividerLine: Record<string, string> = {
   C: 'via-violet-300/30 to-violet-400/50 dark:via-violet-600/20 dark:to-violet-600/30',
 }
 
-// Decorative divider component — part-aware
+// Decorative divider component — part-aware with pulsing gradient
 function DecorativeDivider({ part = 'A' }: { part?: string }) {
   const line = partDividerLine[part] || partDividerLine.A
   const ornament = partOrnamentColor[part] || partOrnamentColor.A
   return (
-    <div className="flex items-center justify-center gap-3 my-6">
+    <div className="flex items-center justify-center gap-3 my-6 divider-pulse-animate">
       <span className={`h-px flex-1 bg-gradient-to-r from-transparent ${line}`} />
       <span className={`${ornament} text-xs tracking-[0.3em] select-none`}>✦</span>
       <span className={`h-px flex-1 bg-gradient-to-l from-transparent ${line}`} />
@@ -156,7 +156,7 @@ const sevenLevels = [
   { id: 'c7', name: 'Tajalli', label: 'Révélation', description: 'La lumière qui se dévoile — Illumination spirituelle et transformation', icon: Sun, metaphor: 'L\'huile pure qui illumine' },
 ] as const
 
-// Animated section wrapper using framer-motion useInView
+// Animated section wrapper using framer-motion useInView — enhanced with slide transition
 function AnimatedSection({ children, className, id }: { children: React.ReactNode; className?: string; id?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-50px' })
@@ -166,9 +166,9 @@ function AnimatedSection({ children, className, id }: { children: React.ReactNod
       ref={ref}
       id={id}
       className={className}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
+      initial={{ opacity: 0, y: 20, x: -4 }}
+      animate={isInView ? { opacity: 1, y: 0, x: 0 } : { opacity: 0, y: 20, x: -4 }}
+      transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
       {children}
     </motion.div>
@@ -487,6 +487,7 @@ export function ChapterView() {
   const [showTocDropdown, setShowTocDropdown] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [activeSection, setActiveSection] = useState<string>('')
 
   useEffect(() => {
     const handleScroll = () => {
@@ -496,10 +497,24 @@ export function ChapterView() {
       const docHeight = document.documentElement.scrollHeight - window.innerHeight
       const progress = docHeight > 0 ? Math.min(window.scrollY / docHeight, 1) : 0
       setScrollProgress(progress)
+
+      // Determine active section based on scroll position
+      const sectionIds = sectionsList.map((s) => s.id)
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sectionIds[i])
+        if (el) {
+          const rect = el.getBoundingClientRect()
+          if (rect.top <= 120) {
+            const section = sectionsList.find((s) => s.id === sectionIds[i])
+            setActiveSection(section?.label || '')
+            break
+          }
+        }
+      }
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [sectionsList])
 
   // Find prev/next chapters
   const { prevChapter, nextChapter } = useMemo(() => {
@@ -575,6 +590,21 @@ export function ChapterView() {
                 {chapter.number}
               </Badge>
               <span className="truncate text-sm font-medium">{chapter.title}</span>
+              {/* Active section indicator */}
+              <AnimatePresence mode="wait">
+                {activeSection && (
+                  <motion.span
+                    key={activeSection}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.2 }}
+                    className="hidden sm:inline text-[10px] text-muted-foreground/70 truncate max-w-32"
+                  >
+                    · {activeSection}
+                  </motion.span>
+                )}
+              </AnimatePresence>
               {/* Mini TOC dropdown toggle */}
               <div className="relative ml-auto">
                 <Button
@@ -657,7 +687,7 @@ export function ChapterView() {
         )}
       </AnimatePresence>
 
-      <div className={`max-w-3xl mx-auto px-4 md:px-8 py-6 space-y-6 scroll-smooth bg-gradient-to-b ${partBgGradient[partLetter] || partBgGradient.A} min-h-screen relative`}>
+      <div className={`max-w-3xl mx-auto px-4 md:px-8 py-6 space-y-6 scroll-smooth snap-y snap-mandatory bg-gradient-to-b ${partBgGradient[partLetter] || partBgGradient.A} min-h-screen relative`}>
         {/* Reading progress glow at bottom viewport */}
         {scrollProgress > 0.1 && (
           <div
@@ -778,6 +808,7 @@ export function ChapterView() {
               translation={chapter.translation}
               translationSource={chapter.translationSource}
               chapterTitle={`${chapter.number} — ${chapter.title}`}
+              part={partLetter as 'A' | 'B' | 'C' | 'intro' | 'appendix'}
             />
           </AnimatedSection>
         )}

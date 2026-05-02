@@ -13,7 +13,7 @@ import { DuaOfTheDay } from '@/components/shared/dua-of-the-day';
 import { StudyReminder } from '@/components/shared/study-reminder';
 import { ReflectionCard } from '@/components/shared/reflection-card';
 import { VerseOfTheDay } from '@/components/shared/verse-of-the-day';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 
 const toc = getTableOfContents();
 
@@ -72,6 +72,71 @@ const partDotColor: Record<string, string> = {
   C: 'bg-violet-500 dark:bg-violet-400',
 };
 
+// Part gradient thread color (for connecting line between chapters)
+const partThreadColor: Record<string, string> = {
+  A: 'bg-gradient-to-b from-amber-400/40 to-amber-500/20 dark:from-amber-500/30 dark:to-amber-600/10',
+  B: 'bg-gradient-to-b from-emerald-400/40 to-emerald-500/20 dark:from-emerald-500/30 dark:to-emerald-600/10',
+  C: 'bg-gradient-to-b from-violet-400/40 to-violet-500/20 dark:from-violet-500/30 dark:to-violet-600/10',
+};
+
+// Part header decorative background
+const partHeaderBg: Record<string, string> = {
+  A: 'bg-gradient-to-r from-amber-50/80 via-amber-100/40 to-amber-50/60 dark:from-amber-950/20 dark:via-amber-900/10 dark:to-amber-950/15',
+  B: 'bg-gradient-to-r from-emerald-50/80 via-emerald-100/40 to-emerald-50/60 dark:from-emerald-950/20 dark:via-emerald-900/10 dark:to-emerald-950/15',
+  C: 'bg-gradient-to-r from-violet-50/80 via-violet-100/40 to-violet-50/60 dark:from-violet-950/20 dark:via-violet-900/10 dark:to-violet-950/15',
+};
+
+// Animated counter hook
+function useAnimatedCounter(target: number, duration: number = 1000) {
+  const [count, setCount] = useState(0)
+  const [hasStarted, setHasStarted] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasStarted) {
+          setHasStarted(true)
+        }
+      },
+      { threshold: 0.5 }
+    )
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [hasStarted])
+
+  useEffect(() => {
+    if (!hasStarted) return
+    const startTime = Date.now()
+    const animate = () => {
+      const elapsed = Date.now() - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3) // ease-out cubic
+      setCount(Math.round(eased * target))
+      if (progress < 1) requestAnimationFrame(animate)
+    }
+    requestAnimationFrame(animate)
+  }, [hasStarted, target, duration])
+
+  return { count, ref }
+}
+
+// SVG Checkmark with draw animation
+function AnimatedCheckmark({ className }: { className?: string }) {
+  return (
+    <svg className={className} width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path
+        d="M3 8.5L6.5 12L13 4"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="check-draw-animate"
+      />
+    </svg>
+  )
+}
+
 // Seven Levels data for Partie C
 const tocSevenLevels = [
   { id: 'c1', name: 'Tilawa', label: 'Récitation', description: 'Déchiffrement et prononciation sacrée', icon: Star },
@@ -82,6 +147,25 @@ const tocSevenLevels = [
   { id: 'c6', name: 'Tahqiq', label: 'Vérification', description: 'Confrontation et vérité', icon: Zap },
   { id: 'c7', name: 'Tajalli', label: 'Révélation', description: 'Illumination spirituelle et transformation', icon: Sun },
 ] as const;
+
+// Part chapter count component with animated counter
+function PartChapterCount({ partLetter, entries }: { partLetter: string; entries: { id: string }[] }) {
+  const isChapterComplete = useAppStore((s) => s.isChapterComplete)
+  const completedInPart = entries.filter((e) => isChapterComplete(e.id)).length
+  const { count, ref } = useAnimatedCounter(completedInPart, 800)
+
+  const colorClass = partLetter === 'C'
+    ? 'text-violet-600 dark:text-violet-400'
+    : partLetter === 'B'
+      ? 'text-emerald-600 dark:text-emerald-400'
+      : 'text-amber-600 dark:text-amber-400'
+
+  return (
+    <div ref={ref} className={`text-[10px] ${colorClass} count-animate`}>
+      <span className="font-bold">{count}</span> / {entries.length} chapitres complétés
+    </div>
+  )
+}
 
 export function TocView() {
   const navigate = useAppStore((s) => s.navigate);
@@ -256,13 +340,12 @@ export function TocView() {
               </div>
             )}
 
-            {/* Part header with Islamic-inspired ornamental decoration */}
-            <div className="my-8">
+            {/* Part header with decorative background */}
+            <div className={`my-8 rounded-lg ${partHeaderBg[part.letter] || partHeaderBg.A} py-3 px-4`}>
               <div className="flex items-center gap-3">
                 <span className="h-px flex-1 bg-gradient-to-r from-amber-500/40 to-transparent dark:from-amber-600/40" />
                 <div className="flex items-center gap-2">
                   <span className={`inline-block h-2 w-2 rounded-full ${partDotColor[part.letter] || 'bg-amber-500'}`} />
-                  {/* Islamic-inspired ornamental element */}
                   <span className="text-amber-400/30 dark:text-amber-600/20 text-[8px] tracking-[0.2em] select-none">✦ ❋ ✦</span>
                   <h2 className="shrink-0 text-sm font-semibold tracking-wider text-amber-600 dark:text-amber-400/80 uppercase">
                     Partie {part.letter} — {part.title}
@@ -271,6 +354,10 @@ export function TocView() {
                   <span className={`inline-block h-2 w-2 rounded-full ${partDotColor[part.letter] || 'bg-amber-500'}`} />
                 </div>
                 <span className="h-px flex-1 bg-gradient-to-l from-amber-500/40 to-transparent dark:from-amber-600/40" />
+              </div>
+              {/* Chapter count with animated counter */}
+              <div className="text-center mt-1">
+                <PartChapterCount partLetter={part.letter} entries={part.entries} />
               </div>
             </div>
 
@@ -348,8 +435,11 @@ export function TocView() {
               </div>
             )}
 
+            {/* Gradient thread connecting chapters */}
+            <div className={`ml-5 w-0.5 ${partThreadColor[part.letter] || partThreadColor.A} rounded-full`} />
+
             {/* Chapter entries with left border color */}
-            {part.entries.map((entry) => {
+            {part.entries.map((entry, entryIdx) => {
               const completed = isChapterComplete(entry.id);
               const bookmarked = isBookmarked(entry.id);
               // Find level info for Partie C
@@ -358,15 +448,17 @@ export function TocView() {
               const cLevel = cLevelNum ? tocSevenLevels[cLevelNum - 1] : null
 
               return (
-                <motion.div key={entry.id} variants={slideIn}>
+                <motion.div key={entry.id} variants={slideIn} className="relative">
+                  {/* Thread connector dot */}
+                  <div className={`absolute left-[7px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full ${completed ? (part.letter === 'C' ? 'bg-violet-400 dark:bg-violet-500' : 'bg-emerald-400 dark:bg-emerald-500') : 'bg-stone-300 dark:bg-stone-600/50'} z-10`} />
                   <button
                     onClick={() => navigate('chapter', entry.id)}
-                    className={`group flex w-full items-center gap-2 rounded-xl border-l-2 ${partBorderColor[part.letter] || 'border-l-amber-500'} px-3 py-3 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:border-l-[3px] hover:-translate-y-0.5 hover:translate-x-1 hover:pl-4 ${currentChapterId === entry.id ? 'bg-amber-50/80 dark:bg-amber-900/15 border-l-[3px]' : ''}`}
+                    className={`group flex w-full items-center gap-2 rounded-xl border-l-2 ${partBorderColor[part.letter] || 'border-l-amber-500'} px-3 py-3 ml-3 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:border-l-[3px] hover:-translate-y-0.5 hover:translate-x-1 hover:pl-4 active:scale-[0.98] ${currentChapterId === entry.id ? 'bg-amber-50/80 dark:bg-amber-900/15 border-l-[3px]' : ''}`}
                   >
-                    {/* Completion icon */}
+                    {/* Completion icon with SVG draw animation */}
                     <span className="w-5 shrink-0">
                       {completed ? (
-                        <CheckCircle2 className="size-4 text-emerald-500 dark:text-emerald-400/70" />
+                        <AnimatedCheckmark className="text-emerald-500 dark:text-emerald-400/70" />
                       ) : (
                         <span className="block size-4 rounded-full border border-stone-300 dark:border-stone-600/30" />
                       )}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppStore } from '@/store/use-app-store';
-import { allChapters } from '@/data/chapters';
+import { allChapters, siteContent } from '@/data/chapters';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,8 +17,12 @@ import {
   Target,
   Zap,
   RotateCcw,
+  Flame,
+  Star,
+  ArrowLeft,
+  Moon,
 } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 
 interface ReadingPlan {
   id: string;
@@ -33,11 +37,11 @@ interface ReadingPlan {
 
 const readingPlans: ReadingPlan[] = [
   {
-    id: 'decouverte',
-    name: 'Plan Découverte',
+    id: '7-jours',
+    name: '7 jours',
     duration: 7,
     description:
-      'Une introduction aux sept versets de la Fatiha. Un chapitre par jour pour découvrir la méditation coranique.',
+      'Un chapitre par jour pendant 7 jours. Parfait pour découvrir la Fatiha en profondeur.',
     icon: Sparkles,
     color: 'text-amber-600 dark:text-amber-400',
     bgGradient:
@@ -53,11 +57,11 @@ const readingPlans: ReadingPlan[] = [
     ],
   },
   {
-    id: 'approfondissement',
-    name: 'Plan Approfondissement',
-    duration: 17,
+    id: '14-jours',
+    name: '14 jours',
+    duration: 14,
     description:
-      'Tous les 17 chapitres du programme, un par jour. Le parcours complet pour une transformation profonde.',
+      'Étalez votre lecture sur deux semaines pour une assimilation plus profonde des versets.',
     icon: Target,
     color: 'text-emerald-600 dark:text-emerald-400',
     bgGradient:
@@ -72,14 +76,54 @@ const readingPlans: ReadingPlan[] = [
       { day: 7, chapterIds: ['a7'], label: 'Siratal Lazina' },
       { day: 8, chapterIds: ['b1'], label: 'Ayat al-Kursi' },
       { day: 9, chapterIds: ['b2'], label: 'Ayat an-Nur' },
-      { day: 10, chapterIds: ['b3-b10'], label: 'Trésors du Coran (B3-B5)' },
-      { day: 11, chapterIds: ['b3-b10'], label: 'Trésors du Coran (B6-B8)' },
-      { day: 12, chapterIds: ['b3-b10'], label: 'Trésors du Coran (B9-B10)' },
-      { day: 13, chapterIds: ['c1'], label: 'Tilawa' },
-      { day: 14, chapterIds: ['c2'], label: 'Tartil' },
-      { day: 15, chapterIds: ['c3'], label: 'Tadabbur' },
-      { day: 16, chapterIds: ['c4'], label: 'Tafakkur' },
-      { day: 17, chapterIds: ['c5'], label: 'Tazakkur' },
+      { day: 10, chapterIds: ['b3'], label: 'La mesure divine' },
+      { day: 11, chapterIds: ['b4'], label: 'La supériorité de la foi' },
+      { day: 12, chapterIds: ['b5'], label: 'Malik al-Mulk' },
+      { day: 13, chapterIds: ['b6'], label: 'Tatma\'innu al-Qulub' },
+      { day: 14, chapterIds: ['c1'], label: 'Tilawa' },
+    ],
+  },
+  {
+    id: 'ramadan',
+    name: 'Ramadan',
+    duration: 30,
+    description:
+      'Tous les 24 chapitres en 30 jours, le rythme idéal pour le mois béni. Un chapitre par jour avec des jours de révision.',
+    icon: Moon,
+    color: 'text-violet-600 dark:text-violet-400',
+    bgGradient:
+      'from-violet-50 via-violet-100/50 to-violet-50 dark:from-violet-950/30 dark:via-violet-900/20 dark:to-violet-950/30',
+    schedule: [
+      { day: 1, chapterIds: ['a1'], label: 'Bismillah' },
+      { day: 2, chapterIds: ['a2'], label: 'Al-Hamd' },
+      { day: 3, chapterIds: ['a3'], label: 'Ar-Rahman Ar-Rahim' },
+      { day: 4, chapterIds: ['a4'], label: 'Maliki Yawm ad-Din' },
+      { day: 5, chapterIds: ['a5'], label: "Iyyaka Na'budu" },
+      { day: 6, chapterIds: ['a6'], label: 'Ihdina as-Sirata' },
+      { day: 7, chapterIds: ['a7'], label: 'Siratal Lazina' },
+      { day: 8, chapterIds: [], label: '🔄 Révision Partie A' },
+      { day: 9, chapterIds: ['b1'], label: 'Ayat al-Kursi' },
+      { day: 10, chapterIds: ['b2'], label: 'Ayat an-Nur' },
+      { day: 11, chapterIds: ['b3'], label: 'La mesure divine' },
+      { day: 12, chapterIds: ['b4'], label: 'La supériorité de la foi' },
+      { day: 13, chapterIds: ['b5'], label: 'Malik al-Mulk' },
+      { day: 14, chapterIds: ['b6'], label: 'Tatma\'innu al-Qulub' },
+      { day: 15, chapterIds: [], label: '🔄 Révision Partie B' },
+      { day: 16, chapterIds: ['c1'], label: 'Tilawa' },
+      { day: 17, chapterIds: ['c2'], label: 'Tarjamah' },
+      { day: 18, chapterIds: ['c3'], label: 'Tadabbur' },
+      { day: 19, chapterIds: ['c4'], label: 'Tafakkur' },
+      { day: 20, chapterIds: ['c5'], label: 'Tazakkur' },
+      { day: 21, chapterIds: ['c6'], label: 'Tahqiq' },
+      { day: 22, chapterIds: ['c7'], label: 'Tajalli' },
+      { day: 23, chapterIds: [], label: '🔄 Révision Partie C' },
+      { day: 24, chapterIds: [], label: '🔄 Révision générale (A)' },
+      { day: 25, chapterIds: [], label: '🔄 Révision générale (B)' },
+      { day: 26, chapterIds: [], label: '🔄 Révision générale (C)' },
+      { day: 27, chapterIds: ['a1', 'a2', 'a3'], label: '🌙 Nuit du Destin - Fatiha' },
+      { day: 28, chapterIds: ['b1', 'b2', 'b3'], label: '🌙 Trésors du Coran' },
+      { day: 29, chapterIds: [], label: '🤲 Prière & Munajat' },
+      { day: 30, chapterIds: [], label: '🎉 Eid — Célébration spirituelle' },
     ],
   },
   {
@@ -89,9 +133,9 @@ const readingPlans: ReadingPlan[] = [
     description:
       'Pour les étudiants dévoués. Plusieurs chapitres par jour sur 5 jours pour une immersion totale.',
     icon: Zap,
-    color: 'text-violet-600 dark:text-violet-400',
+    color: 'text-rose-600 dark:text-rose-400',
     bgGradient:
-      'from-violet-50 via-violet-100/50 to-violet-50 dark:from-violet-950/30 dark:via-violet-900/20 dark:to-violet-950/30',
+      'from-rose-50 via-rose-100/50 to-rose-50 dark:from-rose-950/30 dark:via-rose-900/20 dark:to-rose-950/30',
     schedule: [
       {
         day: 1,
@@ -105,8 +149,8 @@ const readingPlans: ReadingPlan[] = [
       },
       {
         day: 3,
-        chapterIds: ['b1', 'b2', 'b3-b10'],
-        label: 'Trésors du Coran',
+        chapterIds: ['b1', 'b2', 'b3', 'b4', 'b5'],
+        label: 'Trésors du Coran (1-5)',
       },
       {
         day: 4,
@@ -140,6 +184,11 @@ function getChapterTitle(id: string): string {
   return ch ? `${ch.number} — ${ch.title}` : id;
 }
 
+function getTodayDateString(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
 export function ReadingPlanView() {
   const navigate = useAppStore((s) => s.navigate);
   const selectedPlan = useAppStore((s) => s.selectedPlan);
@@ -148,6 +197,10 @@ export function ReadingPlanView() {
   const clearPlan = useAppStore((s) => s.clearPlan);
   const isChapterComplete = useAppStore((s) => s.isChapterComplete);
   const completedChapters = useAppStore((s) => s.completedChapters);
+  const currentStreak = useAppStore((s) => s.currentStreak);
+  const planCompletedDays = useAppStore((s) => s.planCompletedDays);
+  const togglePlanDay = useAppStore((s) => s.togglePlanDay);
+  const recordActivity = useAppStore((s) => s.recordActivity);
 
   const activePlan = useMemo(
     () => readingPlans.find((p) => p.id === selectedPlan) ?? null,
@@ -162,11 +215,34 @@ export function ReadingPlanView() {
     const diffMs = now.getTime() - start.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     const currentDay = Math.min(diffDays + 1, activePlan.duration);
-    const completedDays = activePlan.schedule.filter((day) =>
-      day.chapterIds.every((id) => isChapterComplete(id))
+    const completedDaysCount = activePlan.schedule.filter((day) =>
+      day.chapterIds.length > 0 && day.chapterIds.every((id) => isChapterComplete(id))
     ).length;
-    return { currentDay, completedDays, totalDays: activePlan.duration };
+    return { currentDay, completedDays: completedDaysCount, totalDays: activePlan.duration };
   }, [activePlan, planStartDate, isChapterComplete, completedChapters]);
+
+  // Mark today's reading as done
+  const handleMarkDayComplete = useCallback((day: number) => {
+    togglePlanDay(day);
+  }, [togglePlanDay]);
+
+  // Calendar visualization data
+  const calendarData = useMemo(() => {
+    if (!activePlan || !planStartDate) return [];
+    const start = new Date(planStartDate);
+    return activePlan.schedule.map((day) => {
+      const dayDate = new Date(start);
+      dayDate.setDate(dayDate.getDate() + day.day - 1);
+      const dateStr = `${dayDate.getFullYear()}-${String(dayDate.getMonth() + 1).padStart(2, '0')}-${String(dayDate.getDate()).padStart(2, '0')}`;
+      const isComplete = day.chapterIds.length > 0
+        ? day.chapterIds.every((id) => isChapterComplete(id))
+        : planCompletedDays.includes(day.day);
+      const isToday = dateStr === getTodayDateString();
+      return { day: day.day, dateStr, date: dayDate, isComplete, isToday, label: day.label };
+    });
+  }, [activePlan, planStartDate, isChapterComplete, planCompletedDays]);
+
+  const todayDateString = getTodayDateString();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50/50 via-stone-50 to-stone-100 dark:from-stone-950 dark:via-stone-900 dark:to-stone-950">
@@ -184,7 +260,8 @@ export function ReadingPlanView() {
             onClick={() => navigate('toc')}
             className="mb-6 text-stone-500 hover:text-amber-600 dark:text-stone-400/70 dark:hover:text-amber-300/80"
           >
-            ← Retour
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Retour
           </Button>
           <h1 className="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-300 dark:via-yellow-200 dark:to-amber-300 bg-clip-text font-serif text-3xl text-transparent md:text-4xl">
             Plan de Lecture
@@ -201,7 +278,7 @@ export function ReadingPlanView() {
 
         {/* Active plan progress */}
         {activePlan && planStartDate && (
-          <motion.div variants={fadeIn} className="mb-8">
+          <motion.div variants={fadeIn} className="mb-8 space-y-4">
             <Card className="border-amber-300/50 dark:border-amber-700/30 overflow-hidden">
               <div className={`bg-gradient-to-r ${activePlan.bgGradient} p-5`}>
                 <div className="flex items-center justify-between mb-3">
@@ -211,15 +288,23 @@ export function ReadingPlanView() {
                       {activePlan.name}
                     </span>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={clearPlan}
-                    className="text-stone-400 hover:text-red-500 dark:text-stone-500 dark:hover:text-red-400 h-7 px-2"
-                  >
-                    <RotateCcw className="h-3.5 w-3.5 mr-1" />
-                    Changer
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    {currentStreak > 0 && (
+                      <Badge variant="secondary" className="gap-1 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300 border-0 text-[10px]">
+                        <Flame className="h-3 w-3" />
+                        {currentStreak}j
+                      </Badge>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearPlan}
+                      className="text-stone-400 hover:text-red-500 dark:text-stone-500 dark:hover:text-red-400 h-7 px-2"
+                    >
+                      <RotateCcw className="h-3.5 w-3.5 mr-1" />
+                      Changer
+                    </Button>
+                  </div>
                 </div>
 
                 {/* Progress bar */}
@@ -254,27 +339,110 @@ export function ReadingPlanView() {
                 </div>
               </div>
 
-              {/* Daily schedule */}
+              {/* Calendar-style visualization */}
               <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Calendar className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+                  <span className="text-sm font-semibold text-stone-700 dark:text-stone-200">Calendrier</span>
+                </div>
+                <div className="grid grid-cols-7 gap-1.5 mb-3">
+                  {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
+                    <div key={i} className="text-center text-[9px] font-medium text-muted-foreground/50">
+                      {d}
+                    </div>
+                  ))}
+                  {calendarData.map((cal) => {
+                    const dayOfWeek = (cal.date.getDay() + 6) % 7 // Mon=0
+                    return (
+                      <div
+                        key={cal.day}
+                        className={`
+                          relative flex items-center justify-center h-9 rounded-lg text-xs font-medium transition-all cursor-pointer
+                          ${cal.isToday
+                            ? 'ring-2 ring-amber-500 dark:ring-amber-400 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 shadow-sm shadow-amber-200/30 dark:shadow-amber-900/20'
+                            : cal.isComplete
+                              ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
+                              : 'bg-stone-100 dark:bg-stone-800/50 text-stone-500 dark:text-stone-400 hover:bg-stone-200/60 dark:hover:bg-stone-700/40'
+                          }
+                        `}
+                        onClick={() => {
+                          const scheduleDay = activePlan.schedule.find(s => s.day === cal.day);
+                          if (scheduleDay && scheduleDay.chapterIds.length > 0) {
+                            navigate('chapter', scheduleDay.chapterIds[0]);
+                          }
+                        }}
+                        title={`Jour ${cal.day} — ${cal.label}${cal.isToday ? ' (Aujourd\'hui)' : ''}${cal.isComplete ? ' ✓' : ''}`}
+                      >
+                        {cal.isComplete ? (
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                        ) : (
+                          cal.day
+                        )}
+                        {cal.isToday && (
+                          <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-500 dark:bg-amber-400 text-[7px] font-bold text-white">
+                            A
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                {/* Legend */}
+                <div className="flex items-center justify-center gap-4 text-[10px] text-muted-foreground mb-4">
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 rounded bg-amber-100 dark:bg-amber-900/30 ring-1 ring-amber-500/50" />
+                    <span>Aujourd&apos;hui</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/30" />
+                    <span>Complété</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 rounded bg-stone-100 dark:bg-stone-800/50" />
+                    <span>À faire</span>
+                  </div>
+                </div>
+              </CardContent>
+
+              {/* Daily schedule */}
+              <CardContent className="p-4 pt-0">
+                <div className="flex items-center gap-2 mb-3">
+                  <BookOpen className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+                  <span className="text-sm font-semibold text-stone-700 dark:text-stone-200">Programme quotidien</span>
+                </div>
                 <div className="space-y-2 max-h-80 overflow-y-auto custom-scrollbar">
                   {activePlan.schedule.map((day) => {
-                    const isCompleted = day.chapterIds.every((id) => isChapterComplete(id));
+                    const isCompleted = day.chapterIds.length > 0
+                      ? day.chapterIds.every((id) => isChapterComplete(id))
+                      : planCompletedDays.includes(day.day);
                     const isCurrent =
                       planProgress.currentDay === day.day && !isCompleted;
+                    // Calculate the date for this day
+                    const startDate = new Date(planStartDate);
+                    const dayDate = new Date(startDate);
+                    dayDate.setDate(dayDate.getDate() + day.day - 1);
+                    const dateStr = `${dayDate.getFullYear()}-${String(dayDate.getMonth() + 1).padStart(2, '0')}-${String(dayDate.getDate()).padStart(2, '0')}`;
+                    const isToday = dateStr === todayDateString;
+                    const isRevision = day.chapterIds.length === 0;
 
                     return (
                       <motion.button
                         key={day.day}
-                        onClick={() => navigate('chapter', day.chapterIds[0])}
+                        onClick={() => {
+                          if (day.chapterIds.length > 0) {
+                            navigate('chapter', day.chapterIds[0]);
+                          } else {
+                            handleMarkDayComplete(day.day);
+                          }
+                        }}
                         className={`
                           flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left
                           transition-all duration-200 text-sm
-                          ${
-                            isCurrent
-                              ? 'bg-amber-100/80 dark:bg-amber-900/20 border border-amber-300/50 dark:border-amber-700/30'
-                              : isCompleted
-                                ? 'bg-emerald-50/50 dark:bg-emerald-950/10 opacity-70'
-                                : 'hover:bg-stone-100/60 dark:hover:bg-stone-800/30'
+                          ${isToday && !isCompleted
+                            ? 'bg-amber-100/80 dark:bg-amber-900/20 border border-amber-300/50 dark:border-amber-700/30 shadow-sm'
+                            : isCompleted
+                              ? 'bg-emerald-50/50 dark:bg-emerald-950/10 opacity-70'
+                              : 'hover:bg-stone-100/60 dark:hover:bg-stone-800/30'
                           }
                         `}
                         whileHover={{ x: 3 }}
@@ -283,12 +451,11 @@ export function ReadingPlanView() {
                         {/* Day number */}
                         <span
                           className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold
-                          ${
-                            isCurrent
-                              ? 'bg-amber-500 text-white'
-                              : isCompleted
-                                ? 'bg-emerald-500 text-white'
-                                : 'bg-stone-200 dark:bg-stone-700 text-stone-500 dark:text-stone-400'
+                          ${isToday && !isCompleted
+                            ? 'bg-amber-500 text-white'
+                            : isCompleted
+                              ? 'bg-emerald-500 text-white'
+                              : 'bg-stone-200 dark:bg-stone-700 text-stone-500 dark:text-stone-400'
                           }
                         `}
                         >
@@ -301,22 +468,35 @@ export function ReadingPlanView() {
 
                         {/* Day info */}
                         <div className="flex-1 min-w-0">
-                          <p
-                            className={`font-medium truncate ${isCompleted ? 'line-through text-stone-400 dark:text-stone-500' : 'text-stone-700 dark:text-stone-200'}`}
-                          >
-                            Jour {day.day} — {day.label}
-                          </p>
-                          <p className="text-[10px] text-stone-400 dark:text-stone-500/50 truncate">
-                            {day.chapterIds.map(getChapterTitle).join(' · ')}
-                          </p>
+                          <div className="flex items-center gap-1.5">
+                            <p
+                              className={`font-medium truncate ${isCompleted ? 'line-through text-stone-400 dark:text-stone-500' : 'text-stone-700 dark:text-stone-200'}`}
+                            >
+                              Jour {day.day} — {day.label}
+                            </p>
+                            {isToday && (
+                              <Badge className="bg-amber-500 text-white border-0 text-[9px] shrink-0">
+                                Aujourd&apos;hui
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <p className="text-[10px] text-stone-400 dark:text-stone-500/50 truncate">
+                              {day.chapterIds.length > 0
+                                ? day.chapterIds.map(getChapterTitle).join(' · ')
+                                : 'Jour de révision et réflexion'}
+                            </p>
+                          </div>
                         </div>
 
-                        {isCurrent && (
+                        {isCurrent && !isToday && (
                           <Badge className="bg-amber-500 text-white border-0 text-[9px] shrink-0">
                             En cours
                           </Badge>
                         )}
-                        <ChevronRight className="h-4 w-4 shrink-0 text-stone-300 dark:text-stone-600" />
+                        {!isRevision && (
+                          <ChevronRight className="h-4 w-4 shrink-0 text-stone-300 dark:text-stone-600" />
+                        )}
                       </motion.button>
                     );
                   })}
@@ -372,7 +552,7 @@ export function ReadingPlanView() {
                     <CardContent className="p-4">
                       {/* Preview schedule */}
                       <div className="space-y-1.5 mb-4 max-h-40 overflow-y-auto custom-scrollbar">
-                        {plan.schedule.map((day) => (
+                        {plan.schedule.slice(0, 7).map((day) => (
                           <div
                             key={day.day}
                             className="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400/80"
@@ -385,6 +565,11 @@ export function ReadingPlanView() {
                             </span>
                           </div>
                         ))}
+                        {plan.schedule.length > 7 && (
+                          <p className="text-[10px] text-muted-foreground/50 text-center mt-1">
+                            ... et {plan.schedule.length - 7} jours de plus
+                          </p>
+                        )}
                       </div>
                       <Button
                         onClick={() => selectPlan(plan.id)}
@@ -413,6 +598,7 @@ export function ReadingPlanView() {
                 <p className="mt-1 text-xs text-stone-500 dark:text-stone-400/80 leading-relaxed">
                   Vous pouvez changer de plan à tout moment. Votre progression est sauvegardée
                   automatiquement. Prenez le temps de méditer — la qualité prime sur la quantité.
+                  Les jours marqués &quot;Aujourd&apos;hui&quot; sont surlignés pour vous guider dans votre lecture quotidienne.
                 </p>
               </div>
             </div>

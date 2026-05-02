@@ -53,20 +53,36 @@ function QuoteOfTheDay() {
   );
 }
 
+// Staggered reveal with more dramatic entrance
 const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.3,
+      staggerChildren: 0.2,
+      delayChildren: 0.5,
     },
   },
 };
 
 const item = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] } },
+};
+
+const itemDelay1 = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, delay: 0.1, ease: 'easeOut' } },
+};
+
+const itemDelay2 = {
+  hidden: { opacity: 0, y: 15 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.2, ease: 'easeOut' } },
+};
+
+const itemDelay3 = {
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.3, ease: 'easeOut' } },
 };
 
 // Sparkle/particle data
@@ -198,10 +214,33 @@ export function CoverView() {
           </div>
         </motion.div>
 
-        {/* Mirror emoji with dramatic multi-layer glow — enhanced */}
+        {/* Mirror emoji with geometric mandala and dramatic multi-layer glow */}
         <motion.div variants={item} className="relative">
+          {/* Slow-rotating geometric mandala behind mirror */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <svg className="mandala-slow-rotate w-48 h-48 md:w-56 md:h-56 opacity-[0.08] dark:opacity-[0.05]" viewBox="0 0 200 200" fill="none">
+              <circle cx="100" cy="100" r="90" stroke="currentColor" strokeWidth="0.5" className="text-amber-500" />
+              <circle cx="100" cy="100" r="75" stroke="currentColor" strokeWidth="0.5" className="text-amber-400" />
+              <circle cx="100" cy="100" r="60" stroke="currentColor" strokeWidth="0.5" className="text-amber-500" />
+              {/* 8-pointed star pattern */}
+              {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
+                <line key={angle} x1="100" y1="10" x2="100" y2="190" stroke="currentColor" strokeWidth="0.3" className="text-amber-400" transform={`rotate(${angle} 100 100)`} />
+              ))}
+              {/* Diamond shapes at intersections */}
+              {[0, 45, 90, 135].map((angle) => (
+                <rect key={`d${angle}`} x="94" y="20" width="12" height="12" stroke="currentColor" strokeWidth="0.5" className="text-amber-500" transform={`rotate(${angle + 22.5} 100 100)`} />
+              ))}
+            </svg>
+          </div>
+          {/* Reverse-rotating inner mandala */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <svg className="mandala-reverse-rotate w-36 h-36 md:w-44 md:h-44 opacity-[0.06] dark:opacity-[0.04]" viewBox="0 0 200 200" fill="none">
+              <polygon points="100,20 120,80 180,80 130,120 150,180 100,140 50,180 70,120 20,80 80,80" stroke="currentColor" strokeWidth="0.5" className="text-amber-400" />
+              <polygon points="100,40 115,75 150,75 122,98 132,135 100,112 68,135 78,98 50,75 85,75" stroke="currentColor" strokeWidth="0.5" className="text-amber-500" />
+            </svg>
+          </div>
           <motion.span
-            className="block text-8xl md:text-9xl"
+            className="relative block text-8xl md:text-9xl"
             animate={{ y: [0, -8, 0], scale: [1, 1.04, 1] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           >
@@ -229,9 +268,9 @@ export function CoverView() {
           <div className="absolute inset-0 rounded-full bg-amber-200/10 blur-lg dark:bg-amber-200/5" />
         </motion.div>
 
-        {/* Title with shimmer and gentle float */}
+        {/* Title with shimmer and gentle float — staggered reveal */}
         <motion.h1
-          variants={item}
+          variants={itemDelay1}
           className="animate-gentle-float relative bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-300 dark:via-yellow-200 dark:to-amber-300 bg-clip-text text-3xl font-serif tracking-widest text-transparent sm:text-4xl md:text-5xl"
           style={{
             backgroundSize: '200% auto',
@@ -248,16 +287,16 @@ export function CoverView() {
           `}</style>
         </motion.h1>
 
-        {/* Subtitle with serif styling */}
+        {/* Subtitle with serif styling — staggered reveal */}
         <motion.p
-          variants={item}
+          variants={itemDelay2}
           className="text-lg font-serif text-stone-700/90 dark:text-amber-50/90 md:text-xl tracking-wide italic"
         >
           Méditer le Coran avec l&apos;Âme
         </motion.p>
 
-        {/* Level badge */}
-        <motion.div variants={item} className="mt-4">
+        {/* Level badge — staggered reveal */}
+        <motion.div variants={itemDelay3} className="mt-4">
           <Badge
             variant="outline"
             className="border-amber-500/40 bg-amber-100/60 px-4 py-1.5 text-sm text-amber-700 dark:border-amber-600/50 dark:bg-amber-950/40 dark:text-amber-300/90"
@@ -266,9 +305,9 @@ export function CoverView() {
           </Badge>
         </motion.div>
 
-        {/* Three part tags */}
+        {/* Three part tags — staggered reveal */}
         <motion.div
-          variants={item}
+          variants={itemDelay3}
           className="mt-2 flex flex-col gap-2 sm:flex-row sm:gap-3"
         >
           <Badge
@@ -316,7 +355,7 @@ export function CoverView() {
           <VerseOfTheDay />
         </motion.div>
 
-        {/* CTA Button with breathing pulse */}
+        {/* CTA Button with shimmer reflection effect */}
         <motion.div variants={item} className="mt-4 relative">
           {/* Breathing shadow pulse */}
           <motion.div
@@ -329,7 +368,7 @@ export function CoverView() {
             size="lg"
             role="button"
             aria-label="Commencer la méditation"
-            className="relative rounded-full bg-gradient-to-r from-amber-800 via-amber-700 to-amber-800 px-10 py-6 text-base font-medium text-amber-50 shadow-lg shadow-amber-900/30 transition-all duration-300 hover:from-amber-700 hover:via-amber-600 hover:to-amber-700 hover:shadow-amber-800/40 hover:brightness-110 hover:scale-[1.03] focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2"
+            className="cta-shimmer-reflection relative rounded-full bg-gradient-to-r from-amber-800 via-amber-700 to-amber-800 px-10 py-6 text-base font-medium text-amber-50 shadow-lg shadow-amber-900/30 transition-all duration-300 hover:from-amber-700 hover:via-amber-600 hover:to-amber-700 hover:shadow-amber-800/40 hover:brightness-110 hover:scale-[1.03] active:scale-95 focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2"
           >
             Commencer la méditation →
           </Button>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '@/store/use-app-store'
 import { allChapters } from '@/data/chapters'
@@ -30,25 +30,27 @@ import {
   Shuffle,
   XCircle,
   Star,
+  Volume2,
+  VolumeX,
 } from 'lucide-react'
 
 type Difficulty = 'facile' | 'moyen' | 'difficile'
-type GameMode = 'classic' | 'fill-blank' | 'ordering'
+type GameMode = 'classic' | 'fill-blank' | 'ordering' | 'progressive'
 
 const DIFFICULTY_CONFIG: Record<Difficulty, { label: string; description: string; color: string }> = {
   facile: {
     label: 'Facile',
-    description: '1 mot sur 3 visible',
+    description: 'Première lettre visible',
     color: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/40',
   },
   moyen: {
     label: 'Moyen',
-    description: 'Premier mot de chaque phrase',
+    description: 'Un mot sur deux visible',
     color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/40',
   },
   difficile: {
     label: 'Difficile',
-    description: 'Totale obscurité',
+    description: 'Tout est caché',
     color: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800/40',
   },
 }
@@ -69,19 +71,39 @@ const GAME_MODE_CONFIG: Record<GameMode, { label: string; description: string; i
     description: 'Remettez les mots en ordre',
     icon: Shuffle,
   },
+  progressive: {
+    label: 'Progressif',
+    description: 'Révélez mot par mot en tapant',
+    icon: Brain,
+  },
 }
 
 function getWordsToShow(words: string[], difficulty: Difficulty): boolean[] {
   return words.map((_, idx) => {
     switch (difficulty) {
       case 'facile':
+        // Show first letter hint — word is "revealed" if it's the first or every 3rd
         return idx % 3 === 0
       case 'moyen':
-        return idx === 0 || words[idx - 1]?.endsWith('،') || words[idx - 1]?.endsWith(',')
+        return idx % 2 === 0
       case 'difficile':
         return false
     }
   })
+}
+
+/** Get first letter of a word for the easy hint */
+function getFirstLetter(word: string): string {
+  return word.charAt(0)
+}
+
+/** Chunk words into groups of 2-3 for verse chunking display */
+function chunkWords(words: string[], size: number = 3): string[][] {
+  const chunks: string[][] = []
+  for (let i = 0; i < words.length; i += size) {
+    chunks.push(words.slice(i, i + size))
+  }
+  return chunks
 }
 
 /** Fisher-Yates shuffle that guarantees the order is different from original */
@@ -120,6 +142,18 @@ export function MemorizationView() {
   const [userOrder, setUserOrder] = useState<number[]>([])
   const [orderingChecked, setOrderingChecked] = useState(false)
 
+  // Progressive mode specific state
+  const [progressiveIndex, setProgressiveIndex] = useState(0) // current word to reveal
+  const [progressiveInput, setProgressiveInput] = useState('')
+  const [progressiveRevealed, setProgressiveRevealed] = useState<Set<number>>(new Set())
+  const [progressiveMistakes, setProgressiveMistakes] = useState(0)
+  const [progressiveCompleted, setProgressiveCompleted] = useState(false)
+  const progressiveInputRef = useRef<HTMLInputElement>(null)
+
+  // Audio state
+  const [isSpeaking, setIsSpeaking] = useState(false)
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null)
+
   const chapter = useMemo(
     () => allChapters.find((c) => c.id === selectedChapterId),
     [selectedChapterId]
@@ -129,6 +163,8 @@ export function MemorizationView() {
     if (!chapter?.arabicVerse) return []
     return chapter.arabicVerse.split(/\s+/)
   }, [chapter])
+
+  const chunks = useMemo(() => chunkWords(words, 3), [words])
 
   const visibleMap = useMemo(
     () => getWordsToShow(words, difficulty),
@@ -158,6 +194,13 @@ export function MemorizationView() {
       setShuffledIndices(shuffled)
       setUserOrder([])
     }
+    if (m === 'progressive') {
+      setProgressiveIndex(0)
+      setProgressiveRevealed(new Set())
+      setProgressiveMistakes(0)
+      setProgressiveCompleted(false)
+      setTimeout(() => progressiveInputRef.current?.focus(), 100)
+    }
   }, [words])
 
   function resetAllState() {
@@ -170,7 +213,37 @@ export function MemorizationView() {
     setShuffledIndices([])
     setUserOrder([])
     setOrderingChecked(false)
+    setProgressiveIndex(0)
+    setProgressiveInput('')
+    setProgressiveRevealed(new Set())
+    setProgressiveMistakes(0)
+    setProgressiveCompleted(false)
   }
+
+  // Audio playback
+  const handlePlayAudio = useCallback(() => {
+    if (!chapter?.arabicVerse) return
+    if (isSpeaking) {
+      window.speechSynthesis.cancel()
+      setIsSpeaking(false)
+      return
+    }
+    const utterance = new SpeechSynthesisUtterance(chapter.arabicVerse)
+    utterance.lang = 'ar-SA'
+    utterance.rate = 0.7
+    utterance.onend = () => setIsSpeaking(false)
+    utterance.onerror = () => setIsSpeaking(false)
+    utteranceRef.current = utterance
+    setIsSpeaking(true)
+    window.speechSynthesis.speak(utterance)
+  }, [chapter, isSpeaking])
+
+  // Cleanup speech on unmount
+  useEffect(() => {
+    return () => {
+      window.speechSynthesis.cancel()
+    }
+  }, [])
 
   const handleHint = useCallback(() => {
     if (gameMode === 'classic') {
@@ -181,7 +254,6 @@ export function MemorizationView() {
         }
       }
     } else if (gameMode === 'fill-blank') {
-      // Reveal one blank
       for (const idx of hiddenIndices) {
         if (!blankInputs[idx]) {
           setBlankInputs((prev) => ({ ...prev, [idx]: words[idx] }))
@@ -189,14 +261,21 @@ export function MemorizationView() {
         }
       }
     } else if (gameMode === 'ordering') {
-      // Place next correct word
       const nextIdx = userOrder.length
       if (nextIdx < words.length) {
-        const correctWordIndex = words.indexOf(words[nextIdx])
-        setUserOrder((prev) => [...prev, correctWordIndex])
+        setUserOrder((prev) => [...prev, nextIdx])
+      }
+    } else if (gameMode === 'progressive') {
+      // Reveal current word as hint
+      if (progressiveIndex < words.length) {
+        setProgressiveRevealed((prev) => new Set([...prev, progressiveIndex]))
+        setProgressiveMistakes((prev) => prev + 1)
+        setProgressiveIndex((prev) => prev + 1)
+        setProgressiveInput('')
+        setTimeout(() => progressiveInputRef.current?.focus(), 50)
       }
     }
-  }, [gameMode, words, visibleMap, revealedIndices, hiddenIndices, blankInputs, userOrder])
+  }, [gameMode, words, visibleMap, revealedIndices, hiddenIndices, blankInputs, userOrder, progressiveIndex])
 
   const handleCheck = useCallback(() => {
     if (gameMode === 'classic') {
@@ -216,7 +295,6 @@ export function MemorizationView() {
       })
 
       const score = total > 0 ? Math.round((correct / total) * 100) : 100
-
       if (chapter) {
         updateMemorizationProgress(chapter.id, difficulty, score)
       }
@@ -245,8 +323,17 @@ export function MemorizationView() {
       if (chapter) {
         updateMemorizationProgress(chapter.id, difficulty, score)
       }
+    } else if (gameMode === 'progressive') {
+      setProgressiveCompleted(true)
+      // Score: based on mistakes vs total words
+      const total = words.length
+      const mistakeRatio = progressiveMistakes / total
+      const score = Math.max(0, Math.round((1 - mistakeRatio) * 100))
+      if (chapter) {
+        updateMemorizationProgress(chapter.id, difficulty, score)
+      }
     }
-  }, [gameMode, words, visibleMap, revealedIndices, userInputs, blankInputs, hiddenIndices, userOrder, chapter, difficulty, updateMemorizationProgress])
+  }, [gameMode, words, visibleMap, revealedIndices, userInputs, blankInputs, hiddenIndices, userOrder, chapter, difficulty, updateMemorizationProgress, progressiveMistakes])
 
   const handleReset = useCallback(() => {
     resetAllState()
@@ -255,12 +342,33 @@ export function MemorizationView() {
       setShuffledIndices(shuffled)
       setUserOrder([])
     }
+    if (gameMode === 'progressive') {
+      setTimeout(() => progressiveInputRef.current?.focus(), 100)
+    }
   }, [gameMode, words])
 
   const handleWordReveal = useCallback((idx: number) => {
     if (visibleMap[idx] || revealedIndices.has(idx) || showFullVerse) return
     setRevealedIndices((prev) => new Set([...prev, idx]))
   }, [visibleMap, revealedIndices, showFullVerse])
+
+  // Progressive mode: handle typing the next word
+  const handleProgressiveSubmit = useCallback(() => {
+    if (progressiveIndex >= words.length) return
+    const currentWord = words[progressiveIndex]
+    const input = progressiveInput.trim()
+
+    if (input === currentWord) {
+      // Correct!
+      setProgressiveRevealed((prev) => new Set([...prev, progressiveIndex]))
+      setProgressiveIndex((prev) => prev + 1)
+      setProgressiveInput('')
+      setTimeout(() => progressiveInputRef.current?.focus(), 50)
+    } else {
+      // Wrong — count mistake
+      setProgressiveMistakes((prev) => prev + 1)
+    }
+  }, [progressiveIndex, words, progressiveInput])
 
   // Ordering game: add word to order
   const handleOrderingAdd = useCallback((wordIdx: number) => {
@@ -315,7 +423,24 @@ export function MemorizationView() {
     return { correct, total, score: total > 0 ? Math.round((correct / total) * 100) : 100 }
   }, [orderingChecked, userOrder, words])
 
-  const activeScoreResult = gameMode === 'classic' ? classicScoreResult : gameMode === 'fill-blank' ? fillBlankScoreResult : orderingScoreResult
+  const progressiveScoreResult = useMemo(() => {
+    if (!progressiveCompleted) return null
+    const total = words.length
+    const score = Math.max(0, Math.round((1 - progressiveMistakes / total) * 100))
+    return { correct: total - progressiveMistakes, total, score, mistakes: progressiveMistakes }
+  }, [progressiveCompleted, words, progressiveMistakes])
+
+  const activeScoreResult = gameMode === 'classic' ? classicScoreResult : gameMode === 'fill-blank' ? fillBlankScoreResult : gameMode === 'ordering' ? orderingScoreResult : progressiveScoreResult
+
+  // Live memorization score for progressive mode
+  const liveProgressiveScore = useMemo(() => {
+    if (gameMode !== 'progressive' || words.length === 0) return null
+    const revealed = progressiveRevealed.size
+    const total = words.length
+    const mistakes = progressiveMistakes
+    const rawScore = Math.max(0, Math.round((1 - mistakes / total) * 100))
+    return { revealed, total, mistakes, score: rawScore }
+  }, [gameMode, words, progressiveRevealed, progressiveMistakes])
 
   const progress = chapter ? memorizationProgress[chapter.id] : null
 
@@ -382,14 +507,14 @@ export function MemorizationView() {
             {/* Game mode selector */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-muted-foreground">Mode de jeu</label>
-              <div className="flex gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {(Object.entries(GAME_MODE_CONFIG) as [GameMode, typeof GAME_MODE_CONFIG[GameMode]][]).map(([key, config]) => {
                   const Icon = config.icon
                   return (
                     <button
                       key={key}
                       onClick={() => handleGameModeChange(key)}
-                      className={`flex-1 rounded-lg border px-3 py-2 text-center transition-all duration-200 ${
+                      className={`rounded-lg border px-3 py-2 text-center transition-all duration-200 ${
                         gameMode === key
                           ? 'bg-amber-100 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700 ring-2 ring-offset-1 ring-amber-400 dark:ring-amber-600'
                           : 'border-stone-200 dark:border-stone-700 hover:border-amber-300 dark:hover:border-amber-700'
@@ -458,6 +583,16 @@ export function MemorizationView() {
                 <span className="text-sm font-medium">{chapter.title}</span>
               </div>
               <div className="flex items-center gap-2">
+                {/* Audio button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handlePlayAudio}
+                  className="h-7 w-7 p-0 text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300"
+                  title="Écouter le verset"
+                >
+                  {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                </Button>
                 <Badge className={`text-[10px] border ${DIFFICULTY_CONFIG[difficulty].color}`}>
                   {DIFFICULTY_CONFIG[difficulty].label}
                 </Badge>
@@ -467,6 +602,30 @@ export function MemorizationView() {
               </div>
             </div>
 
+            {/* Live score for progressive mode */}
+            {liveProgressiveScore && !progressiveCompleted && (
+              <div className="px-4 py-2 border-b border-amber-200/30 dark:border-amber-700/20 bg-amber-50/40 dark:bg-amber-950/10">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-3">
+                    <span className="text-muted-foreground">
+                      Mots révélés : <span className="font-semibold text-amber-700 dark:text-amber-300">{liveProgressiveScore.revealed}/{liveProgressiveScore.total}</span>
+                    </span>
+                    <span className="text-muted-foreground">
+                      Erreurs : <span className={`font-semibold ${liveProgressiveScore.mistakes > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>{liveProgressiveScore.mistakes}</span>
+                    </span>
+                  </div>
+                  <span className="font-bold text-amber-700 dark:text-amber-300">{liveProgressiveScore.score}%</span>
+                </div>
+                <div className="mt-1.5 h-1.5 rounded-full bg-stone-200/60 dark:bg-stone-700/40 overflow-hidden">
+                  <motion.div
+                    className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400"
+                    animate={{ width: `${(liveProgressiveScore.revealed / liveProgressiveScore.total) * 100}%` }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </div>
+              </div>
+            )}
+
             <CardContent className="pt-6 pb-6 px-6">
               {/* ===== CLASSIC MODE ===== */}
               {gameMode === 'classic' && (
@@ -474,45 +633,63 @@ export function MemorizationView() {
                   <div className="text-center mb-6 text-amber-500 dark:text-amber-400 tracking-[0.5em] text-sm select-none">
                     ✦ ✦ ✦
                   </div>
-                  <div
-                    dir="rtl"
-                    lang="ar"
-                    className="arabic-verse text-3xl md:text-4xl text-center leading-loose flex flex-wrap justify-center gap-x-2 gap-y-3 min-h-[120px]"
-                  >
-                    {words.map((word, idx) => {
-                      const isVisible = visibleMap[idx] || revealedIndices.has(idx) || showFullVerse
-                      const isHidden = !isVisible
-
-                      let wordColor = 'text-amber-900 dark:text-amber-100'
-                      if (hasChecked && showFullVerse && !visibleMap[idx] && !revealedIndices.has(idx)) {
-                        const userInput = userInputs[idx]?.trim()
-                        if (userInput && userInput === word) {
-                          wordColor = 'text-emerald-600 dark:text-emerald-400'
-                        } else if (userInput) {
-                          wordColor = 'text-rose-500 dark:text-rose-400'
-                        }
-                      }
-
+                  {/* Chunked display */}
+                  <div className="space-y-4">
+                    {chunks.map((chunk, chunkIdx) => {
+                      const startIdx = chunkIdx * 3
                       return (
-                        <motion.span
-                          key={idx}
-                          initial={false}
-                          animate={{
-                            opacity: isVisible ? 1 : 0.3,
-                            scale: isVisible ? 1 : 0.95,
-                          }}
-                          transition={{ duration: 0.3, type: 'spring', stiffness: 300, damping: 25 }}
-                          className={`relative cursor-pointer inline-block ${wordColor} ${isHidden ? 'hover:opacity-50' : ''}`}
-                          onClick={() => handleWordReveal(idx)}
+                        <div
+                          key={chunkIdx}
+                          dir="rtl"
+                          lang="ar"
+                          className="arabic-verse text-3xl md:text-4xl text-center leading-loose flex flex-wrap justify-center gap-x-2 gap-y-3"
                         >
-                          {isVisible ? (
-                            <span>{word}</span>
-                          ) : (
-                            <span className="inline-block min-w-[3ch] rounded bg-amber-200/60 dark:bg-amber-800/40 px-2 py-0.5 text-transparent select-none">
-                              {word}
-                            </span>
-                          )}
-                        </motion.span>
+                          {chunk.map((word, wordIdx) => {
+                            const idx = startIdx + wordIdx
+                            if (idx >= words.length) return null
+                            const isVisible = visibleMap[idx] || revealedIndices.has(idx) || showFullVerse
+                            const isHidden = !isVisible
+
+                            // Easy mode: show first letter hint
+                            const showHint = difficulty === 'facile' && isHidden && !showFullVerse
+
+                            let wordColor = 'text-amber-900 dark:text-amber-100'
+                            if (hasChecked && showFullVerse && !visibleMap[idx] && !revealedIndices.has(idx)) {
+                              const userInput = userInputs[idx]?.trim()
+                              if (userInput && userInput === word) {
+                                wordColor = 'text-emerald-600 dark:text-emerald-400'
+                              } else if (userInput) {
+                                wordColor = 'text-rose-500 dark:text-rose-400'
+                              }
+                            }
+
+                            return (
+                              <motion.span
+                                key={idx}
+                                initial={false}
+                                animate={{
+                                  opacity: isVisible ? 1 : 0.3,
+                                  scale: isVisible ? 1 : 0.95,
+                                }}
+                                transition={{ duration: 0.3, type: 'spring', stiffness: 300, damping: 25 }}
+                                className={`relative cursor-pointer inline-block ${wordColor} ${isHidden ? 'hover:opacity-50' : ''}`}
+                                onClick={() => handleWordReveal(idx)}
+                              >
+                                {isVisible ? (
+                                  <span>{word}</span>
+                                ) : (
+                                  <span className="inline-block min-w-[3ch] rounded bg-amber-200/60 dark:bg-amber-800/40 px-2 py-0.5 select-none">
+                                    {showHint ? (
+                                      <span className="text-amber-400 dark:text-amber-500 text-lg">{getFirstLetter(word)}...</span>
+                                    ) : (
+                                      <span className="text-transparent">{word}</span>
+                                    )}
+                                  </span>
+                                )}
+                              </motion.span>
+                            )
+                          })}
+                        </div>
                       )
                     })}
                   </div>
@@ -580,7 +757,6 @@ export function MemorizationView() {
                             placeholder="..."
                             disabled={blankChecked}
                           />
-                          {/* Correct answer shown below on incorrect */}
                           {(isIncorrect || isEmpty) && blankChecked && (
                             <motion.span
                               initial={{ opacity: 0, y: -5 }}
@@ -723,6 +899,111 @@ export function MemorizationView() {
                 </div>
               )}
 
+              {/* ===== PROGRESSIVE MODE ===== */}
+              {gameMode === 'progressive' && (
+                <div className="space-y-6">
+                  <div className="text-center mb-4 text-amber-500 dark:text-amber-400 tracking-[0.5em] text-sm select-none">
+                    ✦ ✦ ✦
+                  </div>
+                  {/* Verse display with revealed/hidden words */}
+                  <div
+                    dir="rtl"
+                    lang="ar"
+                    className="arabic-verse text-3xl md:text-4xl text-center leading-loose flex flex-wrap justify-center gap-x-2 gap-y-3 min-h-[120px]"
+                  >
+                    {words.map((word, idx) => {
+                      const isRevealed = progressiveRevealed.has(idx) || progressiveCompleted
+                      const isCurrent = idx === progressiveIndex && !progressiveCompleted
+
+                      return (
+                        <motion.span
+                          key={idx}
+                          initial={false}
+                          animate={{
+                            opacity: isRevealed ? 1 : isCurrent ? 0.6 : 0.2,
+                            scale: isCurrent ? 1.05 : isRevealed ? 1 : 0.95,
+                          }}
+                          transition={{ duration: 0.3, type: 'spring', stiffness: 300, damping: 25 }}
+                          className={`relative inline-block ${
+                            isRevealed
+                              ? 'text-amber-900 dark:text-amber-100'
+                              : isCurrent
+                                ? 'text-amber-600 dark:text-amber-300 border-b-2 border-amber-400 dark:border-amber-500'
+                                : 'text-transparent'
+                          }`}
+                        >
+                          {isRevealed ? (
+                            word
+                          ) : isCurrent ? (
+                            // Show first letter as hint for current word
+                            <span className="inline-block min-w-[3ch]">
+                              {difficulty === 'facile' ? `${getFirstLetter(word)}___` : '___'}
+                            </span>
+                          ) : (
+                            <span className="inline-block min-w-[3ch] rounded bg-amber-200/60 dark:bg-amber-800/40 px-2 py-0.5">
+                              <span className="text-transparent">{word}</span>
+                            </span>
+                          )}
+                        </motion.span>
+                      )
+                    })}
+                  </div>
+                  <div className="text-center mt-4 text-amber-500 dark:text-amber-400 tracking-[0.5em] text-sm select-none">
+                    ✦ ✦ ✦
+                  </div>
+
+                  {/* Input for current word */}
+                  {!progressiveCompleted && progressiveIndex < words.length && (
+                    <div className="flex items-center justify-center gap-2 mt-4">
+                      <div className="relative">
+                        <Input
+                          ref={progressiveInputRef}
+                          dir="rtl"
+                          lang="ar"
+                          className="w-48 h-11 text-center text-xl arabic-verse border-2 border-amber-300 dark:border-amber-700 bg-amber-50/30 dark:bg-amber-950/10 focus:border-amber-500 dark:focus:border-amber-500"
+                          value={progressiveInput}
+                          onChange={(e) => setProgressiveInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleProgressiveSubmit()
+                            }
+                          }}
+                          placeholder="Tapez le mot..."
+                          autoComplete="off"
+                        />
+                      </div>
+                      <Button
+                        onClick={handleProgressiveSubmit}
+                        size="sm"
+                        className="bg-gradient-to-r from-amber-600 to-amber-500 text-white hover:from-amber-500 hover:to-amber-400"
+                      >
+                        Vérifier
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Completion message */}
+                  {progressiveCompleted && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-center py-4"
+                    >
+                      <p className="text-lg font-semibold text-amber-700 dark:text-amber-300">
+                        {progressiveMistakes === 0
+                          ? "Masha'Allah ! Mémorisation parfaite ! 🌟"
+                          : progressiveMistakes <= 2
+                            ? 'Très bien ! Quelques hésitations seulement. ✨'
+                            : 'Bon effort ! Continuez à pratiquer. 💪'}
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {progressiveMistakes} erreur{progressiveMistakes > 1 ? 's' : ''} sur {words.length} mots
+                      </p>
+                    </motion.div>
+                  )}
+                </div>
+              )}
+
               {/* Translation reference */}
               {chapter.translation && (
                 <div className="mt-6 text-center">
@@ -742,7 +1023,7 @@ export function MemorizationView() {
                 variant="outline"
                 size="sm"
                 onClick={handleHint}
-                disabled={gameMode === 'classic' ? showFullVerse : gameMode === 'fill-blank' ? blankChecked : orderingChecked}
+                disabled={gameMode === 'classic' ? showFullVerse : gameMode === 'fill-blank' ? blankChecked : gameMode === 'ordering' ? orderingChecked : progressiveCompleted}
                 className="gap-1.5"
               >
                 <Lightbulb className="h-4 w-4" />
@@ -752,7 +1033,7 @@ export function MemorizationView() {
                 variant="outline"
                 size="sm"
                 onClick={handleCheck}
-                disabled={gameMode === 'classic' ? showFullVerse : gameMode === 'fill-blank' ? blankChecked : orderingChecked || userOrder.length !== words.length}
+                disabled={gameMode === 'classic' ? showFullVerse : gameMode === 'fill-blank' ? blankChecked : gameMode === 'ordering' ? orderingChecked || userOrder.length !== words.length : progressiveCompleted}
                 className="gap-1.5"
               >
                 <CheckCircle2 className="h-4 w-4" />
@@ -840,6 +1121,9 @@ export function MemorizationView() {
                 </h3>
                 <p className="text-muted-foreground">
                   {activeScoreResult.correct} mot{activeScoreResult.correct > 1 ? 's' : ''} correct{activeScoreResult.correct > 1 ? 's' : ''} sur {activeScoreResult.total}
+                  {'mistakes' in activeScoreResult && activeScoreResult.mistakes > 0 && (
+                    <span className="text-rose-500 ml-2">({activeScoreResult.mistakes} indice{activeScoreResult.mistakes > 1 ? 's' : ''} utilisé{activeScoreResult.mistakes > 1 ? 's' : ''})</span>
+                  )}
                 </p>
                 <p className="text-sm font-medium">
                   {activeScoreResult.score >= 90
@@ -878,6 +1162,10 @@ export function MemorizationView() {
                   </li>
                   <li className="flex items-start gap-2">
                     <ChevronRight className="h-3 w-3 text-amber-500 shrink-0 mt-0.5" />
+                    <span>Le mode <strong>Progressif</strong> vous guide mot par mot avec suivi des erreurs</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <ChevronRight className="h-3 w-3 text-amber-500 shrink-0 mt-0.5" />
                     <span>Utilisez le mode <strong>Texte à trous</strong> pour tester votre mémoire active</span>
                   </li>
                   <li className="flex items-start gap-2">
@@ -886,7 +1174,7 @@ export function MemorizationView() {
                   </li>
                   <li className="flex items-start gap-2">
                     <ChevronRight className="h-3 w-3 text-amber-500 shrink-0 mt-0.5" />
-                    <span>Récitez le verset à voix haute avant de vérifier</span>
+                    <span>Utilisez le bouton 🔊 pour écouter la prononciation du verset</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <ChevronRight className="h-3 w-3 text-amber-500 shrink-0 mt-0.5" />

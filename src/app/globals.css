@@ -230,7 +230,8 @@
   }
 }
 
-.verse-gradient-border {
+/* Part A: Amber/Gold gradient border */
+.verse-gradient-border-a {
   background: linear-gradient(
     90deg,
     #d97706,
@@ -245,7 +246,7 @@
   animation: gradientBorderRotate 12s ease infinite;
 }
 
-.dark .verse-gradient-border {
+.dark .verse-gradient-border-a {
   background: linear-gradient(
     90deg,
     #92400e,
@@ -255,6 +256,68 @@
     #92400e,
     #78350f,
     #92400e
+  );
+  background-size: 300% 100%;
+  animation: gradientBorderRotate 12s ease infinite;
+}
+
+/* Part B: Emerald/Green gradient border */
+.verse-gradient-border-b {
+  background: linear-gradient(
+    90deg,
+    #059669,
+    #10b981,
+    #34d399,
+    #10b981,
+    #059669,
+    #047857,
+    #059669
+  );
+  background-size: 300% 100%;
+  animation: gradientBorderRotate 12s ease infinite;
+}
+
+.dark .verse-gradient-border-b {
+  background: linear-gradient(
+    90deg,
+    #064e3b,
+    #047857,
+    #059669,
+    #047857,
+    #064e3b,
+    #022c22,
+    #064e3b
+  );
+  background-size: 300% 100%;
+  animation: gradientBorderRotate 12s ease infinite;
+}
+
+/* Part C: Violet/Purple gradient border */
+.verse-gradient-border-c {
+  background: linear-gradient(
+    90deg,
+    #7c3aed,
+    #8b5cf6,
+    #a78bfa,
+    #8b5cf6,
+    #7c3aed,
+    #6d28d9,
+    #7c3aed
+  );
+  background-size: 300% 100%;
+  animation: gradientBorderRotate 12s ease infinite;
+}
+
+.dark .verse-gradient-border-c {
+  background: linear-gradient(
+    90deg,
+    #4c1d95,
+    #6d28d9,
+    #7c3aed,
+    #6d28d9,
+    #4c1d95,
+    #3b0764,
+    #4c1d95
   );
   background-size: 300% 100%;
   animation: gradientBorderRotate 12s ease infinite;
@@ -757,4 +820,246 @@
   outline: 2px solid oklch(0.65 0.18 295);
   outline-offset: 2px;
   border-radius: 6px;
+}
+
+/* ═══════════════════════════════════════════════════
+   Mandala Rotation Animation (Cover View)
+   ═══════════════════════════════════════════════════ */
+@keyframes mandalaRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.mandala-slow-rotate {
+  animation: mandalaRotate 60s linear infinite;
+}
+
+.mandala-reverse-rotate {
+  animation: mandalaRotate 80s linear infinite reverse;
+}
+
+/* ═══════════════════════════════════════════════════
+   CTA Shimmer Reflection Effect (Cover View)
+   ═══════════════════════════════════════════════════ */
+@keyframes ctaShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.cta-shimmer-reflection {
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-shimmer-reflection::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.15) 55%,
+    transparent 70%
+  );
+  animation: ctaShimmer 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════
+   SVG Checkmark Draw Animation (TOC View)
+   ═══════════════════════════════════════════════════ */
+@keyframes checkDraw {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.check-draw-animate {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: checkDraw 0.5s ease-out forwards;
+}
+
+/* ═══════════════════════════════════════════════════
+   Pulsing Gradient Divider (Chapter View)
+   ═══════════════════════════════════════════════════ */
+@keyframes dividerPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.divider-pulse-animate {
+  animation: dividerPulse 4s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════
+   Progress Particle Trail (Progress View)
+   ═══════════════════════════════════════════════════ */
+@keyframes particleOrbit {
+  from {
+    transform: rotate(0deg) translateX(52px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(52px) rotate(-360deg);
+  }
+}
+
+.progress-particle {
+  animation: particleOrbit 6s linear infinite;
+}
+
+/* ═══════════════════════════════════════════════════
+   Search Animated Underline (Search View)
+   ═══════════════════════════════════════════════════ */
+@keyframes searchUnderline {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.search-match-underline {
+  position: relative;
+  display: inline;
+}
+
+.search-match-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+  border-radius: 1px;
+  animation: searchUnderline 0.4s ease-out forwards;
+}
+
+/* ═══════════════════════════════════════════════════
+   Letter Glow Animation (Glossary View)
+   ═══════════════════════════════════════════════════ */
+@keyframes letterGlow {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(245, 158, 11, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.5), 0 0 20px rgba(245, 158, 11, 0.2);
+  }
+}
+
+.letter-active-glow {
+  animation: letterGlow 2.5s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════
+   Arabic Calligraphy Decorative Pattern
+   ═══════════════════════════════════════════════════ */
+.arabic-calligraphy-bg {
+  background-image:
+    radial-gradient(circle at 15% 30%, rgba(217, 169, 99, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 70%, rgba(217, 169, 99, 0.06) 0%, transparent 40%);
+}
+
+.dark .arabic-calligraphy-bg {
+  background-image:
+    radial-gradient(circle at 15% 30%, rgba(217, 169, 99, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 85% 70%, rgba(217, 169, 99, 0.03) 0%, transparent 40%);
+}
+
+/* ═══════════════════════════════════════════════════
+   Prefers Reduced Motion — Disable All Animations
+   ═══════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   Smooth Theme Transitions
+   ═══════════════════════════════════════════════════ */
+html {
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+/* ═══════════════════════════════════════════════════
+   Chapter Section Transition Animations
+   ═══════════════════════════════════════════════════ */
+@keyframes sectionSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateX(0);
+  }
+}
+
+.section-slide-in {
+  animation: sectionSlideIn 0.6s ease-out forwards;
+}
+
+/* ═══════════════════════════════════════════════════
+   Animated Number Counter (TOC + Progress Views)
+   ═══════════════════════════════════════════════════ */
+@keyframes countFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.count-animate {
+  animation: countFadeIn 0.4s ease-out forwards;
+}
+
+/* ═══════════════════════════════════════════════════
+   Milestone Badge Pop (Progress View)
+   ═══════════════════════════════════════════════════ */
+@keyframes milestonePop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.milestone-pop {
+  animation: milestonePop 0.5s ease-out forwards;
 }

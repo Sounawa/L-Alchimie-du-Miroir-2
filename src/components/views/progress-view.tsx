@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useAppStore } from '@/store/use-app-store'
 import { allChapters } from '@/data/chapters'
@@ -33,6 +33,8 @@ import {
   Trophy,
   ArrowRight,
   BarChart3,
+  Award,
+  Star,
 } from 'lucide-react'
 import { StudyStats } from '@/components/shared/study-stats'
 import { ReadingStatsPanel } from '@/components/shared/reading-stats-panel'
@@ -44,6 +46,50 @@ const fadeUp = {
     y: 0,
     transition: { delay: i * 0.06, duration: 0.4, ease: 'easeOut' },
   }),
+}
+
+// Milestone data for celebrations
+const milestones = [
+  { pct: 25, emoji: '🌱', label: 'Le cheminement commence' },
+  { pct: 50, emoji: '🌿', label: 'À mi-chemin' },
+  { pct: 75, emoji: '🌳', label: 'La lumière est proche' },
+  { pct: 100, emoji: '✨', label: 'Masha\'Allah !' },
+]
+
+// Animated number component
+function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string }) {
+  const [displayed, setDisplayed] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
+  const [hasAnimated, setHasAnimated] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true)
+        }
+      },
+      { threshold: 0.5 }
+    )
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [hasAnimated])
+
+  useEffect(() => {
+    if (!hasAnimated) return
+    const duration = 800
+    const startTime = Date.now()
+    const animate = () => {
+      const elapsed = Date.now() - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setDisplayed(Math.round(eased * value))
+      if (progress < 1) requestAnimationFrame(animate)
+    }
+    requestAnimationFrame(animate)
+  }, [hasAnimated, value])
+
+  return <span ref={ref} className="count-animate">{displayed}{suffix}</span>
 }
 
 function getMotivationalMessage(pct: number): { text: string; icon: React.ReactNode } {
@@ -277,7 +323,7 @@ export function ProgressView() {
           <div className="absolute inset-0 bg-gradient-to-br from-amber-50/50 to-transparent dark:from-amber-950/20 dark:to-transparent pointer-events-none" />
           <CardContent className="pt-6 relative">
             <div className="flex flex-col items-center gap-4">
-              {/* Animated progress circle */}
+              {/* Animated progress circle with particle trail */}
               <div className={`relative w-44 h-44 ${progressPercent > 0 ? 'progress-circle-glow' : ''}`}>
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
                   <circle
@@ -307,13 +353,35 @@ export function ProgressView() {
                       '--target-offset': `${2 * Math.PI * 52 * (1 - progressPercent / 100)}`,
                     } as React.CSSProperties}
                   />
+                  {/* Particle trail orbiting the progress circle */}
+                  {progressPercent > 0 && (
+                    <g className="progress-particle">
+                      <circle cx="60" cy="60" r="2.5" fill="#f59e0b" opacity="0.8" />
+                      <circle cx="60" cy="60" r="1.5" fill="#fbbf24" opacity="0.5" style={{ animationDelay: '0.5s' }} />
+                    </g>
+                  )}
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <span className="text-3xl font-bold text-amber-600 dark:text-amber-400">
-                    {progressPercent}%
+                    <AnimatedNumber value={progressPercent} suffix="%" />
                   </span>
                   <span className="text-xs text-muted-foreground">complété</span>
                 </div>
+                {/* Milestone badges */}
+                {milestones.map((milestone) => (
+                  progressPercent >= milestone.pct && (
+                    <div
+                      key={milestone.pct}
+                      className="milestone-pop absolute"
+                      style={{
+                        top: milestone.pct === 25 ? '8%' : milestone.pct === 50 ? '8%' : milestone.pct === 75 ? '8%' : '8%',
+                        right: milestone.pct === 25 ? '0' : milestone.pct === 50 ? '-4%' : milestone.pct === 75 ? '0' : '-8%',
+                      }}
+                    >
+                      <span className="text-xs" title={milestone.label}>{milestone.emoji}</span>
+                    </div>
+                  )
+                ))}
               </div>
               <Progress value={progressPercent} className="h-2 w-full max-w-sm" />
             </div>
@@ -329,13 +397,13 @@ export function ProgressView() {
         </Card>
       </motion.div>
 
-      {/* Statistics Cards with gradient backgrounds */}
+      {/* Statistics Cards with gradient backgrounds and animated numbers */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <Card className="border-emerald-200/50 dark:border-emerald-800/30 shadow-sm overflow-hidden relative">
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/80 to-emerald-100/30 dark:from-emerald-950/30 dark:to-transparent pointer-events-none shadow-inner" />
           <CardContent className="pt-4 pb-4 text-center relative">
             <CheckCircle2 className="h-5 w-5 mx-auto mb-1.5 text-emerald-500" />
-            <p className="text-2xl font-bold">{completedCount}</p>
+            <p className="text-2xl font-bold"><AnimatedNumber value={completedCount} /></p>
             <p className="text-[11px] text-muted-foreground">Complétés</p>
           </CardContent>
         </Card>
@@ -343,7 +411,7 @@ export function ProgressView() {
           <div className="absolute inset-0 bg-gradient-to-br from-amber-50/80 to-amber-100/30 dark:from-amber-950/30 dark:to-transparent pointer-events-none shadow-inner" />
           <CardContent className="pt-4 pb-4 text-center relative">
             <Circle className="h-5 w-5 mx-auto mb-1.5 text-amber-500" />
-            <p className="text-2xl font-bold">{remainingCount}</p>
+            <p className="text-2xl font-bold"><AnimatedNumber value={remainingCount} /></p>
             <p className="text-[11px] text-muted-foreground">Restants</p>
           </CardContent>
         </Card>
@@ -360,8 +428,48 @@ export function ProgressView() {
           <div className="absolute inset-0 bg-gradient-to-br from-orange-50/80 to-amber-100/30 dark:from-orange-950/30 dark:to-transparent pointer-events-none" />
           <CardContent className="pt-4 pb-4 text-center relative">
             <Flame className="h-5 w-5 mx-auto mb-1.5 text-orange-500" />
-            <p className="text-2xl font-bold">{currentStreak}j</p>
+            <p className="text-2xl font-bold"><AnimatedNumber value={currentStreak} suffix="j" /></p>
             <p className="text-[11px] text-muted-foreground">🔥 Série{longestStreak > currentStreak && <span className="ml-1 text-orange-400">({longestStreak}j max)</span>}</p>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Part-level mini progress bars */}
+      <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+        <Card className="border-stone-200 shadow-sm">
+          <CardContent className="pt-4 pb-4 space-y-3">
+            <div className="flex items-center gap-2 mb-2">
+              <BarChart3 className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              <span className="text-sm font-semibold">Progression par partie</span>
+            </div>
+            {[
+              { letter: 'A', label: 'Partie A — Al-Fatiha', color: 'bg-amber-500 dark:bg-amber-400', barColor: 'from-amber-400 to-amber-600 dark:from-amber-500 dark:to-amber-300' },
+              { letter: 'B', label: 'Partie B — Trésors du Coran', color: 'bg-emerald-500 dark:bg-emerald-400', barColor: 'from-emerald-400 to-emerald-600 dark:from-emerald-500 dark:to-emerald-300' },
+              { letter: 'C', label: 'Partie C — Les Sept Niveaux', color: 'bg-violet-500 dark:bg-violet-400', barColor: 'from-violet-400 to-violet-600 dark:from-violet-500 dark:to-violet-300' },
+            ].map((part) => {
+              const partChapters = allChapters.filter((c) => c.part === part.letter)
+              const completedInPart = partChapters.filter((c) => completedChapters.some((cc) => cc.chapterId === c.id)).length
+              const partPct = partChapters.length > 0 ? Math.round((completedInPart / partChapters.length) * 100) : 0
+              return (
+                <div key={part.letter} className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className={`inline-block h-2 w-2 rounded-full ${part.color}`} />
+                      <span className="text-xs text-stone-600 dark:text-stone-400">{part.label}</span>
+                    </div>
+                    <span className="text-xs font-semibold text-stone-500 dark:text-stone-300">{completedInPart}/{partChapters.length} ({partPct}%)</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${partPct}%` }}
+                      transition={{ duration: 1, ease: 'easeOut' }}
+                      className={`h-full rounded-full bg-gradient-to-r ${part.barColor}`}
+                    />
+                  </div>
+                </div>
+              )
+            })}
           </CardContent>
         </Card>
       </motion.div>

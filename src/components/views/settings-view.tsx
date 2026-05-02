@@ -27,6 +27,8 @@ import {
   Upload,
   Check,
   Sparkles,
+  Volume2,
+  VolumeX,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
@@ -60,6 +62,7 @@ export function SettingsView() {
     importData,
   } = useAppStore()
 
+  const [soundEnabled, setSoundEnabled] = useState(true)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [importing, setImporting] = useState(false)
 
@@ -225,7 +228,7 @@ export function SettingsView() {
                 onClick={() => setFontFamily(option.value)}
                 className={`
                   w-full flex items-center justify-between rounded-lg border px-4 py-3
-                  transition-all duration-150 text-left
+                  transition-all duration-150 text-left active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-amber-400
                   ${fontFamily === option.value
                     ? 'border-amber-400 bg-amber-50 dark:border-amber-600 dark:bg-amber-950/30'
                     : 'border-stone-200 dark:border-stone-700 hover:border-amber-300 dark:hover:border-amber-700 hover:bg-stone-50 dark:hover:bg-stone-800/50'
@@ -282,7 +285,7 @@ export function SettingsView() {
                 onClick={() => setReadingMode(option.value)}
                 className={`
                   w-full flex items-center justify-between rounded-lg border px-4 py-3
-                  transition-all duration-150 text-left
+                  transition-all duration-150 text-left active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-amber-400
                   ${readingMode === option.value
                     ? 'border-amber-400 bg-amber-50 dark:border-amber-600 dark:bg-amber-950/30'
                     : 'border-stone-200 dark:border-stone-700 hover:border-amber-300 dark:hover:border-amber-700 hover:bg-stone-50 dark:hover:bg-stone-800/50'
@@ -300,6 +303,48 @@ export function SettingsView() {
                 )}
               </button>
             ))}
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Sound Effects Toggle */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.13 }}
+      >
+        <Card className="border-amber-200/60 dark:border-amber-800/30">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              {soundEnabled ? (
+                <Volume2 className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              ) : (
+                <VolumeX className="h-4 w-4 text-stone-400" />
+              )}
+              Effets sonores
+            </CardTitle>
+            <CardDescription>
+              Sons de tour de page lors de la navigation
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <button
+              onClick={() => setSoundEnabled(!soundEnabled)}
+              className="flex items-center justify-between w-full rounded-lg border px-4 py-3 transition-all duration-150 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-amber-400 border-stone-200 dark:border-stone-700 hover:border-amber-300 dark:hover:border-amber-700"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium">Sons de navigation</span>
+                <span className="text-xs text-muted-foreground">
+                  — {soundEnabled ? 'Activés' : 'Désactivés'}
+                </span>
+              </div>
+              <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${soundEnabled ? 'bg-amber-500' : 'bg-stone-300 dark:bg-stone-600'}`}>
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 shadow-sm ${soundEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+              </div>
+            </button>
+            <p className="text-[10px] text-muted-foreground mt-2 italic">
+              Les effets sonores seront disponibles dans une prochaine mise à jour.
+            </p>
           </CardContent>
         </Card>
       </motion.div>

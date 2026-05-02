@@ -102,6 +102,7 @@ interface AppState {
   // Reading plan
   selectedPlan: string | null;
   planStartDate: string | null; // ISO date string
+  planCompletedDays: number[]; // Array of day numbers completed in the plan
 
   // Word of the day
   wordOfDayDismissed: string; // ISO date string of when it was last dismissed
@@ -182,6 +183,7 @@ interface AppState {
   // Reading plan actions
   selectPlan: (planId: string) => void;
   clearPlan: () => void;
+  togglePlanDay: (day: number) => void;
 
   // Word of the day actions
   dismissWordOfDay: () => void;
@@ -211,7 +213,7 @@ interface AppState {
   resetAllData: () => void;
 }
 
-const TOTAL_CHAPTERS = 17; // A1-A7 + B1-B10
+const TOTAL_CHAPTERS = 24; // A1-A7 + B1-B10 + C1-C7
 
 /** Get today's date as YYYY-MM-DD string */
 function getTodayDateString(): string {
@@ -291,6 +293,7 @@ export const useAppStore = create<AppState>()(
       // ── Reading Plan ────────────────────────────────────────────────
       selectedPlan: null,
       planStartDate: null,
+      planCompletedDays: [],
 
       // ── Word of the Day ─────────────────────────────────────────────
       wordOfDayDismissed: '',
@@ -694,7 +697,17 @@ export const useAppStore = create<AppState>()(
       },
 
       clearPlan: () => {
-        set({ selectedPlan: null, planStartDate: null });
+        set({ selectedPlan: null, planStartDate: null, planCompletedDays: [] });
+      },
+
+      togglePlanDay: (day: number) => {
+        set((state) => {
+          const days = state.planCompletedDays.includes(day)
+            ? state.planCompletedDays.filter((d) => d !== day)
+            : [...state.planCompletedDays, day];
+          return { planCompletedDays: days };
+        });
+        get().recordActivity();
       },
 
       // ── Word of the Day Actions ─────────────────────────────────────
@@ -861,6 +874,7 @@ export const useAppStore = create<AppState>()(
           memorizationProgress: {},
           selectedPlan: null,
           planStartDate: null,
+          planCompletedDays: [],
           wordOfDayDismissed: '',
           duaOfDayDismissed: '',
           totalMeditationMinutes: 0,
@@ -900,6 +914,7 @@ export const useAppStore = create<AppState>()(
         memorizationProgress: state.memorizationProgress,
         selectedPlan: state.selectedPlan,
         planStartDate: state.planStartDate,
+        planCompletedDays: state.planCompletedDays,
         wordOfDayDismissed: state.wordOfDayDismissed,
         duaOfDayDismissed: state.duaOfDayDismissed,
         totalMeditationMinutes: state.totalMeditationMinutes,

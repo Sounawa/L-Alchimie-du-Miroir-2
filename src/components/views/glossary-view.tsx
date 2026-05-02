@@ -98,7 +98,9 @@ export function GlossaryView() {
   let sectionIndex = 0
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="max-w-4xl mx-auto px-4 py-6 arabic-calligraphy-bg">
+      {/* Subtle pattern overlay */}
+      <div className="pointer-events-none fixed inset-0 islamic-pattern opacity-[0.02] dark:opacity-[0.015]" />
       {/* Back button */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
         <Button
@@ -112,8 +114,14 @@ export function GlossaryView() {
         </Button>
       </motion.div>
 
-      {/* Header */}
-      <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="mt-2 mb-6">
+      {/* Header with Arabic calligraphy decorative element */}
+      <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="mt-2 mb-6 relative">
+        {/* Arabic calligraphy background decoration */}
+        <div className="absolute top-0 right-0 opacity-[0.04] dark:opacity-[0.03] pointer-events-none">
+          <p dir="rtl" lang="ar" className="arabic-verse text-6xl text-amber-700 select-none">
+            المعجم
+          </p>
+        </div>
         <div className="flex items-center gap-3 mb-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30">
             <BookOpen className="h-5 w-5 text-amber-700 dark:text-amber-400" />
@@ -159,9 +167,9 @@ export function GlossaryView() {
                 onClick={() => scrollToLetter(letter)}
                 disabled={!isActive}
                 className={`
-                  w-9 h-9 rounded-lg text-xs font-semibold transition-all duration-200 relative group
+                  w-9 h-9 rounded-lg text-xs font-semibold transition-all duration-200 relative group focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-1
                   ${isActive
-                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-900/60 hover:scale-110 hover:shadow-sm hover:shadow-amber-200/30 dark:hover:shadow-amber-800/20 cursor-pointer'
+                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-900/60 hover:scale-110 hover:shadow-sm hover:shadow-amber-200/30 dark:hover:shadow-amber-800/20 cursor-pointer letter-active-glow'
                     : 'text-muted-foreground/30 dark:text-muted-foreground/20 cursor-default'
                   }
                 `}
@@ -241,7 +249,7 @@ export function GlossaryView() {
                         >
                           <AccordionItem
                             value={item.term}
-                            className="border border-amber-200/40 dark:border-amber-800/20 rounded-xl px-4 bg-amber-50/30 dark:bg-amber-950/10 hover:border-amber-300/60 dark:hover:border-amber-700/40 transition-all duration-200 data-[state=open]:bg-gradient-to-br data-[state=open]:from-amber-50/60 data-[state=open]:via-amber-50/30 data-[state=open]:to-amber-100/20 dark:data-[state=open]:from-amber-950/20 dark:data-[state=open]:via-amber-950/10 dark:data-[state=open]:to-amber-900/10 data-[state=open]:shadow-sm data-[state=open]:card-shadow-subtle"
+                            className="border border-amber-200/40 dark:border-amber-800/20 rounded-xl px-4 bg-amber-50/30 dark:bg-amber-950/10 hover:border-amber-300/60 dark:hover:border-amber-700/40 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-amber-100/30 dark:hover:shadow-amber-900/10 data-[state=open]:bg-gradient-to-br data-[state=open]:from-amber-50/60 data-[state=open]:via-amber-50/30 data-[state=open]:to-amber-100/20 dark:data-[state=open]:from-amber-950/20 dark:data-[state=open]:via-amber-950/10 dark:data-[state=open]:to-amber-900/10 data-[state=open]:shadow-sm data-[state=open]:card-shadow-subtle"
                           >
                             <AccordionTrigger className="py-3 hover:no-underline">
                               <span className="font-semibold text-amber-900 dark:text-amber-200 text-sm">

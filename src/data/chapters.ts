@@ -888,94 +888,890 @@ const b2: Chapter = {
   ],
 };
 
-// ---- Chapter B3-B10 (grouped) ----
+// ---- Chapter B3 — Allah ne surcharge personne ----
 
-const b3to10: Chapter = {
-  id: "b3-b10",
-  number: "B3-B10",
-  title: "Huit trésors supplémentaires du Coran",
-  subtitle: "B3 à B10",
+const b3: Chapter = {
+  id: "b3",
+  number: "B3",
+  title: "La mesure divine",
+  subtitle: "Allah ne surcharge personne",
   part: "B",
-  arabicVerse: "",
-  translation: "",
-  translationSource: "",
-  wordAnalysis: [],
-  mirrorQuestions: [],
-  munajatPrompts: [],
-  timerMinutes: 60,
-  exercises: [],
+  arabicVerse: "لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا",
+  translation:
+    "Allah n'impose à aucune âme une charge supérieure à sa capacité.",
+  translationSource: "Traduction approximative",
+  wordAnalysis: [
+    {
+      arabic: "لَا يُكَلِّفُ",
+      transliteration: "La yukallifu",
+      literalMeaning: "Il n'impose pas / Il n'oblige pas",
+      mirrorDimension:
+        "Dieu ne demande jamais l'impossible. Chaque obligation divine vient avec Sa capacité de l'accomplir — c'est une promesse cachée dans chaque commandement.",
+    },
+    {
+      arabic: "نَفْسًا",
+      transliteration: "Nafsan",
+      literalMeaning: "Une âme / Une personne",
+      mirrorDimension:
+        "La mesure est individuelle — pas collective. Ce qui est supportable pour l'un ne l'est pas pour l'autre, et Allah connaît la capacité de chaque âme.",
+    },
+    {
+      arabic: "إِلَّا وُسْعَهَا",
+      transliteration: "Illa wus'aha",
+      literalMeaning: "Sauf sa capacité / Sauf ce qu'elle peut porter",
+      mirrorDimension:
+        "Le « wus' » désigne une capacité vaste, pas minimale. Allah ne vous donne pas juste de quoi survivre — Il vous donne de quoi réussir.",
+    },
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "Quand je me sens dépassé par une épreuve, est-ce que je me rappelle que Allah l'a mesurée selon ma capacité ?",
+      meditation:
+        "Ressentez la promesse divine : si cette épreuve vous a été envoyée, vous avez en vous la force de la porter.",
+    },
+    {
+      question:
+        "Est-ce que je me compare aux autres en me disant « eux, ils y arrivent, pas moi » ?",
+      meditation:
+        "Chaque âme a sa propre mesure. Votre épreuve n'est pas la leur, et votre capacité n'est pas la leur non plus.",
+    },
+    {
+      question:
+        "Quelle épreuve actuelle me semble au-delà de mes forces ? Et si je demandais à Allah de me montrer la capacité qu'Il a mise en moi ?",
+      meditation:
+        "La capacité est déjà là — elle attend que vous la découvriez. La prière révèle ce qui est caché.",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Allah, rappelle-moi que Tu ne m'imposes rien que je ne puisse porter — et montre-moi la force que Tu as placée en moi.",
+    "Ya Rabb, quand je me sens écrasé par l'épreuve, rappelle-moi Ta promesse : « Illa wus'aha » — selon ma capacité.",
+    "Ya Allah, augmente ma capacité (wus') pour que chaque épreuve devienne un chemin vers Toi.",
+  ],
+  timerMinutes: 18,
+  exercises: [
+    {
+      question:
+        "Identifiez une épreuve actuelle qui vous semble insurmontable. Écrivez trois façons dont Allah vous a déjà donné la capacité de la traverser — même si vous ne les voyez pas encore.",
+      placeholder:
+        "Mon épreuve actuelle et les capacités qu'Allah m'a données pour la traverser...",
+    },
+    {
+      question:
+        "Pendant 24 heures, chaque fois que vous vous sentez dépassé, dites intérieurement « Illa wus'aha — selon ma capacité ». Notez les moments où ce rappel a changé votre perspective.",
+      placeholder:
+        "Mon journal du dhikr « Illa wus'aha » sur 24h...",
+    },
+  ],
+  callouts: [
+    {
+      type: "gold",
+      title: "La promesse cachée",
+      content:
+        "Ce verset n'est pas seulement une consolation — c'est un contrat. Allah s'engage à ne jamais surcharger votre âme. Quand l'épreuve semble impossible, c'est que vous n'avez pas encore découvert la force qu'Il a placée en vous.",
+    },
+    {
+      type: "info",
+      title: "Contexte : Sourate Al-Baqarah 2:286",
+      content:
+        "Ce verset conclut la plus longue sourate du Coran, après le verset du Trône (Ayat al-Kursi). Il encadre la relation entre Dieu et le croyant : « Nous n'imposons à aucune âme que ce qu'elle peut porter » — le dernier mot de la sourate est une promesse de miséricorde.",
+    },
+  ],
+  coherencePoints: [
+    "Lien avec Ayat al-Kursi (B1) : Le Trône d'Allah déborde les cieux et la terre, et pourtant Sa charge sur chaque âme est mesurée avec précision. L'immensité de Sa souveraineté ne conduit pas à l'écrasement, mais à la mesure parfaite.",
+    "Lien avec Al-Fatiha (A4) : « Maliki yawm ad-din » — le Maître du Jugement est aussi Celui qui ne surcharge pas. Sa justice est tempérée par Sa miséricorde.",
+    "Lien avec la Fatiha (A6) : « Ihdina as-sirat al-mustaqim » — la guidée vers le chemin droit implique que le chemin est à notre mesure, sinon la prière serait vaine.",
+  ],
   extraSections: [
     {
-      id: "b3",
-      title: "Allah ne surcharge personne",
+      id: "b3-commentaire",
+      title: "Commentaire spirituel",
       arabic: "لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا",
       translation:
         "Allah n'impose à aucune âme une charge supérieure à sa capacité.",
       commentary:
         "Ce verset est une promesse divine de miséricorde. Chaque épreuve que vous affrontez est mesurée selon votre capacité — pas celle de quelqu'un d'autre. Quand vous vous sentez dépassé, rappelez-vous : si Allah vous l'a envoyé, vous pouvez le porter.",
     },
+  ],
+};
+
+// ---- Chapter B4 — Ne vous laissez pas abattre ----
+
+const b4: Chapter = {
+  id: "b4",
+  number: "B4",
+  title: "La supériorité de la foi",
+  subtitle: "Ne vous laissez pas abattre",
+  part: "B",
+  arabicVerse: "وَلَا تَهِنُوا وَلَا تَحْزَنُوا وَأَنتُمُ الْأَعْلَوْنَ إِن كُنتُم مُّؤْمِنِينَ",
+  translation:
+    "Ne vous laissez pas abattre, ne vous affligez pas alors que vous êtes les supérieurs, si vous êtes de vrais croyants.",
+  translationSource: "Traduction approximative",
+  wordAnalysis: [
     {
-      id: "b4",
-      title: "Ne vous laissez pas abattre",
+      arabic: "وَلَا تَهِنُوا",
+      transliteration: "Wa la tahinu",
+      literalMeaning: "Ne vous laissez pas abattre / Ne faiblissez pas",
+      mirrorDimension:
+        "Le « wahn » (faiblesse) est l'ennemi intérieur du croyant. Ce n'est pas la défaite extérieure qui détruit — c'est le découragement intérieur.",
+    },
+    {
+      arabic: "وَأَنتُمُ الْأَعْلَوْنَ",
+      transliteration: "Wa antum al-a'lawna",
+      literalMeaning: "Vous êtes les supérieurs / Les plus élevés",
+      mirrorDimension:
+        "La supériorité spirituelle ne se mesure pas au succès matériel. Le croyant est « supérieur » par sa connexion à Allah, même quand tout s'effondre autour de lui.",
+    },
+    {
+      arabic: "إِن كُنتُم مُّؤْمِنِينَ",
+      transliteration: "In kuntum mu'minin",
+      literalMeaning: "Si vous êtes croyants",
+      mirrorDimension:
+        "La condition « si vous êtes croyants » n'est pas une menace — c'est un rappel. La foi authentique produit la résilience. Si le découragement domine, c'est que la foi a besoin d'être ravivée.",
+    },
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "Dans quel domaine de ma vie est-ce que je me sens découragé en ce moment ?",
+      meditation:
+        "Identifiez le « wahn » dans votre vie. Est-ce un découragement spirituel, relationnel, professionnel ?",
+    },
+    {
+      question:
+        "Qu'est-ce qui me fait me sentir « inférieur » alors que la foi me rend « supérieur » ?",
+      meditation:
+        "Examinez vos critères de succès. Sont-ils matériels ou spirituels ? La foi vous élève même quand le monde vous rabaisse.",
+    },
+    {
+      question:
+        "Ma foi me donne-t-elle vraiment une force que les épreuves ne peuvent pas détruire ?",
+      meditation:
+        "La foi authentique est une forteresse intérieure. Si elle ne vous protège pas du découragement, il est temps de la renforcer.",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Allah, quand le découragement m'envahit, rappelle-moi que je suis parmi les « a'lawna » — les supérieurs — par ma foi en Toi.",
+    "Ya Mu'min, renforce ma foi pour qu'elle devienne un bouclier contre le wahn (la faiblesse intérieure).",
+    "Ya Allah, fais que ma confiance en Toi dépasse ma confiance en mes propres forces — car Toi seul ne faiblis jamais.",
+  ],
+  timerMinutes: 18,
+  exercises: [
+    {
+      question:
+        "Faites la liste de 3 situations où vous vous sentez « inférieur » ou découragé. Pour chacune, écrivez comment la foi pourrait vous élever au-dessus de cette situation.",
+      placeholder:
+        "Mes 3 situations de découragement et comment la foi m'élève...",
+    },
+    {
+      question:
+        "Pendant une semaine, chaque matin, répétez « Wa antum al-a'lawna in kuntum mu'minin » en réfléchissant à sa signification. Notez les changements dans votre état d'esprit.",
+      placeholder:
+        "Mon journal de la supériorité de la foi pendant une semaine...",
+    },
+  ],
+  callouts: [
+    {
+      type: "gold",
+      title: "Le miroir de la résilience",
+      content:
+        "Ce verset fut révélé après la défaite de Uhud, quand les musulmans avaient perdu et le Prophète lui-même était blessé. Malgré la défaite apparente, Allah leur dit : « Vous êtes les supérieurs. » La victoire spirituelle transcende la défaite matérielle.",
+    },
+    {
+      type: "info",
+      title: "Contexte : Sourate Ali Imran 3:139",
+      content:
+        "Cette sourate traite de la bataille de Uhud et de ses leçons. Le verset vient rappeler que la vraie supériorité n'est pas militaire mais spirituelle. Le croyant ne perd jamais tant qu'il garde sa foi.",
+    },
+  ],
+  coherencePoints: [
+    "Lien avec Ayat al-Kursi (B1) : Al-Hayy Al-Qayyum ne faiblit jamais — et le croyant qui s'appuie sur Lui hérite d'une part de cette force inébranlable.",
+    "Lien avec La mesure divine (B3) : « Allah ne surcharge personne » et « vous êtes les supérieurs » sont deux faces du même miroir — votre capacité est toujours suffisante car votre foi vous élève.",
+    "Lien avec Maliki yawm ad-din (A4) : La supériorité du croyant sera manifeste au Jour du Jugement, même si elle est cachée dans ce monde.",
+  ],
+  extraSections: [
+    {
+      id: "b4-commentaire",
+      title: "Commentaire spirituel",
       arabic: "وَلَا تَهِنُوا وَلَا تَحْزَنُوا وَأَنتُمُ الْأَعْلَوْنَ إِن كُنتُم مُّؤْمِنِينَ",
       translation:
         "Ne vous laissez pas abattre, ne vous affligez pas alors que vous êtes les supérieurs, si vous êtes de vrais croyants.",
       commentary:
         "La supériorité dont parle ce verset n'est pas matérielle — elle est spirituelle. Le croyant est « supérieur » non par sa force, mais par sa connexion à Allah. Même dans la défaite apparente, la foi est une victoire.",
     },
+  ],
+};
+
+// ---- Chapter B5 — La souveraineté divine ----
+
+const b5: Chapter = {
+  id: "b5",
+  number: "B5",
+  title: "Malik al-Mulk",
+  subtitle: "La souveraineté divine",
+  part: "B",
+  arabicVerse: "قُلِ اللَّهُمَّ مَالِكَ الْمُلْكِ تُؤْتِي الْمُلْكَ مَن تَشَاءُ وَتَنزِعُ الْمُلْكَ مِمَّن تَشَاءُ",
+  translation:
+    "Dis : Ô Allah, Maître de la souveraineté, Tu accordes la souveraineté à qui Tu veux et Tu la retires de qui Tu veux.",
+  translationSource: "Traduction approximative",
+  wordAnalysis: [
     {
-      id: "b5",
-      title: "La souveraineté divine",
+      arabic: "مَالِكَ الْمُلْكِ",
+      transliteration: "Malika al-mulk",
+      literalMeaning: "Maître de la souveraineté / Possesseur de la royauté",
+      mirrorDimension:
+        "Tout pouvoir humain est un prêt divin. Celui qui comprend cela ne s'enorgueillit jamais de son statut et ne désespère jamais de sa perte.",
+    },
+    {
+      arabic: "تُؤْتِي",
+      transliteration: "Tu'ti",
+      literalMeaning: "Tu donnes / Tu accordes",
+      mirrorDimension:
+        "Le don divin est un acte de grâce, pas de mérite. Votre position dans la vie est un dépôt (amana), pas un accomplissement.",
+    },
+    {
+      arabic: "تَنزِعُ",
+      transliteration: "Tanzi'u",
+      literalMeaning: "Tu retires / Tu arraches",
+      mirrorDimension:
+        "Le retrait est aussi un acte divin. Quand Allah vous prive de quelque chose, c'est pour vous rapprocher de Lui — la privation est parfois un cadeau déguisé.",
+    },
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "De quel pouvoir ou statut suis-je fier ? Et si Allah me le retirait demain, comment réagirais-je ?",
+      meditation:
+        "Le pouvoir est un prêt. Celui qui l'oublie se prépare à une chute douloureuse. L'humilité est le bouclier du pouvoir.",
+    },
+    {
+      question:
+        "Ai-je déjà vécu un retrait divin — une perte qui s'est révélée être une bénédiction ?",
+      meditation:
+        "Relisez votre vie à la lumière de ce verset. Chaque perte cachait-elle un gain ? Chaque fermeture ouvrait-elle une porte ?",
+    },
+    {
+      question:
+        "Suis-je attaché à une position, une richesse ou une influence plus qu'à Allah Lui-même ?",
+      meditation:
+        "Le test ultime : « Si je perdais tout, resterais-je reconnaissant envers Allah ? » La réponse révèle où se trouve votre véritable souveraineté.",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Malik al-Mulk, je reconnais que tout ce que je possède vient de Toi — apprends-moi à tout tenir avec des mains ouvertes.",
+    "Ya Allah, si Tu retires quelque chose de ma vie, donne-moi la sagesse de voir le cadeau caché dans cette perte.",
+    "Ya Rabb, fais que mon cœur ne s'attache à aucun pouvoir terrestre — car seul Ton pouvoir est éternel.",
+  ],
+  timerMinutes: 18,
+  exercises: [
+    {
+      question:
+        "Listez tout ce que vous considérez comme « votre » pouvoir ou possession (argent, titre, talent, relations). Pour chacun, écrivez : « Ceci m'a été donné par Allah et peut m'être retiré. » Comment cela change-t-il votre rapport à ces choses ?",
+      placeholder:
+        "Ma liste de possessions et comment le détachement transforme mon rapport...",
+    },
+    {
+      question:
+        "Méditez sur une perte passée. Écrivez comment cette perte vous a rapproché d'Allah ou vous a enseigné quelque chose d'essentiel.",
+      placeholder:
+        "Comment une perte passée est devenue une bénédiction...",
+    },
+  ],
+  callouts: [
+    {
+      type: "gold",
+      title: "Le miroir de l'humilité",
+      content:
+        "Ce verset est une chirurgie du cœur. Il coupe l'orgueil à sa racine : vous n'êtes pas l'auteur de votre succès, et vous n'êtes pas la victime de votre échec. Tout vient de Lui et retourne à Lui. La seule chose qui vous appartient vraiment est votre intention.",
+    },
+    {
+      type: "info",
+      title: "Contexte : Sourate Ali Imran 3:26",
+      content:
+        "Ce verset est souvent récité dans les prières de nuit (qiyam al-layl). Les savants recommandent de le méditer quand on est tenté par l'orgueil ou le désespoir, car il rappelle que les deux états — élévation et abaissement — sont entre les mains d'Allah.",
+    },
+  ],
+  coherencePoints: [
+    "Lien avec Ayat al-Kursi (B1) : « Lahu ma fis-samawati wa ma fil-ard » — tout Lui appartient. Le verset B5 applique cette vérité au domaine du pouvoir et de la souveraineté.",
+    "Lien avec Maliki yawm ad-din (A4) : Allah est Maître au Jour du Jugement ET Maître de la souveraineté dans ce monde. Sa maîtrise est totale, dans les deux mondes.",
+    "Lien avec La mesure divine (B3) : Allah donne et retire selon Sa sagesse, mais toujours dans la mesure de notre capacité à porter les conséquences.",
+  ],
+  extraSections: [
+    {
+      id: "b5-commentaire",
+      title: "Commentaire spirituel",
       arabic: "قُلِ اللَّهُمَّ مَالِكَ الْمُلْكِ تُؤْتِي الْمُلْكَ مَن تَشَاءُ وَتَنزِعُ الْمُلْكَ مِمَّن تَشَاءُ",
       translation:
         "Dis : Ô Allah, Maître de la souveraineté, Tu accordes la souveraineté à qui Tu veux et Tu la retires de qui Tu veux.",
       commentary:
         "Ce verset est une leçon d'humilité radicale. Tout pouvoir, toute richesse, toute influence vient de Lui et revient à Lui. Seule la bonne action (hasanah) demeure.",
     },
+  ],
+};
+
+// ---- Chapter B6 — Les cœurs trouvent la paix ----
+
+const b6: Chapter = {
+  id: "b6",
+  number: "B6",
+  title: "Tatma'innu al-Qulub",
+  subtitle: "Les cœurs trouvent la paix",
+  part: "B",
+  arabicVerse: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ",
+  translation:
+    "C'est par le rappel d'Allah que les cœurs trouvent la paix.",
+  translationSource: "Traduction approximative",
+  wordAnalysis: [
     {
-      id: "b6",
-      title: "Les cœurs trouvent la paix",
+      arabic: "أَلَا",
+      transliteration: "Ala",
+      literalMeaning: "Certes / N'est-ce pas / Attention",
+      mirrorDimension:
+        "Le « ala » est une particule d'alerte — comme si Allah nous réveillait : « Attention ! Écoutez bien ceci ! » C'est une annonce qui mérite toute notre attention.",
+    },
+    {
+      arabic: "بِذِكْرِ",
+      transliteration: "Bi-dhikri",
+      literalMeaning: "Par le rappel / Par l'évocation",
+      mirrorDimension:
+        "Le dhikr n'est pas seulement la répétition de mots — c'est la présence du cœur. La préposition « bi » indique un moyen intime : le dhikr est l'instrument direct de la paix.",
+    },
+    {
+      arabic: "تَطْمَئِنُّ",
+      transliteration: "Tatma'innu",
+      literalMeaning: "Trouvent la paix / Se tranquillisent / Se stabilisent",
+      mirrorDimension:
+        "Le verbe « itmi'nan » désigne une paix profonde, pas superficielle. C'est le calme au milieu de la tempête — pas l'absence de tempête.",
+    },
+    {
+      arabic: "الْقُلُوبُ",
+      transliteration: "Al-qulub",
+      literalMeaning: "Les cœurs",
+      mirrorDimension:
+        "Le « qalb » (cœur) vient d'une racine qui signifie « retourner / changer ». Le cœur est par nature instable — il est toujours en mouvement. Seul le dhikr peut le stabiliser.",
+    },
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "Quand je cherche la paix, est-ce que je me tourne d'abord vers le dhikr ou vers d'autres moyens ?",
+      meditation:
+        "Analysez vos stratégies d'apaisement : distraction, nourriture, réseaux sociaux... Le dhikr est-il votre premier réflexe ou votre dernier recours ?",
+    },
+    {
+      question:
+        "Mon cœur est-il plus agité qu'apaisé en ce moment ? Qu'est-ce qui perturbe sa tranquillité ?",
+      meditation:
+        "L'agitation du cœur est un signal : il manque de dhikr. Comme un corps manque d'eau, le cœur manque de rappel divin.",
+    },
+    {
+      question:
+        "Quelle forme de dhikr m'apporte le plus de paix ? La prière, la récitation du Coran, l'invocation silencieuse ?",
+      meditation:
+        "Chaque cœur a sa « porte » de dhikr. Trouvez la vôtre et pratiquez-la avec assiduité.",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Allah, mon cœur est agité — calme-le par Ton dhikr, car Tu es la seule source de itmi'nan.",
+    "Ya Dhikr, fais que chaque souffle devienne un rappel de Toi, et que chaque rappel apporte la paix dans mon cœur.",
+    "Ya Allah, apprends-moi le dhikr du cœur — pas seulement celui des lèvres, mais celui qui pénètre chaque fibre de mon être.",
+  ],
+  timerMinutes: 20,
+  exercises: [
+    {
+      question:
+        "Pendant 24 heures, pratiquez le dhikr du cœur : chaque fois que vous sentez l'anxiété monter, arrêtez-vous et dites intérieurement « SubhanAllah, Alhamdulillah, Allahu Akbar » trois fois. Notez les moments où ce dhikr a apporté la paix.",
+      placeholder:
+        "Mon journal de dhikr et de paix intérieure sur 24h...",
+    },
+    {
+      question:
+        "Identifiez les 3 plus grandes sources d'agitation dans votre cœur. Pour chacune, écrivez une invocation (du'a) spécifique que vous pourriez réciter quand cette agitation se manifeste.",
+      placeholder:
+        "Mes 3 sources d'agitation et les invocations correspondantes...",
+    },
+    {
+      question:
+        "Méditez sur la différence entre la « paix » (itmi'nan) et le « calme temporaire ». Le dhikr apporte-t-il une paix durable ou seulement un répit ? Écrivez votre expérience.",
+      placeholder:
+        "Réflexion sur la paix durable vs. le calme temporaire...",
+    },
+  ],
+  callouts: [
+    {
+      type: "gold",
+      title: "Le cœur qui retourne",
+      content:
+        "La racine du mot « qalb » (cœur) signifie « retourner ». Le cœur est par nature instable — il change, il oscille, il bascule. La promesse « tatma'innu al-qulub » n'est pas que le cœur arrêtera de bouger, mais que le dhikr le stabilisera au milieu du mouvement. Comme une toupie qui tourne vite mais reste en équilibre.",
+    },
+    {
+      type: "info",
+      title: "Contexte : Sourate Ar-Ra'd 13:28",
+      content:
+        "Ce verset est au cœur d'une sourate qui parle de la foi et de la guidée. Il vient après la description de ceux qui croient et font de bonnes œuvres, et leur dit : leur récompense est la paix intérieure — dès maintenant, pas seulement dans l'au-delà.",
+    },
+  ],
+  coherencePoints: [
+    "Lien avec Ayat an-Nur (B2) : La lumière divine (nur) dans la niche du cœur produit la paix (itmi'nan). La lumière et la paix sont deux manifestations de la même présence divine.",
+    "Lien avec Al-Fatiha (A1) : Le Bismillah est le premier dhikr du croyant. C'est par lui que commence chaque action, et c'est par lui que le cœur commence à trouver la paix.",
+    "Lien avec La supériorité de la foi (B4) : Le croyant est « supérieur » précisément parce que son cœur est apaisé par le dhikr, même dans la tempête.",
+  ],
+  extraSections: [
+    {
+      id: "b6-commentaire",
+      title: "Commentaire spirituel",
       arabic: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ",
       translation:
         "C'est par le rappel d'Allah que les cœurs trouvent la paix.",
       commentary:
         "La paix intérieure ne vient pas de l'absence de problèmes, mais de la présence du dhikr. Le cœur humain est agité par nature — seul le souvenir de Dieu peut le stabiliser.",
     },
+  ],
+};
+
+// ---- Chapter B7 — Chaque chose a son livre ----
+
+const b7: Chapter = {
+  id: "b7",
+  number: "B7",
+  title: "Le livre ouvert",
+  subtitle: "Chaque chose a son livre",
+  part: "B",
+  arabicVerse: "وَكُلَّ إِنسَانٍ أَلْزَمْنَاهُ طَائِرَهُ فِي عُنُقِهِ ۖ وَنُخْرِجُ لَهُ يَوْمَ الْقِيَامَةِ كِتَابًا يَلْقَاهُ مَنشُورًا",
+  translation:
+    "Et à chaque homme Nous avons attaché son oeuvre à son cou. Et au Jour de la Résurrection, Nous lui ferons sortir un livre qu'il trouvera ouvert.",
+  translationSource: "Traduction approximative",
+  wordAnalysis: [
     {
-      id: "b7",
-      title: "Chaque chose a son livre",
+      arabic: "أَلْزَمْنَاهُ",
+      transliteration: "Alzamnahu",
+      literalMeaning: "Nous lui avons attaché / Nous lui avons imposé",
+      mirrorDimension:
+        "Chaque action est attachée à son auteur comme une ombre inséparable. Vous ne pouvez pas vous en détacher — elle vous suit partout.",
+    },
+    {
+      arabic: "طَائِرَهُ",
+      transliteration: "Ta'irahu",
+      literalMeaning: "Son destin / Son œuvre (litt. « son oiseau »)",
+      mirrorDimension:
+        "Le mot « ta'ir » (oiseau) suggère quelque chose de léger qui s'envole — mais qui revient toujours. Vos actes s'envolent mais vous retrouveront au Jour du Jugement.",
+    },
+    {
+      arabic: "كِتَابًا يَلْقَاهُ مَنشُورًا",
+      transliteration: "Kitaban yalqahu manshuran",
+      literalMeaning: "Un livre qu'il trouvera ouvert / Déployé",
+      mirrorDimension:
+        "Le livre est ouvert — rien n'est caché, rien n'est effacé. Tout est lisible. La transparence totale de votre propre vie devant vous.",
+    },
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "Si mon livre était ouvert aujourd'hui, quels chapitres m'embarrasseraient le plus ?",
+      meditation:
+        "Ne cherchez pas à cacher — cherchez à transformer. Le livre est encore en cours d'écriture, et chaque moment est une chance de réécrire.",
+    },
+    {
+      question:
+        "Suis-je conscient que chaque action, même la plus petite, est enregistrée ?",
+      meditation:
+        "La conscience de l'enregistrement (muraqaba) est le premier pas vers la transformation. Quand on sait qu'on est observé, on agit différemment.",
+    },
+    {
+      question:
+        "Quelles actions aimerais-je trouver dans mon livre au Jour du Jugement ? Que puis-je faire aujourd'hui pour les écrire ?",
+      meditation:
+        "Chaque bonne action est une page que vous ajoutez vous-même à votre livre. Commencez maintenant.",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Allah, fais que les pages de mon livre soient remplies de bonnes actions et de repentir sincère.",
+    "Ya Rabb, quand mon livre sera ouvert, fais que j'y trouve plus de gratitude que de plainte, plus de générosité que d'égoïsme.",
+    "Ya Allah, accorde-moi la conscience (muraqaba) de Ta présence pour que chaque action soit digne d'être lue.",
+  ],
+  timerMinutes: 18,
+  exercises: [
+    {
+      question:
+        "Imaginez votre « livre » des 7 derniers jours. Écrivez trois actions dont vous êtes fier(e) et trois dont vous aimeriez vous repentir. Que changeriez-vous ?",
+      placeholder:
+        "Mon livre des 7 derniers jours — fiertés et repentirs...",
+    },
+    {
+      question:
+        "Pendant 24 heures, pratiquez la muraqaba (surveillance de soi) : avant chaque action, demandez-vous « Voudrais-je que cette action soit dans mon livre ouvert ? ». Notez les moments où cette conscience a changé votre comportement.",
+      placeholder:
+        "Mon journal de muraqaba sur 24h...",
+    },
+  ],
+  callouts: [
+    {
+      type: "gold",
+      title: "Le livre est encore ouvert",
+      content:
+        "Ce verset peut sembler effrayant, mais il contient une bonne nouvelle : le livre est encore en cours d'écriture. Tant que vous êtes en vie, vous pouvez ajouter des pages de bien, de repentir, de pardon. La plume n'est pas encore posée.",
+    },
+    {
+      type: "info",
+      title: "Contexte : Sourate Al-Isra 17:13",
+      content:
+        "Cette sourate, aussi appelée « Le Voyage Nocturne », traite de la responsabilité individuelle. Le verset sur le livre vient après le commandement de la justice envers les parents, et avant l'affirmation que chaque âme ne porte que son propre fardeau.",
+    },
+  ],
+  coherencePoints: [
+    "Lien avec Maliki yawm ad-din (A4) : Le Maître du Jour du Jugement ouvrira le livre. La justice divine est parfaite — rien n'est oublié, rien n'est exagéré.",
+    "Lien avec La mesure divine (B3) : Chaque action est enregistrée, mais Allah n'impose que ce qu'on peut porter. La justice est toujours tempérée par la miséricorde.",
+    "Lien avec La souveraineté divine (B5) : Allah est Maître de la souveraineté, mais vous êtes maître de votre livre. Votre liberté de choix écrit les pages.",
+  ],
+  extraSections: [
+    {
+      id: "b7-commentaire",
+      title: "Commentaire spirituel",
       arabic: "وَكُلَّ إِنسَانٍ أَلْزَمْنَاهُ طَائِرَهُ فِي عُنُقِهِ ۖ وَنُخْرِجُ لَهُ يَوْمَ الْقِيَامَةِ كِتَابًا يَلْقَاهُ مَنشُورًا",
       translation:
         "Et à chaque homme Nous avons attaché son oeuvre à son cou. Et au Jour de la Résurrection, Nous lui ferons sortir un livre qu'il trouvera ouvert.",
       commentary:
         "Chaque action est enregistrée et vous sera présentée. L'image du livre ouvert au Jour du Jugement est un rappel que rien n'est oublié — ni les bonnes ni les mauvaises actions.",
     },
+  ],
+};
+
+// ---- Chapter B8 — Ô mon Seigneur, ouvre-moi ma poitrine ----
+
+const b8: Chapter = {
+  id: "b8",
+  number: "B8",
+  title: "Ishrah li sadri",
+  subtitle: "Ô mon Seigneur, ouvre-moi ma poitrine",
+  part: "B",
+  arabicVerse: "قَالَ رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي يَفْقَهُوا قَوْلِي",
+  translation:
+    "Il dit : Ô mon Seigneur, ouvre-moi ma poitrine, et facilite ma mission, et dénoue un nœud en ma langue, afin qu'ils comprennent mes paroles.",
+  translationSource: "Traduction approximative",
+  wordAnalysis: [
     {
-      id: "b8",
-      title: "Ô mon Seigneur, ouvre-moi ma poitrine",
+      arabic: "اشْرَحْ لِي صَدْرِي",
+      transliteration: "Ishrah li sadri",
+      literalMeaning: "Ouvre-moi ma poitrine / Élargis ma poitrine",
+      mirrorDimension:
+        "L'ouverture de la poitrine (sharh as-sadr) est l'élargissement spirituel du cœur. Un cœur étouffé ne peut pas accueillir la sagesse. L'ouverture précède la compréhension.",
+    },
+    {
+      arabic: "وَيَسِّرْ لِي أَمْرِي",
+      transliteration: "Wa yassir li amri",
+      literalMeaning: "Et facilite ma mission / Et rends mon affaire facile",
+      mirrorDimension:
+        "Même avec un cœur ouvert, la mission reste difficile. La facilité (taysir) est un don divin — on ne la crée pas, on la demande.",
+    },
+    {
+      arabic: "وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي",
+      transliteration: "Wahlul 'uqdatan min lisani",
+      literalMeaning: "Et dénoue un nœud en ma langue",
+      mirrorDimension:
+        "Le « nœud » est ce qui empêche la communication authentique. Chacun a ses nœuds — la timidité, la peur, l'incompréhension. Les dénouer demande une intervention divine.",
+    },
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "Ma poitrine est-elle « ouverte » ou « étouffée » en ce moment ? Qu'est-ce qui la resserre ?",
+      meditation:
+        "L'étouffement du cœur peut venir de la peur, du doute, du péché ou de l'anxiété. Identifiez ce qui serre votre poitrine et demandez le sharh.",
+    },
+    {
+      question:
+        "Quelle « mission » difficile est-ce que j'évite parce qu'elle me semble insurmontable ?",
+      meditation:
+        "Moïse aussi trouvait sa mission insurmontable. Mais il a prié au lieu de fuir. Quelle est votre mission et quelle prière pourriez-vous faire ?",
+    },
+    {
+      question:
+        "Quel « nœud » dans ma langue m'empêche de communiquer la vérité ?",
+      meditation:
+        "Le nœud de la langue n'est pas seulement physique — c'est aussi la difficulté à exprimer ce qu'on ressent, à dire la vérité, à partager sa foi.",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Allah, ouvre ma poitrine (ishrah sadri) comme Tu as ouvert celle de Moïse — fais-la vaste enough pour accueillir Ta sagesse.",
+    "Ya Rabb, facilite ma mission comme Tu as facilité celle de Moïse — car sans Ta facilité, je suis impuissant.",
+    "Ya Allah, dénoue les nœuds de mon cœur et de ma langue, afin que ma parole soit claire et mon cœur soit libre.",
+  ],
+  timerMinutes: 20,
+  exercises: [
+    {
+      question:
+        "Identifiez un « nœud » dans votre vie (un blocage émotionnel, une peur, une difficulté de communication). Écrivez une prière inspirée de celle de Moïse en utilisant les trois demandes : ouverture, facilité, dénouement.",
+      placeholder:
+        "Mon nœud et ma prière inspirée de Moïse...",
+    },
+    {
+      question:
+        "Pendant une semaine, chaque matin, récitez « Rabbi ishrah li sadri, wa yassir li amri » avant de commencer votre journée. Notez comment cette invocation change votre attitude face aux défis quotidiens.",
+      placeholder:
+        "Mon journal de l'invocation de Moïse pendant une semaine...",
+    },
+  ],
+  callouts: [
+    {
+      type: "gold",
+      title: "La prière du messager",
+      content:
+        "Moïse fait cette prière avant d'affronter Pharaon — le plus puissant tyran de son époque. Il ne demande pas la victoire, mais l'ouverture du cœur, la facilité et la clarté. Ces trois dons suffisent pour affronter n'importe quelle épreuve. La victoire vient d'Allah — votre part est la préparation du cœur.",
+    },
+    {
+      type: "info",
+      title: "Contexte : Sourate Ta-Ha 20:25-28",
+      content:
+        "Cette sourate raconte l'histoire de Moïse en détail. La prière de Moïse est devenue un modèle de du'a pour les croyants face à toute mission difficile — examen, entrevue, prise de parole, décision importante.",
+    },
+  ],
+  coherencePoints: [
+    "Lien avec Ayat an-Nur (B2) : L'ouverture de la poitrine est comme l'élargissement de la niche — plus le cœur est ouvert, plus la lumière divine peut y résider.",
+    "Lien avec La mesure divine (B3) : Allah ne surcharge personne, et quand Il envoie une mission, Il ouvre la poitrine pour la recevoir. La charge vient toujours avec la capacité.",
+    "Lien avec Ihdina as-sirata (A6) : La guidée vers le chemin droit passe par l'ouverture du cœur. Un cœur fermé ne peut pas recevoir la hidaya.",
+  ],
+  extraSections: [
+    {
+      id: "b8-commentaire",
+      title: "Commentaire spirituel",
       arabic: "قَالَ رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي يَفْقَهُوا قَوْلِي",
       translation:
         "Il dit : Ô mon Seigneur, ouvre-moi ma poitrine, et facilite ma mission, et dénoue un nœud en ma langue, afin qu'ils comprennent mes paroles.",
       commentary:
         "La prière de Moïse avant sa mission est un modèle pour tout croyant face à une tâche difficile : demander l'ouverture du cœur, la facilité, et la clarté de communication.",
     },
+  ],
+};
+
+// ---- Chapter B9 — Les plus beaux noms ----
+
+const b9: Chapter = {
+  id: "b9",
+  number: "B9",
+  title: "Asma' ul-Husna",
+  subtitle: "Les plus beaux noms",
+  part: "B",
+  arabicVerse: "هُوَ اللَّهُ الَّذِي لَا إِلَٰهَ إِلَّا هُوَ عَالِمُ الْغَيْبِ وَالشَّهَادَةِ ۖ هُوَ الرَّحْمَٰنُ الرَّحِيمُ",
+  translation:
+    "C'est Lui Allah. Nulle divinité autre que Lui, Le Connaisseur de l'Invisible et du Visible. C'est Lui, le Tout Miséricordieux, le Très Miséricordieux.",
+  translationSource: "Traduction approximative",
+  wordAnalysis: [
     {
-      id: "b9",
-      title: "Les plus beaux noms",
+      arabic: "عَالِمُ الْغَيْبِ وَالشَّهَادَةِ",
+      transliteration: "'Alimu al-ghaybi wash-shahadah",
+      literalMeaning: "Le Connaisseur de l'Invisible et du Visible",
+      mirrorDimension:
+        "Allah connaît ce que vous montrez et ce que vous cachez. La muraqaba (surveillance divine) englobe tout — même vos pensées les plus secrètes.",
+    },
+    {
+      arabic: "الرَّحْمَٰنُ",
+      transliteration: "Ar-Rahman",
+      literalMeaning: "Le Tout Miséricordieux",
+      mirrorDimension:
+        "Même après avoir mentionné Sa connaissance totale de l'Invisible, Il se présente d'abord comme Rahman. La connaissance précède, mais la miséricorde domine.",
+    },
+    {
+      arabic: "الرَّحِيمُ",
+      transliteration: "Ar-Rahim",
+      literalMeaning: "Le Très Miséricordieux",
+      mirrorDimension:
+        "La miséricorde intime et spécifique. Après la vastitude du Rahman vient la tendresse du Rahim — Dieu est à la fois océan et source.",
+    },
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "Quel nom d'Allah résonne le plus dans mon cœur en ce moment ? Pourquoi ?",
+      meditation:
+        "Le nom qui résonne en vous est souvent celui dont vous avez le plus besoin. Méditez sur cette connexion.",
+    },
+    {
+      question:
+        "Est-ce que je connais réellement les noms d'Allah, ou est-ce que je les récite sans les comprendre ?",
+      meditation:
+        "Chaque nom est une porte. La connaître sans la franchir, c'est rester devant la maison sans y entrer. Quel nom voulez-vous approfondir ?",
+    },
+    {
+      question:
+        "Comment les noms d'Allah devraient-ils se refléter dans mon propre caractère ?",
+      meditation:
+        "Le croyant est appelé à refléter les attributs divins dans la mesure du possible : être rahman (compatissant), 'alim (savant), hakim (sage). Quel attribut cultivez-vous ?",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Allah, fais-moi connaître Tes noms non pas comme des mots, mais comme des réalités vivantes qui transforment mon cœur.",
+    "Ya 'Alim al-ghayb wash-shahadah, Tu connais mes secrets — purifie-les par Ta miséricorde.",
+    "Ya Rahman Ya Rahim, que Ta miséricorde vaste et intime enveloppe chaque aspect de ma vie — ce que je montre et ce que je cache.",
+  ],
+  timerMinutes: 18,
+  exercises: [
+    {
+      question:
+        "Choisissez un nom d'Allah (par exemple : Al-Wadud — Le Très Aimant, As-Salam — La Paix, Al-Hakim — Le Sage). Méditez-le pendant 15 minutes. Écrivez ce que ce nom révèle sur Dieu et comment il pourrait se refléter dans votre vie.",
+      placeholder:
+        "Méditation sur un nom divin et son reflet dans ma vie...",
+    },
+    {
+      question:
+        "Pendant une semaine, choisissez un nom différent d'Allah chaque jour. Écrivez une courte prière utilisant ce nom. À la fin de la semaine, relisez vos sept prières — quel nom a le plus touché votre cœur ?",
+      placeholder:
+        "Mes sept prières avec les noms divins et le nom qui m'a le plus touché...",
+    },
+  ],
+  callouts: [
+    {
+      type: "gold",
+      title: "Les noms comme miroirs",
+      content:
+        "Les Asma' ul-Husna ne sont pas de simples étiquettes — ce sont des miroirs. Chaque nom reflète une dimension de Dieu et vous invite à refléter cette dimension dans votre propre vie. Méditer « Ar-Rahman » sans devenir plus compatissant, c'est manquer l'essence du nom.",
+    },
+    {
+      type: "info",
+      title: "Contexte : Sourate Al-Hashr 59:22",
+      content:
+        "Cette sourate traite de l'exil et de la perte. Le verset sur les plus beaux noms vient rappeler que même quand on perd tout sur terre, les noms d'Allah restent — ils sont le trésor inaliénable du croyant.",
+    },
+  ],
+  coherencePoints: [
+    "Lien avec Ar-Rahman Ar-Rahim (A3) : La comparaison entre Rahman et Rahim s'approfondit ici — dans le contexte de la connaissance de l'Invisible, la miséricorde prend une dimension supplémentaire.",
+    "Lien avec Bismillah (A1) : Le Bismillah contient deux des noms mentionnés ici (Rahman, Rahim). Chaque fois que vous dites Bismillah, vous invoquez les plus beaux noms.",
+    "Lien avec Le livre ouvert (B7) : Allah connaît l'Invisible et le Visible — Il sait ce qui est dans votre livre avant même que vous ne l'écriviez.",
+  ],
+  extraSections: [
+    {
+      id: "b9-commentaire",
+      title: "Commentaire spirituel",
       arabic: "هُوَ اللَّهُ الَّذِي لَا إِلَٰهَ إِلَّا هُوَ عَالِمُ الْغَيْبِ وَالشَّهَادَةِ ۖ هُوَ الرَّحْمَٰنُ الرَّحِيمُ",
       translation:
         "C'est Lui Allah. Nulle divinité autre que Lui, Le Connaisseur de l'Invisible et du Visible. C'est Lui, le Tout Miséricordieux, le Très Miséricordieux.",
       commentary:
         "Les plus beaux noms d'Allah (Asma' ul-Husna) sont une porte vers la connaissance de Dieu. Méditer sur chaque nom est une forme de dhikr qui transforme le cœur.",
     },
+  ],
+};
+
+// ---- Chapter B10 — Al-Ikhlas : La pureté ----
+
+const b10: Chapter = {
+  id: "b10",
+  number: "B10",
+  title: "Al-Ikhlas",
+  subtitle: "La pureté — Le tiers du Coran",
+  part: "B",
+  arabicVerse: "قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ",
+  translation:
+    "Dis : Il est Allah, l'Unique. Allah, Le Seul à être imploré pour ce que nous désirons. Il n'a jamais engendré, n'a pas été engendré non plus. Et nul n'est égal à Lui.",
+  translationSource: "Traduction approximative",
+  wordAnalysis: [
     {
-      id: "b10",
-      title: "Al-Ikhlas : La pureté",
+      arabic: "أَحَدٌ",
+      transliteration: "Ahad",
+      literalMeaning: "L'Unique / L'Un",
+      mirrorDimension:
+        "« Ahad » est plus absolu que « wahid » (un). Wahid peut être un parmi d'autres, mais Ahad est l'Unique sans second. Il n'y a rien qui Lui soit comparable.",
+    },
+    {
+      arabic: "الصَّمَدُ",
+      transliteration: "As-Samad",
+      literalMeaning: "Le Seul à être imploré / L'Éternel / Le Indépendant",
+      mirrorDimension:
+        "As-Samad est Celui dont tout dépend et qui ne dépend de rien. Chaque créature se tourne vers Lui dans le besoin, mais Lui n'a besoin de personne.",
+    },
+    {
+      arabic: "لَمْ يَلِدْ وَلَمْ يُولَدْ",
+      transliteration: "Lam yalid wa lam yulad",
+      literalMeaning: "Il n'a jamais engendré, n'a pas été engendré",
+      mirrorDimension:
+        "Allah est au-delà de la chaîne de la filiation. Il n'est ni père ni fils — Il est l'Origine sans origine, la Fin sans fin.",
+    },
+    {
+      arabic: "وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ",
+      transliteration: "Wa lam yakun lahu kufuwan ahad",
+      literalMeaning: "Et nul n'est égal à Lui / Nul ne Lui est comparable",
+      mirrorDimension:
+        "L'unicité absolue. Pas de partenaire, pas de rival, pas d'équivalent. Cette affirmation clôt la sourate comme un sceau sur la pureté de la foi.",
+    },
+  ],
+  mirrorQuestions: [
+    {
+      question:
+        "Y a-t-il quelque chose dans ma vie qui rivalise avec Allah pour ma dévotion ?",
+      meditation:
+        "Al-Ikhlas nous purifie du shirk (association). Le shirk subtil — aimer quelque chose autant qu'Allah — est le plus dangereux car il passe inaperçu.",
+    },
+    {
+      question:
+        "Quand je suis dans le besoin, vers qui ou vers quoi me tourne-je en premier ?",
+      meditation:
+        "As-Samad est Celui qu'on implore. Si votre premier réflexe n'est pas de vous tourner vers Lui, c'est que votre cœur a besoin d'être purifié.",
+    },
+    {
+      question:
+        "Est-ce que ma compréhension d'Allah est assez pure, ou est-elle mélangée à des conceptions humaines ?",
+      meditation:
+        "« Lam yalid wa lam yulad » rejette toute anthropomorphisation de Dieu. Allah n'est pas comme nous, et nous ne devons pas Le concevoir à notre image.",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Ahad, purifie mon cœur de toute association — que Toi seul sois l'Unique de mon adoration.",
+    "Ya Samad, fais que je me tourne vers Toi dans tous mes besoins, car Toi seul es Celui dont tout dépend.",
+    "Ya Allah, fais que ma foi soit pure comme Al-Ikhlas — sans mélange, sans compromis, sans association.",
+  ],
+  timerMinutes: 20,
+  exercises: [
+    {
+      question:
+        "Récitez Al-Ikhlas avec pleine conscience, en méditant chaque mot pendant 10 minutes. Pour chaque verset, écrivez l'émotion ou la pensée qui surgit. Que vous révèle cette sourate sur votre propre cœur ?",
+      placeholder:
+        "Méditation verset par verset d'Al-Ikhlas...",
+    },
+    {
+      question:
+        "Identifiez un domaine de votre vie où votre dévotion n'est pas pure (un attachement excessif, une peur qui rivalise avec la confiance en Allah, etc.). Écrivez un plan concret pour purifier ce domaine.",
+      placeholder:
+        "Domaine à purifier et plan d'action...",
+    },
+    {
+      question:
+        "Pendant 7 jours, récitez Al-Ikhlas 3 fois après chaque prière obligatoire, en méditant sur « Ahad, Samad, Lam yalid, Lam yakun lahu kufuwan ahad ». Notez comment cette pratique transforme votre conscience de l'unicité divine.",
+      placeholder:
+        "Mon journal de méditation d'Al-Ikhlas sur 7 jours...",
+    },
+  ],
+  callouts: [
+    {
+      type: "gold",
+      title: "Le tiers du Coran",
+      content:
+        "Le Prophète ﷺ a dit qu'Al-Ikhlas équivaut au tiers du Coran. Pourquoi ? Parce que le Coran traite de trois sujets : l'unicité d'Allah (tawhid), les lois (ahkam), et les histoires (qisas). Al-Ikhlas condense tout le tawhid en quatre versets — elle est le cœur battant du message coranique.",
+    },
+    {
+      type: "info",
+      title: "Contexte : Sourate Al-Ikhlas 112:1-4",
+      content:
+        "Cette sourate mecquoise fut révélée en réponse à une question sur la nature d'Allah. En quatre versets, elle définit l'essence de la foi monothéiste : unicité, indépendance, transcendance, incomparabilité. Sa récitation est recommandée dans les prières surérogatoires et avant de dormir.",
+    },
+  ],
+  coherencePoints: [
+    "Lien avec Ayat al-Kursi (B1) : « La ilaha illa huwa » dans Ayat al-Kursi et « Qul huwa Allah Ahad » dans Al-Ikhlas sont les deux piliers du tawhid dans le Coran.",
+    "Lien avec Bismillah (A1) : Le Bismillah ouvre le Coran par le nom d'Allah ; Al-Ikhlas le scelle par Son unicité. Du nom à l'essence — c'est le chemin de toute méditation.",
+    "Lien avec Iyyaka na'budu (A5) : « Toi seul nous adorons » est l'application pratique d'Al-Ikhlas. L'unicité dans la croyance (i'tiqad) se traduit par l'exclusivité dans l'adoration ('ibadah).",
+  ],
+  extraSections: [
+    {
+      id: "b10-commentaire",
+      title: "Commentaire spirituel",
       arabic: "قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ",
       translation:
         "Dis : Il est Allah, l'Unique. Allah, Le Seul à être imploré pour ce que nous désirons. Il n'a jamais engendré, n'a pas été engendré non plus. Et nul n'est égal à Lui.",
       commentary:
         "Le tiers du Coran en quatre versets. Al-Ikhlas est la sourate de la pureté absolue — elle nettoie le cœur de toute association (shirk), même la plus subtile. Méditer sur ces quatre versets, c'est se purifier de l'intérieur.",
+    },
+  ],
+  quotes: [
+    {
+      text: "Quiconque récite Qul huwa Allahu ahad, c'est comme s'il avait récité le tiers du Coran.",
+      source: "Rapporté par Muslim",
     },
   ],
 };
@@ -2175,7 +2971,7 @@ export const siteContent: SiteContent = {
       letter: "B",
       title: "Trésors du Coran",
       description: partBDescription,
-      chapters: [b1, b2, b3to10],
+      chapters: [b1, b2, b3, b4, b5, b6, b7, b8, b9, b10],
     },
     {
       id: "part-c",
@@ -2194,7 +2990,7 @@ export const siteContent: SiteContent = {
 
 export const allChapters: Chapter[] = [
   a1, a2, a3, a4, a5, a6, a7,
-  b1, b2, b3to10,
+  b1, b2, b3, b4, b5, b6, b7, b8, b9, b10,
   c1, c2, c3, c4, c5, c6, c7,
 ];
 

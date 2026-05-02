@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Search, ArrowLeft, BookOpen, Keyboard, Sparkles, X, Clock } from 'lucide-react'
+import { Search, ArrowLeft, BookOpen, Keyboard, Sparkles, X, Clock, Filter } from 'lucide-react'
 
 interface SearchResult {
   chapterId: string
@@ -230,7 +230,7 @@ function highlightMatch(text: string, query: string): React.ReactNode {
       parts.push(text.slice(lastIndex, start))
     }
     parts.push(
-      <mark key={start} className="bg-amber-200/60 dark:bg-amber-800/40 rounded px-0.5">
+      <mark key={start} className="bg-amber-200/60 dark:bg-amber-800/40 rounded px-0.5 search-match-underline">
         {text.slice(start, end)}
       </mark>
     )
@@ -250,6 +250,7 @@ export function SearchView() {
   const addRecentSearch = useAppStore((s) => s.addRecentSearch)
   const clearRecentSearches = useAppStore((s) => s.clearRecentSearches)
   const [query, setQuery] = useState('')
+  const [partFilter, setPartFilter] = useState<string>('all')
   const inputRef = useState<React.RefObject<HTMLInputElement | null>>({ current: null })
 
   // Keyboard shortcut: Ctrl+K / Cmd+K to focus search
@@ -269,11 +270,13 @@ export function SearchView() {
 
     const allResults: SearchResult[] = []
     for (const chapter of allChapters) {
+      // Apply part filter
+      if (partFilter !== 'all' && chapter.part !== partFilter) continue
       const chapterResults = searchChapter(chapter, query.trim())
       allResults.push(...chapterResults)
     }
     return allResults
-  }, [query])
+  }, [query, partFilter])
 
   // Group results by chapter
   const groupedResults = useMemo(() => {
@@ -312,10 +315,16 @@ export function SearchView() {
         </Button>
       </motion.div>
 
-      {/* Search input */}
+      {/* Search input with morphing icon */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="space-y-2">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <motion.div
+            animate={query.length > 0 ? { rotate: -10, scale: 1.1 } : { rotate: 0, scale: 1 }}
+            transition={{ duration: 0.2 }}
+            className="absolute left-3 top-1/2 -translate-y-1/2"
+          >
+            <Search className="h-5 w-5 text-muted-foreground" />
+          </motion.div>
           <Input
             ref={inputRef}
             type="text"
@@ -337,10 +346,53 @@ export function SearchView() {
             </kbd>
           </div>
         </div>
+        {/* Category filter chips */}
+        <div className="flex items-center gap-2">
+          <Filter className="h-3.5 w-3.5 text-muted-foreground/50" />
+          {[
+            { value: 'all', label: 'Toutes' },
+            { value: 'A', label: 'Partie A' },
+            { value: 'B', label: 'Partie B' },
+            { value: 'C', label: 'Partie C' },
+          ].map((chip) => (
+            <button
+              key={chip.value}
+              onClick={() => setPartFilter(chip.value)}
+              className={`rounded-full border px-2.5 py-1 text-[11px] transition-all duration-200 active:scale-95 focus-visible:ring-2 focus-visible:ring-amber-400 ${
+                partFilter === chip.value
+                  ? chip.value === 'A'
+                    ? 'border-amber-400 bg-amber-100/60 text-amber-800 dark:border-amber-600 dark:bg-amber-950/30 dark:text-amber-300'
+                    : chip.value === 'B'
+                      ? 'border-emerald-400 bg-emerald-100/60 text-emerald-800 dark:border-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-300'
+                      : chip.value === 'C'
+                        ? 'border-violet-400 bg-violet-100/60 text-violet-800 dark:border-violet-600 dark:bg-violet-950/30 dark:text-violet-300'
+                        : 'border-amber-400 bg-amber-100/60 text-amber-800 dark:border-amber-600 dark:bg-amber-950/30 dark:text-amber-300'
+                  : 'border-stone-200 bg-stone-50 text-stone-600 dark:border-stone-700 dark:bg-stone-800/50 dark:text-stone-400 hover:border-amber-300 dark:hover:border-amber-700'
+              }`}
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
+        {/* Animated results counter */}
         {query.trim().length >= 2 && (
-          <p className="text-sm text-muted-foreground">
-            {results.length} résultat{results.length !== 1 ? 's' : ''} trouvé{results.length !== 1 ? 's' : ''}
-          </p>
+          <motion.p
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-sm text-muted-foreground"
+          >
+            <motion.span
+              key={results.length}
+              initial={{ scale: 1.2, color: '#f59e0b' }}
+              animate={{ scale: 1, color: 'inherit' }}
+              transition={{ duration: 0.3 }}
+              className="font-semibold"
+            >
+              {results.length}
+            </motion.span>{' '}
+            résultat{results.length !== 1 ? 's' : ''} trouvé{results.length !== 1 ? 's' : ''}
+            {partFilter !== 'all' && <span className="text-amber-600 dark:text-amber-400"> dans Partie {partFilter}</span>}
+          </motion.p>
         )}
       </motion.div>
 
