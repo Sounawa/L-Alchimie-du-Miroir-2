@@ -1,0 +1,185 @@
+'use client'
+
+import React from 'react'
+import { useAppStore } from '@/store/use-app-store'
+import { getChapterById } from '@/data/chapters'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Switch } from '@/components/ui/switch'
+import {
+  Menu,
+  Moon,
+  Sun,
+  Search,
+  MessageSquare,
+  BookOpen,
+  Minus,
+  Plus,
+  Download,
+} from 'lucide-react'
+import { useTheme } from 'next-themes'
+import { toast } from 'sonner'
+
+export function AppHeader() {
+  const {
+    toggleSidebar,
+    currentView,
+    currentChapterId,
+    toggleChat,
+    fontSize,
+    setFontSize,
+    navigate,
+    exportNotes,
+  } = useAppStore()
+
+  const { theme, setTheme } = useTheme()
+
+  // Determine the title to display
+  const chapter = currentChapterId ? getChapterById(currentChapterId) : null
+  const headerTitle =
+    currentView === 'chapter' && chapter
+      ? `${chapter.number} — ${chapter.title}`
+      : "L'Alchimie du Miroir"
+
+  // Font size controls
+  const handleFontSizeDecrease = () => {
+    const newSize = Math.max(14, fontSize - 1)
+    setFontSize(newSize)
+  }
+
+  const handleFontSizeIncrease = () => {
+    const newSize = Math.min(24, fontSize + 1)
+    setFontSize(newSize)
+  }
+
+  // Export notes
+  const handleExportNotes = () => {
+    const text = exportNotes()
+    navigator.clipboard.writeText(text).then(
+      () => {
+        toast.success('Notes copiées dans le presse-papiers !')
+      },
+      () => {
+        toast.error('Impossible de copier les notes.')
+      }
+    )
+  }
+
+  // Dark mode toggle
+  const isDark = theme === 'dark'
+  const toggleTheme = () => {
+    setTheme(isDark ? 'light' : 'dark')
+  }
+
+  return (
+    <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-sm">
+      <div className="flex h-14 items-center gap-2 px-3 md:px-4">
+        {/* Hamburger menu */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="shrink-0"
+          onClick={toggleSidebar}
+          aria-label="Ouvrir le menu"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+
+        {/* Title */}
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <BookOpen className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 hidden sm:block" />
+          <h2 className="text-sm font-semibold truncate">
+            {headerTitle}
+          </h2>
+        </div>
+
+        {/* Right-side actions */}
+        <div className="flex items-center gap-1 shrink-0">
+          {/* Search */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('search')}
+            aria-label="Rechercher"
+          >
+            <Search className="h-4 w-4" />
+          </Button>
+
+          {/* Chat toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleChat}
+            aria-label="Assistant IA"
+          >
+            <MessageSquare className="h-4 w-4" />
+          </Button>
+
+          {/* Dark mode toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            aria-label={isDark ? 'Mode clair' : 'Mode sombre'}
+          >
+            {isDark ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </Button>
+
+          {/* Settings dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="Paramètres">
+                <span className="flex h-4 w-4 items-center justify-center text-xs font-bold">⋮</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Taille du texte</DropdownMenuLabel>
+              <div className="flex items-center gap-2 px-2 py-1.5">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={handleFontSizeDecrease}
+                  disabled={fontSize <= 14}
+                >
+                  <Minus className="h-3 w-3" />
+                </Button>
+                <Badge variant="secondary" className="flex-1 justify-center text-xs">
+                  {fontSize}px
+                </Badge>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={handleFontSizeIncrease}
+                  disabled={fontSize >= 24}
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+              </div>
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem onClick={handleExportNotes}>
+                <Download className="h-4 w-4 mr-2" />
+                Exporter les notes
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    </header>
+  )
+}
