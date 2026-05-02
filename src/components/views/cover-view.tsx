@@ -4,6 +4,7 @@ import { useAppStore } from '@/store/use-app-store';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useMemo } from 'react';
 
 const container = {
   hidden: { opacity: 0 },
@@ -21,14 +22,75 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
 };
 
+// Sparkle/particle data
+interface Sparkle {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  delay: number;
+  duration: number;
+}
+
+// Deterministic pseudo-random number generator (mulberry32)
+function seededRandom(seed: number) {
+  let t = seed + 0x6D2B79F5;
+  return () => {
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function SparkleField() {
+  const sparkles = useMemo<Sparkle[]>(() => {
+    const rng = seededRandom(42);
+    return Array.from({ length: 30 }, (_, i) => ({
+      id: i,
+      x: rng() * 100,
+      y: rng() * 100,
+      size: rng() * 3 + 1,
+      delay: rng() * 5,
+      duration: rng() * 3 + 2,
+    }));
+  }, []);
+
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {sparkles.map((s) => (
+        <motion.div
+          key={s.id}
+          className="absolute rounded-full bg-amber-400/60 dark:bg-amber-300/50"
+          style={{
+            left: `${s.x}%`,
+            top: `${s.y}%`,
+            width: s.size,
+            height: s.size,
+          }}
+          animate={{
+            opacity: [0, 0.8, 0],
+            scale: [0.5, 1.2, 0.5],
+          }}
+          transition={{
+            duration: s.duration,
+            delay: s.delay,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export function CoverView() {
   const navigate = useAppStore((s) => s.navigate);
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-stone-950 via-stone-900 to-amber-950/20">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-amber-50 via-stone-50 to-amber-100/30 dark:from-stone-950 dark:via-stone-900 dark:to-amber-950/20">
       {/* Subtle Islamic geometric pattern overlay */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.04]"
+        className="pointer-events-none absolute inset-0 opacity-[0.06] dark:opacity-[0.04]"
         style={{
           backgroundImage: `
             radial-gradient(circle at 25% 25%, rgba(217, 169, 99, 0.3) 1px, transparent 1px),
@@ -42,8 +104,11 @@ export function CoverView() {
         }}
       />
 
+      {/* Sparkle/particle animation */}
+      <SparkleField />
+
       {/* Radial warm glow */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(180,130,60,0.08)_0%,_transparent_70%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(180,130,60,0.12)_0%,_transparent_70%)] dark:bg-[radial-gradient(ellipse_at_center,_rgba(180,130,60,0.08)_0%,_transparent_70%)]" />
 
       <motion.div
         variants={container}
@@ -51,7 +116,7 @@ export function CoverView() {
         animate="show"
         className="relative z-10 flex flex-col items-center gap-5 px-6 py-12 text-center md:gap-7 md:py-16"
       >
-        {/* Mirror emoji with glow and float */}
+        {/* Mirror emoji with dramatic glow and float */}
         <motion.div variants={item} className="relative">
           <motion.span
             className="block text-7xl md:text-8xl"
@@ -60,13 +125,20 @@ export function CoverView() {
           >
             🪞
           </motion.span>
-          <div className="absolute inset-0 rounded-full bg-amber-400/20 blur-2xl" />
+          {/* Multi-layer glow effect */}
+          <div className="absolute inset-0 rounded-full bg-amber-400/25 blur-2xl dark:bg-amber-400/30" />
+          <div className="absolute inset-0 rounded-full bg-amber-300/15 blur-3xl dark:bg-amber-300/10" />
+          <motion.div
+            className="absolute inset-0 rounded-full bg-amber-500/10 blur-xl"
+            animate={{ opacity: [0.3, 0.7, 0.3], scale: [0.9, 1.1, 0.9] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          />
         </motion.div>
 
         {/* Title with shimmer */}
         <motion.h1
           variants={item}
-          className="relative bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-300 bg-clip-text text-4xl font-serif tracking-wide text-transparent sm:text-5xl md:text-6xl"
+          className="relative bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-300 dark:via-yellow-200 dark:to-amber-300 bg-clip-text text-4xl font-serif tracking-wide text-transparent sm:text-5xl md:text-6xl"
           style={{
             backgroundSize: '200% auto',
             animation: 'shimmer 3s ease-in-out infinite',
@@ -85,7 +157,7 @@ export function CoverView() {
         {/* Subtitle */}
         <motion.p
           variants={item}
-          className="text-lg text-stone-300/80 md:text-xl"
+          className="text-lg text-stone-600 dark:text-stone-300/80 md:text-xl"
         >
           Méditer le Coran avec l&apos;Âme
         </motion.p>
@@ -94,7 +166,7 @@ export function CoverView() {
         <motion.div variants={item}>
           <Badge
             variant="outline"
-            className="border-amber-600/50 bg-amber-950/40 px-4 py-1.5 text-sm text-amber-300/90"
+            className="border-amber-500/40 bg-amber-100/60 px-4 py-1.5 text-sm text-amber-700 dark:border-amber-600/50 dark:bg-amber-950/40 dark:text-amber-300/90"
           >
             ✦ Niveau 2 : L&apos;Approfondissement ✦
           </Badge>
@@ -107,19 +179,19 @@ export function CoverView() {
         >
           <Badge
             variant="outline"
-            className="border-stone-600/40 bg-stone-800/50 px-3 py-1 text-xs text-stone-300/70"
+            className="border-stone-300/50 bg-stone-100/70 px-3 py-1 text-xs text-stone-600 dark:border-stone-600/40 dark:bg-stone-800/50 dark:text-stone-300/70"
           >
             Partie A — Al-Fatiha
           </Badge>
           <Badge
             variant="outline"
-            className="border-stone-600/40 bg-stone-800/50 px-3 py-1 text-xs text-stone-300/70"
+            className="border-stone-300/50 bg-stone-100/70 px-3 py-1 text-xs text-stone-600 dark:border-stone-600/40 dark:bg-stone-800/50 dark:text-stone-300/70"
           >
             Partie B — Trésors du Coran
           </Badge>
           <Badge
             variant="outline"
-            className="border-stone-600/40 bg-stone-800/50 px-3 py-1 text-xs text-stone-300/70"
+            className="border-stone-300/50 bg-stone-100/70 px-3 py-1 text-xs text-stone-600 dark:border-stone-600/40 dark:bg-stone-800/50 dark:text-stone-300/70"
           >
             Partie C — Les Sept Niveaux
           </Badge>
@@ -128,7 +200,7 @@ export function CoverView() {
         {/* Author line */}
         <motion.p
           variants={item}
-          className="mt-3 text-sm italic text-stone-400/60"
+          className="mt-3 text-sm italic text-stone-500 dark:text-stone-400/60"
         >
           Un guide de tadabbur progressif
         </motion.p>
@@ -136,7 +208,7 @@ export function CoverView() {
         {/* Edition */}
         <motion.p
           variants={item}
-          className="text-xs text-stone-500/50"
+          className="text-xs text-stone-400 dark:text-stone-500/50"
         >
           Édition 2025 — Pour usage personnel
         </motion.p>

@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import { useAppStore } from '@/store/use-app-store'
 import { AppHeader } from '@/components/layout/app-header'
 import { AppSidebar } from '@/components/layout/app-sidebar'
+import { AppFooter } from '@/components/layout/app-footer'
 import { CoverView } from '@/components/views/cover-view'
 import { TocView } from '@/components/views/toc-view'
 import { IntroView } from '@/components/views/intro-view'
@@ -13,6 +14,7 @@ import { ProgressView } from '@/components/views/progress-view'
 import { SearchView } from '@/components/views/search-view'
 import { ReadingProgressBar } from '@/components/shared/reading-progress-bar'
 import { ViewTransition } from '@/components/shared/view-transition'
+import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 
 export default function Home() {
   const currentView = useAppStore((s) => s.currentView)
@@ -21,6 +23,9 @@ export default function Home() {
   const chatOpen = useAppStore((s) => s.chatOpen)
   const sidebarOpen = useAppStore((s) => s.sidebarOpen)
   const mainRef = useRef<HTMLDivElement>(null)
+
+  // Register keyboard shortcuts
+  useKeyboardShortcuts()
 
   // Scroll to top on view change
   useEffect(() => {
@@ -55,6 +60,7 @@ export default function Home() {
         <ViewTransition>
           <CoverView />
         </ViewTransition>
+        <AppFooter />
         {chatOpen && <AiChatPanel />}
       </div>
     )
@@ -76,6 +82,7 @@ export default function Home() {
         </main>
         {chatOpen && <AiChatPanel />}
       </div>
+      <AppFooter />
     </div>
   )
 }

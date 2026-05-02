@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '@/store/use-app-store'
 import { allChapters, siteContent } from '@/data/chapters'
@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Search, ArrowLeft, BookOpen } from 'lucide-react'
+import { Search, ArrowLeft, BookOpen, Keyboard, Sparkles } from 'lucide-react'
 
 interface SearchResult {
   chapterId: string
@@ -213,20 +213,19 @@ function highlightMatch(text: string, query: string): React.ReactNode {
   // Use normalized version for matching to handle accents
   const normalizedText = normalizeForSearch(text)
   const normalizedQuery = normalizeForSearch(query)
-  const regex = new RegExp(`(${normalizedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi')
-  
+
   // Build result by matching on normalized text but slicing from original
   const parts: React.ReactNode[] = []
   let lastIndex = 0
   let match: RegExpExecArray | null
-  
+
   // Reset regex
   const searchRegex = new RegExp(normalizedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi')
-  
+
   while ((match = searchRegex.exec(normalizedText)) !== null) {
     const start = match.index
     const end = start + match[0].length
-    
+
     if (start > lastIndex) {
       parts.push(text.slice(lastIndex, start))
     }
@@ -237,17 +236,30 @@ function highlightMatch(text: string, query: string): React.ReactNode {
     )
     lastIndex = end
   }
-  
+
   if (lastIndex < text.length) {
     parts.push(text.slice(lastIndex))
   }
-  
+
   return parts.length > 0 ? <>{parts}</> : text
 }
 
 export function SearchView() {
   const navigate = useAppStore((s) => s.navigate)
   const [query, setQuery] = useState('')
+  const inputRef = useState<React.RefObject<HTMLInputElement | null>>({ current: null })
+
+  // Keyboard shortcut: Ctrl+K / Cmd+K to focus search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault()
+        inputRef.current?.focus()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const results = useMemo(() => {
     if (!query.trim() || query.trim().length < 2) return []
@@ -302,13 +314,20 @@ export function SearchView() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
+            ref={inputRef}
             type="text"
             placeholder="Rechercher dans les chapitres, versets, exercices..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="pl-10 h-12 text-base border-amber-200/50 dark:border-amber-800/30 focus-visible:ring-amber-500/30"
+            className="pl-10 pr-20 h-12 text-base border-amber-200/50 dark:border-amber-800/30 focus-visible:ring-amber-500/30"
             autoFocus
           />
+          {/* Keyboard shortcut hint */}
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none">
+            <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-stone-300 bg-stone-100 px-1.5 py-0.5 text-[10px] font-mono text-stone-500 dark:border-stone-600 dark:bg-stone-800 dark:text-stone-400">
+              <Keyboard className="size-3" /> ⌘K
+            </kbd>
+          </div>
         </div>
         {query.trim().length >= 2 && (
           <p className="text-sm text-muted-foreground">
@@ -332,7 +351,7 @@ export function SearchView() {
                 key={chapterId}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: groupIdx * 0.05 }}
+                transition={{ delay: groupIdx * 0.05, duration: 0.3, ease: 'easeOut' }}
               >
                 <div className="flex items-center gap-2 mb-2">
                   <Badge variant="outline" className="text-[10px] border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-400">
@@ -352,32 +371,38 @@ export function SearchView() {
 
                 <div className="space-y-2">
                   {chapterResults.slice(0, 5).map((result, idx) => (
-                    <Card
+                    <motion.div
                       key={`${chapterId}-${idx}`}
-                      className="cursor-pointer hover:border-amber-300/50 dark:hover:border-amber-700/50 transition-colors"
-                      onClick={() => navigate('chapter', chapterId)}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: groupIdx * 0.05 + idx * 0.03, duration: 0.25, ease: 'easeOut' }}
                     >
-                      <CardContent className="py-3 px-4">
-                        <div className="flex items-start gap-2">
-                          <Badge
-                            variant="secondary"
-                            className={`text-[10px] shrink-0 mt-0.5 border-0 ${matchTypeColors[result.matchType]}`}
-                          >
-                            {matchTypeLabels[result.matchType]}
-                          </Badge>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm leading-relaxed">
-                              {highlightMatch(result.matchText, query.trim())}
-                            </p>
-                            {result.matchContext && (
-                              <p className="text-[11px] text-muted-foreground mt-0.5">
-                                {result.matchContext}
+                      <Card
+                        className="cursor-pointer hover:border-amber-300/50 dark:hover:border-amber-700/50 transition-all hover:shadow-sm hover:shadow-amber-100/30 dark:hover:shadow-amber-900/10"
+                        onClick={() => navigate('chapter', chapterId)}
+                      >
+                        <CardContent className="py-3 px-4">
+                          <div className="flex items-start gap-2">
+                            <Badge
+                              variant="secondary"
+                              className={`text-[10px] shrink-0 mt-0.5 border-0 ${matchTypeColors[result.matchType]}`}
+                            >
+                              {matchTypeLabels[result.matchType]}
+                            </Badge>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm leading-relaxed">
+                                {highlightMatch(result.matchText, query.trim())}
                               </p>
-                            )}
+                              {result.matchContext && (
+                                <p className="text-[11px] text-muted-foreground mt-0.5">
+                                  {result.matchContext}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
                   ))}
                   {chapterResults.length > 5 && (
                     <p className="text-xs text-muted-foreground text-center">
@@ -396,14 +421,23 @@ export function SearchView() {
             exit={{ opacity: 0 }}
             className="text-center py-12"
           >
-            <div className="text-4xl mb-4">🪞</div>
+            <motion.div
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              className="inline-block"
+            >
+              <div className="text-5xl mb-4">🪞</div>
+            </motion.div>
             <h3 className="text-lg font-semibold mb-2">Aucun résultat</h3>
             <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-              Essayez avec d'autres mots-clés. Par exemple : &laquo; miséricorde &raquo;, &laquo; Bismillah &raquo;, &laquo; chemin droit &raquo;...
+              Essayez avec d&apos;autres mots-clés. Par exemple : &laquo; miséricorde &raquo;, &laquo; Bismillah &raquo;, &laquo; chemin droit &raquo;...
             </p>
-            <p className="text-xs text-muted-foreground/60 mt-6 italic">
-              &laquo; Celui qui cherche, trouve. Celui qui frappe, on lui ouvrira. &raquo;
-            </p>
+            <div className="mt-6 inline-flex items-center gap-2 rounded-lg bg-amber-50/80 dark:bg-amber-950/20 px-4 py-2">
+              <Sparkles className="size-4 text-amber-500" />
+              <p className="text-xs text-amber-700 dark:text-amber-300/80 italic">
+                &laquo; Celui qui cherche, trouve. Celui qui frappe, on lui ouvrira. &raquo;
+              </p>
+            </div>
           </motion.div>
         ) : query.trim().length < 2 ? (
           <motion.div
@@ -413,12 +447,29 @@ export function SearchView() {
             exit={{ opacity: 0 }}
             className="text-center py-12"
           >
-            <Search className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
+            <motion.div
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              className="inline-block"
+            >
+              <Search className="h-12 w-12 mx-auto text-amber-300/50 dark:text-muted-foreground/30 mb-4" />
+            </motion.div>
             <h3 className="text-lg font-semibold mb-2">Rechercher</h3>
             <p className="text-sm text-muted-foreground max-w-sm mx-auto">
               Tapez au moins 2 caractères pour rechercher dans les titres, versets, traductions,
               exercices et plus encore.
             </p>
+            <div className="mt-4 flex flex-wrap justify-center gap-2">
+              {['miséricorde', 'Bismillah', 'chemin droit', 'prière'].map((suggestion) => (
+                <button
+                  key={suggestion}
+                  onClick={() => setQuery(suggestion)}
+                  className="rounded-full border border-stone-200 bg-stone-50 px-3 py-1 text-xs text-stone-600 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-400 dark:hover:border-amber-700 dark:hover:bg-amber-950/30 dark:hover:text-amber-300"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
           </motion.div>
         ) : null}
       </AnimatePresence>

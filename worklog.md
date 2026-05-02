@@ -219,3 +219,114 @@ Stage Summary:
 - 5 new features: reading progress bar, view transitions, bookmark button, back-to-top button, enhanced Arabic verse display
 - 1 styling improvement: Amiri font for Arabic verses
 - All changes lint-clean and compiling
+
+---
+Task ID: 13-b
+Agent: Features Agent
+Task: Add new features - daily inspiration, streak tracking, keyboard shortcuts, footer
+
+Work Log:
+- Updated Zustand store (`/src/store/use-app-store.ts`) with new persisted fields: `dailyInspirationDismissed`, `lastActivityDate`, `currentStreak`, `longestStreak`, `previousView`
+- Added new store actions: `dismissDailyInspiration`, `isDailyInspirationDismissed`, `recordActivity`, `goBack`
+- Updated `partialize` to include all new persisted fields
+- `recordActivity()` is called automatically when completing chapters or saving notes
+- `toggleChapterComplete` and `saveNote` now call `recordActivity()` to track daily activity for streak
+- Created DailyInspiration component (`/src/components/shared/daily-inspiration.tsx`) with 14 Quranic verses (Arabic + French), deterministic daily rotation based on day-of-year, amber/gold design, dismissible with localStorage persistence
+- Integrated DailyInspiration into TocView (between header and chapter list)
+- Added streak tracking (🔥) display to AppSidebar (`/src/components/layout/app-sidebar.tsx`) next to progress percentage badge using Flame icon
+- Added streak stats card to ProgressView (`/src/components/views/progress-view.tsx`) showing current streak + longest streak with fire emoji and gradient background
+- Updated ProgressView stats grid to 4 columns (added streak card)
+- Created `useKeyboardShortcuts` hook (`/src/hooks/use-keyboard-shortcuts.ts`) with shortcuts: Ctrl/Cmd+K (search), Escape (go back), ←/→ (chapter nav), B (bookmark toggle), D (dark mode toggle)
+- Integrated `useKeyboardShortcuts` into page.tsx
+- Created AppFooter component (`/src/components/layout/app-footer.tsx`) with navigation links, app name, version, credit line
+- Integrated AppFooter into page.tsx (both cover and non-cover views)
+- Fixed pre-existing lint error in cover-view.tsx (useState+useEffect → useMemo for sparkle generation)
+- All lint checks pass, dev server compiles cleanly
+
+Stage Summary:
+- 4 new features implemented: Daily Inspiration, Reading Streak Tracking, Keyboard Shortcuts, Footer Component
+- Zustand store extended with 5 new fields and 5 new actions
+- All new fields properly persisted via partialize
+- No lint errors, clean compilation
+
+---
+Task ID: 13-a
+Agent: Styling Enhancement Agent
+Task: Fix light mode styling and enhance visual design
+
+Work Log:
+- Fixed Cover View (`cover-view.tsx`): Changed hardcoded dark backgrounds to theme-aware gradients using `dark:` variants (`from-amber-50 via-stone-50 to-amber-100/30` for light, `dark:from-stone-950 dark:via-stone-900 dark:to-amber-950/20` for dark)
+- Added SparkleField component with 30 animated particles using Framer Motion and useMemo
+- Enhanced mirror emoji with multi-layer glow effect (3 layered blur divs + pulsing animation)
+- Made all text colors theme-aware: titles (`from-amber-600` / `dark:from-amber-300`), subtitles (`text-stone-600` / `dark:text-stone-300/80`), badges (`bg-amber-100/60 text-amber-700` / `dark:bg-amber-950/40 dark:text-amber-300/90`)
+- Fixed TOC View (`toc-view.tsx`): Replaced `bg-gradient-to-b from-stone-950 via-stone-900 to-stone-950` with theme-aware `from-amber-50/50 via-stone-50 to-stone-100 dark:from-stone-950 dark:via-stone-900 dark:to-stone-950`
+- Added hover effects on chapter items: `hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10`
+- Made dot leaders more elegant with theme-aware borders and hover color transitions
+- All text colors use light/dark variants consistently
+- Fixed Intro View (`intro-view.tsx`): Same background gradient fix as TOC
+- Added icon decorations to structure table rows (Star, BookMarked, Layers icons for parts A/B/C)
+- Added Clock icon to duration column in structure table
+- Improved card hover effects with shadow transitions: `hover:border-amber-300/60 hover:shadow-md hover:shadow-amber-100/50 dark:hover:border-amber-700/30 dark:hover:shadow-amber-900/10`
+- Made all separators theme-aware: `bg-stone-200/60 dark:bg-stone-700/30`
+- Fixed hadith quote blocks: `border-amber-400/60 bg-amber-50/50 dark:border-amber-500/40 dark:bg-stone-800/30`
+- Enhanced Progress View (`progress-view.tsx`): Added motivational message component with 8 levels (0%, <15%, <30%, <50%, <70%, <90%, <100%, 100%) each with unique icon and French message
+- Added gradient backgrounds to stats cards (emerald, amber, orange gradients)
+- Improved chapter list visual hierarchy with chapter number badges (`bg-amber-100/60 dark:bg-amber-950/30 px-1.5 py-0.5 rounded`)
+- Added completion date with CheckCircle2 icon
+- Preserved streak card from task 13-b (currentStreak + longestStreak with Flame icon)
+- Enhanced Search View (`search-view.tsx`): Added Ctrl+K/Cmd+K keyboard shortcut with visual hint in search input
+- Added staggered animations to search result cards
+- Made empty state more engaging with floating mirror animation and styled quote callout
+- Added search suggestion chips (miséricorde, Bismillah, chemin droit, prière)
+- Made initial prompt state more engaging with pulsing search icon
+- Enhanced Chapter View (`chapter-view.tsx`): Added DecorativeDivider component with centered ✦ ornament and gradient lines
+- Added SectionHeader component with gradient underline for section titles
+- Applied decorative dividers between all major sections
+- Enhanced Verse Display (`verse-display.tsx`): Added subtle background pattern (radial dot grid) inside the manuscript frame
+- Made outer border theme-aware: `border-amber-300/60 dark:border-amber-600/40`
+- Fixed DailyInspiration component (`daily-inspiration.tsx`): Made theme-aware with light mode styles (`from-amber-100/60 via-amber-50/80 to-amber-100/40` / `dark:from-amber-950/40 dark:via-amber-900/30 dark:to-stone-900/40`)
+- Fixed unused import in cover-view.tsx (removed `useState` after 13-b's useMemo refactor)
+- All lint checks pass, dev server compiles cleanly
+
+Stage Summary:
+- 6 view files updated with full light/dark theme support using Tailwind dark: variants
+- Cover View: particle animation, multi-layer glow, theme-aware gradients and text
+- TOC View: theme-aware backgrounds, hover effects, elegant dot leaders
+- Intro View: icon decorations, card hover shadows, theme-aware separators and quotes
+- Progress View: motivational messages, gradient stat cards, visual hierarchy improvements, streak card preserved
+- Search View: Ctrl+K shortcut, staggered animations, engaging empty state, suggestion chips
+- Chapter View: decorative dividers (✦), section headers with gradient underlines
+- Verse Display: subtle background pattern, theme-aware borders
+- Daily Inspiration: fully theme-aware styling
+- No new files created, all changes to existing files
+- Zero lint errors, clean compilation
+
+---
+Task ID: 13-c
+Agent: Chat Enhancement Agent
+Task: Improve AI chat panel UX
+
+Work Log:
+- Created lightweight inline markdown renderer (no external dependencies) supporting **bold**, *italic*, ***bold-italic***, numbered lists (1./1)), and bullet lists (-/•/*)
+- MarkdownContent component parses line-by-line: numbered lists become `<ol>`, bullets become `<ul>`, empty lines become paragraph breaks, regular text becomes `<p>` with inline markdown
+- Improved message bubbles: user messages now have amber gradient background (`from-amber-500 to-amber-600`) with rounded-2xl corners (rounded-tr-sm tail), white text, and shadow; assistant messages have white/card-like background with subtle border and shadow
+- User avatar now uses dark stone gradient, assistant avatar uses amber gradient — both with shadow
+- Added staggered fade-in animation for each message bubble (opacity + y transition)
+- Improved typing indicator: amber-colored dots (bg-amber-400/dark:bg-amber-500), custom `chatBounce` keyframe animation with translateY + opacity for polished bounce, card-like background matching assistant message style
+- Chat input improvements: focus glow ring (amber gradient blur behind input that fades in/out), character counter (appears when >100 chars, shows X/500, turns red at 90%), max input length of 500 characters, send button with gradient + shadow + hover effects
+- Conversation starter improvements: staggered animation on initial appearance (delay per chip), Sparkles icon on each chip, group-hover effect (icon opacity transitions), subtle background and border hover effects with shadow, "Conseil" tip text below suggestions with Lightbulb icon
+- Context indicator improvements: chapter name displayed in a badge with BookOpen icon in the header (animated with AnimatePresence), context glow bar below header (thin amber gradient line with `contextPulse` animation), "Guide de méditation coranique" subtitle when no chapter context
+- Header enhanced with amber gradient background, larger icon with gradient background
+- Empty state enhanced with animated mirror emoji (scale + opacity pulse), background glow blur effect
+- Added CSS keyframes to globals.css: `chatBounce` (translateY + opacity for typing dots), `contextPulse` (opacity pulse for context glow bar)
+- Used `useMemo` for currentChapter lookup, `useCallback` for handleSend, improved auto-scroll to include `isLoading` dependency
+- All text remains in French
+- Lint passes clean, dev server compiles successfully
+
+Stage Summary:
+- 6 major improvements implemented: Markdown rendering, message bubbles, typing indicator, chat input, conversation starters, context indicator
+- Lightweight markdown parser with zero external dependencies (supports bold, italic, numbered/bullet lists)
+- All styling uses theme-aware Tailwind classes with dark: variants
+- Custom CSS keyframe animations for typing dots and context glow
+- No new files created, all changes to existing ai-chat-panel.tsx and globals.css
+- Zero lint errors, clean compilation

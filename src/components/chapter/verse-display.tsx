@@ -12,8 +12,20 @@ export function VerseDisplay({ arabicVerse, translation, translationSource }: Ve
       {/* Illuminated manuscript frame */}
       <div className="relative">
         {/* Outer decorative border */}
-        <div className="rounded-xl border-2 border-amber-400/50 dark:border-amber-600/40 p-1">
-          <div className="rounded-lg border border-amber-300/60 dark:border-amber-700/50 bg-gradient-to-b from-amber-50 via-amber-50/80 to-amber-100/60 dark:from-amber-950/40 dark:via-amber-950/30 dark:to-amber-950/20 p-6 md:p-10 relative overflow-hidden">
+        <div className="rounded-xl border-2 border-amber-300/60 dark:border-amber-600/40 p-1">
+          <div className="rounded-lg border border-amber-200/60 dark:border-amber-700/50 bg-gradient-to-b from-amber-50 via-amber-50/80 to-amber-100/60 dark:from-amber-950/40 dark:via-amber-950/30 dark:to-amber-950/20 p-6 md:p-10 relative overflow-hidden">
+
+            {/* Subtle background pattern */}
+            <div
+              className="pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.04]"
+              style={{
+                backgroundImage: `
+                  radial-gradient(circle at 20% 20%, rgba(217, 169, 99, 0.4) 1px, transparent 1px),
+                  radial-gradient(circle at 80% 80%, rgba(217, 169, 99, 0.4) 1px, transparent 1px)
+                `,
+                backgroundSize: '24px 24px, 24px 24px',
+              }}
+            />
 
             {/* Subtle golden radial glow behind text */}
             <div className="absolute inset-0 bg-gradient-radial from-amber-200/20 via-transparent to-transparent dark:from-amber-700/10 dark:via-transparent dark:to-transparent pointer-events-none" />

@@ -19,9 +19,6 @@ export function MirrorQuestionsTable({ questions }: MirrorQuestionsTableProps) {
 
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold text-amber-800 dark:text-amber-300">
-        Questions miroir
-      </h3>
       <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>

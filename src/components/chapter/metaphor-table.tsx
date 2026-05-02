@@ -20,9 +20,6 @@ interface MetaphorTableProps {
 export function MetaphorTable({ metaphors }: MetaphorTableProps) {
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold text-amber-800 dark:text-amber-300">
-        Tableau des métaphores
-      </h3>
       <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>

@@ -35,6 +35,27 @@ const fadeUp = {
   }),
 }
 
+// Decorative divider component
+function DecorativeDivider() {
+  return (
+    <div className="flex items-center justify-center gap-3 py-2">
+      <span className="h-px flex-1 bg-gradient-to-r from-transparent to-amber-300/40 dark:to-amber-600/30" />
+      <span className="text-amber-400/50 dark:text-amber-500/40 text-xs tracking-[0.3em] select-none">✦</span>
+      <span className="h-px flex-1 bg-gradient-to-l from-transparent to-amber-300/40 dark:to-amber-600/30" />
+    </div>
+  )
+}
+
+// Section header with gradient underline
+function SectionHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mb-1">
+      {children}
+      <div className="mt-1 h-0.5 w-16 rounded-full bg-gradient-to-r from-amber-500/60 to-transparent dark:from-amber-400/40" />
+    </div>
+  )
+}
+
 export function ChapterView() {
   const navigate = useAppStore((s) => s.navigate)
   const chapterId = useAppStore((s) => s.currentChapterId)
@@ -104,7 +125,7 @@ export function ChapterView() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6 space-y-8">
+    <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
       {/* Back button and Bookmark */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
         <div className="flex items-center justify-between">
@@ -140,6 +161,9 @@ export function ChapterView() {
         <p className="text-lg text-muted-foreground">{chapter.subtitle}</p>
       </motion.div>
 
+      {/* Decorative divider */}
+      <DecorativeDivider />
+
       {/* Verse display */}
       {chapter.arabicVerse && (
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
@@ -154,6 +178,10 @@ export function ChapterView() {
       {/* Word analysis table */}
       {chapter.wordAnalysis.length > 0 && (
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <DecorativeDivider />
+          <SectionHeader>
+            <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Analyse des mots</h2>
+          </SectionHeader>
           <WordAnalysisTable words={chapter.wordAnalysis} />
         </motion.div>
       )}
@@ -161,6 +189,10 @@ export function ChapterView() {
       {/* Comparison table */}
       {chapter.comparisonTable && (
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <DecorativeDivider />
+          <SectionHeader>
+            <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Tableau comparatif</h2>
+          </SectionHeader>
           <ComparisonTableBlock
             headers={chapter.comparisonTable.headers}
             rows={chapter.comparisonTable.rows}
@@ -171,6 +203,10 @@ export function ChapterView() {
       {/* Coherence points */}
       {chapter.coherencePoints && chapter.coherencePoints.length > 0 && (
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <DecorativeDivider />
+          <SectionHeader>
+            <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Cohérence</h2>
+          </SectionHeader>
           <CoherencePoints points={chapter.coherencePoints} />
         </motion.div>
       )}
@@ -178,6 +214,7 @@ export function ChapterView() {
       {/* Callout blocks */}
       {chapter.callouts && chapter.callouts.length > 0 && (
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="space-y-3">
+          <DecorativeDivider />
           {chapter.callouts.map((callout, i) => (
             <CalloutBlock
               key={i}
@@ -192,6 +229,10 @@ export function ChapterView() {
       {/* Bullet points */}
       {chapter.bulletPoints && chapter.bulletPoints.length > 0 && (
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <DecorativeDivider />
+          <SectionHeader>
+            <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Points clés</h2>
+          </SectionHeader>
           <BulletPointsList points={chapter.bulletPoints} />
         </motion.div>
       )}
@@ -199,6 +240,10 @@ export function ChapterView() {
       {/* Treasures list */}
       {chapter.treasuresList && chapter.treasuresList.length > 0 && (
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <DecorativeDivider />
+          <SectionHeader>
+            <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Trésors</h2>
+          </SectionHeader>
           <TreasuresList treasures={chapter.treasuresList} />
         </motion.div>
       )}
@@ -206,6 +251,10 @@ export function ChapterView() {
       {/* Metaphor table */}
       {chapter.metaphorTable && chapter.metaphorTable.length > 0 && (
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <DecorativeDivider />
+          <SectionHeader>
+            <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Métaphores</h2>
+          </SectionHeader>
           <MetaphorTable metaphors={chapter.metaphorTable} />
         </motion.div>
       )}
@@ -213,6 +262,10 @@ export function ChapterView() {
       {/* Mirror questions */}
       {chapter.mirrorQuestions.length > 0 && (
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <DecorativeDivider />
+          <SectionHeader>
+            <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Questions miroir</h2>
+          </SectionHeader>
           <MirrorQuestionsTable questions={chapter.mirrorQuestions} />
         </motion.div>
       )}
@@ -220,6 +273,10 @@ export function ChapterView() {
       {/* Munajat section */}
       {chapter.munajatPrompts.length > 0 && (
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <DecorativeDivider />
+          <SectionHeader>
+            <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Munajat — Méditation intime</h2>
+          </SectionHeader>
           <MunajatSection
             chapterId={chapterId}
             prompts={chapter.munajatPrompts}
@@ -230,6 +287,10 @@ export function ChapterView() {
       {/* Timer section */}
       {chapter.timerMinutes > 0 && (
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <DecorativeDivider />
+          <SectionHeader>
+            <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Méditation silencieuse</h2>
+          </SectionHeader>
           <TimerSection
             chapterId={chapterId}
             minutes={chapter.timerMinutes}
@@ -240,6 +301,10 @@ export function ChapterView() {
       {/* Exercise section */}
       {chapter.exercises.length > 0 && (
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <DecorativeDivider />
+          <SectionHeader>
+            <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Exercices</h2>
+          </SectionHeader>
           <ExerciseSection
             chapterId={chapterId}
             exercises={chapter.exercises}
@@ -250,6 +315,10 @@ export function ChapterView() {
       {/* Extra sections (B3-B10) */}
       {chapter.extraSections && chapter.extraSections.length > 0 && (
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <DecorativeDivider />
+          <SectionHeader>
+            <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Sections supplémentaires</h2>
+          </SectionHeader>
           <ExtraSections
             chapterId={chapterId}
             sections={chapter.extraSections}
@@ -260,6 +329,7 @@ export function ChapterView() {
       {/* Quotes */}
       {chapter.quotes && chapter.quotes.length > 0 && (
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="space-y-3">
+          <DecorativeDivider />
           {chapter.quotes.map((quote, i) => (
             <QuoteBlock
               key={i}
@@ -270,8 +340,11 @@ export function ChapterView() {
         </motion.div>
       )}
 
+      {/* Decorative end divider */}
+      <DecorativeDivider />
+
       {/* Chapter navigation */}
-      <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="flex items-center justify-between pt-4 border-t">
+      <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="flex items-center justify-between pt-4 border-t border-stone-200/60 dark:border-stone-700/30">
         {prevChapter ? (
           <Button
             variant="outline"

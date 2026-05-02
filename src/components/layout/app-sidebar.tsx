@@ -24,6 +24,7 @@ import {
   ChevronRight,
   MessageSquare,
   X,
+  Flame,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -37,6 +38,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
     isBookmarked,
     getProgressPercentage,
     toggleChat,
+    currentStreak,
   } = useAppStore()
 
   const progressPercent = getProgressPercentage()
@@ -75,13 +77,24 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
 
       <Separator />
 
-      {/* Progress bar */}
+      {/* Progress bar + Streak */}
       <div className="px-5 py-3">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-medium text-muted-foreground">Progression</span>
-          <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-5 bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 border-0">
-            {progressPercent}%
-          </Badge>
+          <div className="flex items-center gap-2">
+            {currentStreak > 0 && (
+              <Badge
+                variant="secondary"
+                className="text-[10px] px-1.5 py-0 h-5 bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 border-0 gap-0.5"
+              >
+                <Flame className="h-3 w-3" />
+                {currentStreak}
+              </Badge>
+            )}
+            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-5 bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 border-0">
+              {progressPercent}%
+            </Badge>
+          </div>
         </div>
         <Progress value={progressPercent} className="h-2" />
       </div>

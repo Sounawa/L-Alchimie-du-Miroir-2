@@ -23,9 +23,6 @@ export function ExtraSections({ chapterId, sections }: ExtraSectionsProps) {
 
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold text-amber-800 dark:text-amber-300">
-        Sections supplémentaires
-      </h3>
       <Accordion type="multiple" className="w-full">
         {sections.map((section) => (
           <AccordionItem key={section.id} value={section.id}>

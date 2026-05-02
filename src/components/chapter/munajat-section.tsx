@@ -36,10 +36,6 @@ export function MunajatSection({ chapterId, prompts }: MunajatSectionProps) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-amber-800 dark:text-amber-300">
-        Munajat — Prière personnelle
-      </h3>
-
       {prompts.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {prompts.map((prompt, i) => (

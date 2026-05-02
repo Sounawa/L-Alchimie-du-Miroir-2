@@ -30,6 +30,7 @@ interface AppState {
   // Navigation
   currentView: ViewType;
   currentChapterId: string | null;
+  previousView: ViewType | null;
 
   // Theme
   fontSize: number; // 14-24, default 16
@@ -53,8 +54,17 @@ interface AppState {
   // Search
   searchQuery: string;
 
+  // Daily Inspiration
+  dailyInspirationDismissed: string; // ISO date string of when it was last dismissed
+
+  // Streak tracking
+  lastActivityDate: string; // ISO date string (YYYY-MM-DD)
+  currentStreak: number;
+  longestStreak: number;
+
   // Actions
   navigate: (view: ViewType, chapterId?: string | null) => void;
+  goBack: () => void;
   toggleSidebar: () => void;
   toggleChat: () => void;
   setFontSize: (size: number) => void;
@@ -70,9 +80,29 @@ interface AppState {
   setSearchQuery: (query: string) => void;
   getProgressPercentage: () => number; // 0-100 based on completed chapters
   exportNotes: () => string; // Export all notes as formatted text
+
+  // Daily Inspiration actions
+  dismissDailyInspiration: () => void;
+  isDailyInspirationDismissed: () => boolean;
+
+  // Streak actions
+  recordActivity: () => void;
 }
 
 const TOTAL_CHAPTERS = 17; // A1-A7 + B1-B10
+
+/** Get today's date as YYYY-MM-DD string */
+function getTodayDateString(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
+/** Get yesterday's date as YYYY-MM-DD string */
+function getYesterdayDateString(): string {
+  const now = new Date();
+  now.setDate(now.getDate() - 1);
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
 
 export const useAppStore = create<AppState>()(
   persist(
@@ -80,6 +110,7 @@ export const useAppStore = create<AppState>()(
       // ── Navigation ──────────────────────────────────────────────
       currentView: 'cover',
       currentChapterId: null,
+      previousView: null,
 
       // ── Theme ───────────────────────────────────────────────────
       fontSize: 16,
@@ -103,13 +134,46 @@ export const useAppStore = create<AppState>()(
       // ── Search ──────────────────────────────────────────────────
       searchQuery: '',
 
+      // ── Daily Inspiration ───────────────────────────────────────
+      dailyInspirationDismissed: '',
+
+      // ── Streak Tracking ─────────────────────────────────────────
+      lastActivityDate: '',
+      currentStreak: 0,
+      longestStreak: 0,
+
       // ── Actions ─────────────────────────────────────────────────
 
       navigate: (view: ViewType, chapterId?: string | null) => {
+        const { currentView } = get();
         set({
+          previousView: currentView,
           currentView: view,
           currentChapterId: chapterId ?? null,
         });
+      },
+
+      goBack: () => {
+        const { previousView, currentView, chatOpen, sidebarOpen } = get();
+        // Priority: close chat first, then sidebar on mobile, then navigate back
+        if (chatOpen) {
+          set({ chatOpen: false });
+          return;
+        }
+        if (sidebarOpen) {
+          set({ sidebarOpen: false });
+          return;
+        }
+        if (previousView && previousView !== currentView) {
+          set({ currentView: previousView, previousView: null });
+        } else {
+          // Default fallback navigation
+          if (currentView === 'chapter') {
+            set({ currentView: 'toc', previousView: null });
+          } else if (currentView !== 'cover') {
+            set({ currentView: 'toc', previousView: null });
+          }
+        }
       },
 
       toggleSidebar: () => {
@@ -144,6 +208,8 @@ export const useAppStore = create<AppState>()(
             ],
           };
         });
+        // Record activity when completing a chapter
+        get().recordActivity();
       },
 
       isChapterComplete: (chapterId: string) => {
@@ -173,6 +239,8 @@ export const useAppStore = create<AppState>()(
             ],
           };
         });
+        // Record activity when saving a note
+        get().recordActivity();
       },
 
       getNote: (chapterId: string, fieldId: string) => {
@@ -228,7 +296,7 @@ export const useAppStore = create<AppState>()(
       },
 
       exportNotes: () => {
-        const { notes, completedChapters } = get();
+        const { notes, completedChapters, currentStreak, longestStreak } = get();
 
         if (notes.length === 0 && completedChapters.length === 0) {
           return "Aucune note ou progression à exporter.";
@@ -244,6 +312,8 @@ export const useAppStore = create<AppState>()(
         // Progress section
         const pct = get().getProgressPercentage();
         lines.push(`Progression : ${pct}% (${completedChapters.length}/${TOTAL_CHAPTERS} chapitres)`);
+        lines.push(`Série actuelle : ${currentStreak} jour${currentStreak > 1 ? 's' : ''}`);
+        lines.push(`Meilleure série : ${longestStreak} jour${longestStreak > 1 ? 's' : ''}`);
         lines.push("");
 
         if (completedChapters.length > 0) {
@@ -287,6 +357,44 @@ export const useAppStore = create<AppState>()(
 
         return lines.join('\n');
       },
+
+      // ── Daily Inspiration Actions ──────────────────────────────
+
+      dismissDailyInspiration: () => {
+        set({ dailyInspirationDismissed: getTodayDateString() });
+      },
+
+      isDailyInspirationDismissed: () => {
+        return get().dailyInspirationDismissed === getTodayDateString();
+      },
+
+      // ── Streak Actions ─────────────────────────────────────────
+
+      recordActivity: () => {
+        const { lastActivityDate, currentStreak, longestStreak } = get();
+        const today = getTodayDateString();
+        const yesterday = getYesterdayDateString();
+
+        // Already recorded today
+        if (lastActivityDate === today) return;
+
+        // Continue streak (was active yesterday)
+        if (lastActivityDate === yesterday) {
+          const newStreak = currentStreak + 1;
+          set({
+            lastActivityDate: today,
+            currentStreak: newStreak,
+            longestStreak: Math.max(longestStreak, newStreak),
+          });
+        } else {
+          // Streak broken or first activity — start new streak
+          set({
+            lastActivityDate: today,
+            currentStreak: 1,
+            longestStreak: Math.max(longestStreak, 1),
+          });
+        }
+      },
     }),
     {
       name: 'alchimie-du-miroir',
@@ -299,6 +407,10 @@ export const useAppStore = create<AppState>()(
         notes: state.notes,
         bookmarks: state.bookmarks,
         chatMessages: state.chatMessages,
+        dailyInspirationDismissed: state.dailyInspirationDismissed,
+        lastActivityDate: state.lastActivityDate,
+        currentStreak: state.currentStreak,
+        longestStreak: state.longestStreak,
       }),
     }
   )

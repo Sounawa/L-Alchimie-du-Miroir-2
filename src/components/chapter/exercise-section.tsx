@@ -16,10 +16,6 @@ export function ExerciseSection({ chapterId, exercises, label }: ExerciseSection
 
   return (
     <div className="space-y-4 rounded-lg border bg-card p-6">
-      <h3 className="text-lg font-semibold text-amber-800 dark:text-amber-300">
-        {label || `✏️ Exercice ${chapterId.toUpperCase()}`}
-      </h3>
-
       <div className="space-y-6">
         {exercises.map((exercise, i) => (
           <ExerciseItem

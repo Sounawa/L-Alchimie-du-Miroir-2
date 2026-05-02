@@ -68,9 +68,6 @@ export function TimerSection({ chapterId, minutes }: TimerSectionProps) {
   return (
     <div className="space-y-4 rounded-lg border bg-card p-6">
       <div className="text-center space-y-1">
-        <h3 className="text-lg font-semibold text-amber-800 dark:text-amber-300">
-          ⏱️ Minuterie — Chapitre {chapterId.toUpperCase()}
-        </h3>
         <p className="text-sm text-muted-foreground">
           Durée recommandée : {minutes} minutes
         </p>
