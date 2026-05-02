@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle2, Bookmark, ChevronRight, BookOpen } from 'lucide-react';
+import { CheckCircle2, Bookmark, ChevronRight, BookOpen, Flame, Trophy } from 'lucide-react';
 import { DailyInspiration } from '@/components/shared/daily-inspiration';
 
 const toc = getTableOfContents();
@@ -29,10 +29,26 @@ const fadeIn = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
 };
 
+// Part color map for left border indicator
+const partBorderColor: Record<string, string> = {
+  A: 'border-l-amber-500 dark:border-l-amber-400',
+  B: 'border-l-emerald-500 dark:border-l-emerald-400',
+  C: 'border-l-violet-500 dark:border-l-violet-400',
+};
+
+const partDotColor: Record<string, string> = {
+  A: 'bg-amber-500 dark:bg-amber-400',
+  B: 'bg-emerald-500 dark:bg-emerald-400',
+  C: 'bg-violet-500 dark:bg-violet-400',
+};
+
 export function TocView() {
   const navigate = useAppStore((s) => s.navigate);
   const isChapterComplete = useAppStore((s) => s.isChapterComplete);
   const isBookmarked = useAppStore((s) => s.isBookmarked);
+  const completedChapters = useAppStore((s) => s.completedChapters);
+  const currentStreak = useAppStore((s) => s.currentStreak);
+  const getProgressPercentage = useAppStore((s) => s.getProgressPercentage);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50/50 via-stone-50 to-stone-100 dark:from-stone-950 dark:via-stone-900 dark:to-stone-950">
@@ -74,6 +90,32 @@ export function TocView() {
           </div>
         </motion.div>
 
+        {/* Résumé de progression mini-card */}
+        <motion.div variants={fadeIn} className="mb-6">
+          <div className="rounded-xl border border-amber-200/50 bg-gradient-to-r from-amber-50/80 via-stone-50 to-amber-50/60 p-4 dark:border-amber-800/30 dark:from-amber-950/20 dark:via-stone-900 dark:to-amber-950/10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Trophy className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                <div>
+                  <p className="text-sm font-semibold text-stone-700 dark:text-stone-200/80">Résumé de progression</p>
+                  <p className="text-xs text-stone-500 dark:text-stone-400/60">{completedChapters.length}/17 chapitres complétés</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {currentStreak > 0 && (
+                  <Badge variant="secondary" className="gap-1 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300 border-0 text-[10px]">
+                    <Flame className="h-3 w-3" />
+                    {currentStreak}j
+                  </Badge>
+                )}
+                <Badge variant="secondary" className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 border-0 text-[10px]">
+                  {getProgressPercentage()}%
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Daily Inspiration */}
         <motion.div variants={fadeIn} className="mb-8">
           <DailyInspiration />
@@ -97,20 +139,28 @@ export function TocView() {
         </motion.div>
 
         {/* Parts */}
-        {toc.parts.map((part) => (
-          <div key={part.id}>
-            {/* Part header */}
-            <motion.div variants={fadeIn} className="my-6">
+        {toc.parts.map((part, partIdx) => (
+          <motion.div
+            key={part.id}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: partIdx * 0.1, duration: 0.5, ease: 'easeOut' }}
+          >
+            {/* Part header with color dot */}
+            <div className="my-6">
               <div className="flex items-center gap-3">
                 <span className="h-px flex-1 bg-gradient-to-r from-amber-500/40 to-transparent dark:from-amber-600/40" />
-                <h2 className="shrink-0 text-sm font-semibold tracking-wider text-amber-600 dark:text-amber-400/80 uppercase">
-                  Partie {part.letter} — {part.title}
-                </h2>
+                <div className="flex items-center gap-2">
+                  <span className={`inline-block h-2 w-2 rounded-full ${partDotColor[part.letter] || 'bg-amber-500'}`} />
+                  <h2 className="shrink-0 text-sm font-semibold tracking-wider text-amber-600 dark:text-amber-400/80 uppercase">
+                    Partie {part.letter} — {part.title}
+                  </h2>
+                </div>
                 <span className="h-px flex-1 bg-gradient-to-l from-amber-500/40 to-transparent dark:from-amber-600/40" />
               </div>
-            </motion.div>
+            </div>
 
-            {/* Chapter entries */}
+            {/* Chapter entries with left border color */}
             {part.entries.map((entry) => {
               const completed = isChapterComplete(entry.id);
               const bookmarked = isBookmarked(entry.id);
@@ -119,7 +169,7 @@ export function TocView() {
                 <motion.div key={entry.id} variants={slideIn}>
                   <button
                     onClick={() => navigate('chapter', entry.id)}
-                    className="group flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left transition-all hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10"
+                    className={`group flex w-full items-center gap-2 rounded-lg border-l-2 ${partBorderColor[part.letter] || 'border-l-amber-500'} px-3 py-2.5 text-left transition-all hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10`}
                   >
                     {/* Completion icon */}
                     <span className="w-5 shrink-0">
@@ -154,7 +204,7 @@ export function TocView() {
                 </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         ))}
 
         {/* Annexes */}

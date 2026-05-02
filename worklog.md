@@ -330,3 +330,57 @@ Stage Summary:
 - Custom CSS keyframe animations for typing dots and context glow
 - No new files created, all changes to existing ai-chat-panel.tsx and globals.css
 - Zero lint errors, clean compilation
+
+---
+Task ID: 14-a
+Agent: New Views Developer
+Task: Add Glossary view and Spiritual Journal view
+
+Work Log:
+- Updated Zustand store (`/src/store/use-app-store.ts`): Extended `ViewType` to include `'glossary' | 'journal'`, added `JournalEntry` interface (id, title, content, mood, tags, createdAt, updatedAt), added `journalEntries` state field, added three new actions (`addJournalEntry`, `updateJournalEntry`, `deleteJournalEntry`), added `journalEntries` to `partialize` for localStorage persistence, `addJournalEntry` calls `recordActivity()` for streak tracking
+- Created Glossary View (`/src/components/views/glossary-view.tsx`): Beautiful expandable accordion cards for all 14 glossary terms, accent-insensitive search/filter using NFD normalization, terms grouped by first letter with letter headers and decorative badges, letter index sidebar on desktop (sticky, scrollable, highlights active letters), amber-themed design with theme-aware styling (light/dark mode), "Ressources" section at bottom showing all 5 recommended books as styled cards, back button to return to TOC, smooth entrance animations with staggered delays, empty state when search yields no results
+- Created Journal View (`/src/components/views/journal-view.tsx`): Full CRUD for journal entries (add, edit, delete), Dialog-based form with title, content textarea, mood selector (5 emojis: 😊 😌 🤔 😢 🙏), and comma-separated tags, rotating spiritual quote at top (8 quotes, deterministic daily rotation), search/filter by text (accent-insensitive) and mood, entries sorted by date (newest first), beautiful empty state with call-to-action when no entries exist, mood filter buttons with count badges, hover-reveal edit/delete buttons on entry cards, tag badges on entry cards, formatted dates in French locale, theme-aware styling with amber accent colors, all text in French
+- Updated page.tsx (`/src/app/page.tsx`): Added imports for `GlossaryView` and `JournalView`, added cases in `renderView` switch: `case 'glossary': return <GlossaryView />` and `case 'journal': return <JournalView />`
+- Updated app-sidebar.tsx (`/src/components/layout/app-sidebar.tsx`): Added `PenLine` import from lucide-react, extended `handleNavigate` type union to include `'glossary' | 'journal'`, added two new nav items: `{ icon: BookOpen, label: 'Glossaire', view: 'glossary' }` and `{ icon: PenLine, label: 'Journal', view: 'journal' }`
+- All lint checks pass clean, dev server compiles successfully
+
+Stage Summary:
+- 2 new views created: Glossary View and Spiritual Journal View
+- Zustand store extended with JournalEntry type, 3 new actions, and 1 new persisted field
+- Glossary View: 14 terms in accordion cards, letter index sidebar, search, resources section
+- Journal View: Full CRUD with mood selector, tags, search/filter, rotating quotes, empty state
+- Sidebar navigation updated with 2 new items (Glossaire, Journal)
+- All text in French, theme-aware styling, smooth animations
+- Zero lint errors, clean compilation
+
+---
+Task ID: 14-b
+Agent: Onboarding & Styling Polish Agent
+Task: Add onboarding overlay and polish styling
+
+Work Log:
+- Updated Zustand store (`/src/store/use-app-store.ts`) with `hasCompletedOnboarding: boolean` and `recentSearches: string[]` fields, plus `completeOnboarding`, `addRecentSearch`, `clearRecentSearches` actions; added both fields to `partialize` for persistence
+- Created OnboardingOverlay component (`/src/components/shared/onboarding-overlay.tsx`): 4-step multi-step modal with AnimatePresence transitions, Step 1: Welcome with mirror emoji, Step 2: Feature highlights (Navigation, Notes, Chat IA, Mode sombre) with icons in 2x2 grid, Step 3: How-to-use tips (read chapters, write notes, use timer), Step 4: "Commencer" button; amber/gold gradient backgrounds, geometric pattern overlay, progress dots at bottom, smooth step transitions (x-axis slide), floating emoji animation, only shows when `hasCompletedOnboarding` is false
+- Integrated OnboardingOverlay into page.tsx (both cover view and main view paths)
+- Cover View polish (`cover-view.tsx`): Added decorative Islamic-style double border pattern around entire cover (two nested borders with rounded corners), added ✦ corner ornaments at all four corners, added pulsing "scroll down" indicator at bottom (animated chevron + "Défiler" text), added breathing/pulsing shadow animation on CTA button (blurred glow div with opacity/scale animation)
+- TOC View polish (`toc-view.tsx`): Added "Résumé de progression" mini-card at top showing completion count, streak badge, and percentage badge, added staggered fade-in animation for each part section (100ms delay per part using `motion.div` with `initial`/`animate`/`transition`), added left-border color indicator per part (Part A = amber, Part B = emerald, Part C = violet), added colored dot next to each part header, imported Trophy and Flame icons
+- Chapter View polish (`chapter-view.tsx`): Added sticky chapter title bar that appears when scrolling down (fixed position with backdrop-blur, contains chapter badge + title + mini-TOC dropdown), added Table of Contents mini-dropdown in sticky bar showing all sections with scroll-to-section, added mini-TOC pills below chapter header when >3 sections (clickable rounded buttons), added confetti emoji burst celebration when completing a chapter (🎉🎊✨ floating emojis with physics animation + "Masha'Allah!" congratulatory card), enhanced completion checkbox section with colored border (emerald when complete, stone when incomplete) and congratulatory message, added `scroll-smooth` class for smooth scrolling between sections
+- Progress View polish (`progress-view.tsx`): Added horizontal scrollable timeline/roadmap showing all 17 chapters as connected circles (filled green when complete, amber when current, empty when not), connected by lines between chapters, added "Continue reading" CTA button that navigates to the next incomplete chapter, added `currentChapterId` from store for highlighting current chapter on timeline
+- Search View polish (`search-view.tsx`): Added recent search history from Zustand store (limited to 5 entries), recent searches shown as clickable chips below search input with amber-themed styling, added "Effacer" (clear) button with destructive hover color, searches are saved on Enter key press, imported X and Clock icons
+- Header polish (`app-header.tsx`): Enhanced glass morphism effect (`bg-background/60 backdrop-blur-xl supports-[backdrop-filter]:bg-background/50` with subtle border), added fade transition for chapter title when it changes using AnimatePresence (key-based animation with y-axis + opacity)
+- Sidebar polish (`app-sidebar.tsx`): Added hover tooltip on chapter items showing chapter subtitle using shadcn/ui Tooltip component with TooltipProvider, added "Partie" color indicator dots (amber for A, emerald for B, violet for C) next to each part header, imported Tooltip components
+- All text in French, all styling theme-aware with dark: variants
+- Lint passes clean (fixed React set-state-in-effect error by using headerTitle directly as AnimatePresence key)
+- Dev server compiles successfully
+
+Stage Summary:
+- OnboardingOverlay: 4-step welcome modal with AnimatePresence, persisted completion state
+- Cover View: Islamic border pattern, corner ornaments, scroll indicator, breathing CTA button
+- TOC View: Progress summary card, staggered part animations, color-coded left borders and dots
+- Chapter View: Sticky title bar, mini-TOC dropdown, confetti celebration, enhanced completion section
+- Progress View: Horizontal timeline roadmap, "Continue reading" CTA
+- Search View: Recent search history chips with clear button
+- Header: Glass morphism effect, animated title transitions
+- Sidebar: Tooltips with chapter subtitles, part color indicator dots
+- Zustand store: Added `hasCompletedOnboarding`, `recentSearches`, `completeOnboarding`, `addRecentSearch`, `clearRecentSearches`
+- Zero lint errors, clean compilation

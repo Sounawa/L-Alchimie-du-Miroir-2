@@ -12,9 +12,12 @@ import { ChapterView } from '@/components/views/chapter-view'
 import { AiChatPanel } from '@/components/shared/ai-chat-panel'
 import { ProgressView } from '@/components/views/progress-view'
 import { SearchView } from '@/components/views/search-view'
+import { GlossaryView } from '@/components/views/glossary-view'
+import { JournalView } from '@/components/views/journal-view'
 import { ReadingProgressBar } from '@/components/shared/reading-progress-bar'
 import { ViewTransition } from '@/components/shared/view-transition'
 import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
+import { OnboardingOverlay } from '@/components/shared/onboarding-overlay'
 
 export default function Home() {
   const currentView = useAppStore((s) => s.currentView)
@@ -48,6 +51,10 @@ export default function Home() {
         return <ProgressView />
       case 'search':
         return <SearchView />
+      case 'glossary':
+        return <GlossaryView />
+      case 'journal':
+        return <JournalView />
       default:
         return <CoverView />
     }
@@ -62,6 +69,7 @@ export default function Home() {
         </ViewTransition>
         <AppFooter />
         {chatOpen && <AiChatPanel />}
+        <OnboardingOverlay />
       </div>
     )
   }
@@ -83,6 +91,7 @@ export default function Home() {
         {chatOpen && <AiChatPanel />}
       </div>
       <AppFooter />
+      <OnboardingOverlay />
     </div>
   )
 }

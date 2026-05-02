@@ -1,7 +1,17 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type ViewType = 'cover' | 'toc' | 'intro' | 'chapter' | 'progress' | 'search';
+type ViewType = 'cover' | 'toc' | 'intro' | 'chapter' | 'progress' | 'search' | 'glossary' | 'journal';
+
+interface JournalEntry {
+  id: string;
+  title: string;
+  content: string;
+  mood: string; // emoji
+  tags: string[];
+  createdAt: number;
+  updatedAt: number;
+}
 
 interface Bookmark {
   chapterId: string;
@@ -54,6 +64,9 @@ interface AppState {
   // Search
   searchQuery: string;
 
+  // Journal
+  journalEntries: JournalEntry[];
+
   // Daily Inspiration
   dailyInspirationDismissed: string; // ISO date string of when it was last dismissed
 
@@ -61,6 +74,12 @@ interface AppState {
   lastActivityDate: string; // ISO date string (YYYY-MM-DD)
   currentStreak: number;
   longestStreak: number;
+
+  // Onboarding
+  hasCompletedOnboarding: boolean;
+
+  // Search history
+  recentSearches: string[];
 
   // Actions
   navigate: (view: ViewType, chapterId?: string | null) => void;
@@ -81,12 +100,24 @@ interface AppState {
   getProgressPercentage: () => number; // 0-100 based on completed chapters
   exportNotes: () => string; // Export all notes as formatted text
 
+  // Journal actions
+  addJournalEntry: (entry: Omit<JournalEntry, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  updateJournalEntry: (id: string, updates: Partial<Omit<JournalEntry, 'id' | 'createdAt'>>) => void;
+  deleteJournalEntry: (id: string) => void;
+
   // Daily Inspiration actions
   dismissDailyInspiration: () => void;
   isDailyInspirationDismissed: () => boolean;
 
   // Streak actions
   recordActivity: () => void;
+
+  // Onboarding actions
+  completeOnboarding: () => void;
+
+  // Search history actions
+  addRecentSearch: (query: string) => void;
+  clearRecentSearches: () => void;
 }
 
 const TOTAL_CHAPTERS = 17; // A1-A7 + B1-B10
@@ -134,6 +165,9 @@ export const useAppStore = create<AppState>()(
       // ── Search ──────────────────────────────────────────────────
       searchQuery: '',
 
+      // ── Journal ──────────────────────────────────────────────────
+      journalEntries: [],
+
       // ── Daily Inspiration ───────────────────────────────────────
       dailyInspirationDismissed: '',
 
@@ -141,6 +175,12 @@ export const useAppStore = create<AppState>()(
       lastActivityDate: '',
       currentStreak: 0,
       longestStreak: 0,
+
+      // ── Onboarding ────────────────────────────────────────────────
+      hasCompletedOnboarding: false,
+
+      // ── Search History ────────────────────────────────────────────
+      recentSearches: [],
 
       // ── Actions ─────────────────────────────────────────────────
 
@@ -290,6 +330,36 @@ export const useAppStore = create<AppState>()(
         set({ searchQuery: query });
       },
 
+      // ── Journal Actions ────────────────────────────────────────
+
+      addJournalEntry: (entry: Omit<JournalEntry, 'id' | 'createdAt' | 'updatedAt'>) => {
+        const now = Date.now();
+        const id = `journal-${now}-${Math.random().toString(36).slice(2, 9)}`;
+        set((state) => ({
+          journalEntries: [
+            { ...entry, id, createdAt: now, updatedAt: now },
+            ...state.journalEntries,
+          ],
+        }));
+        get().recordActivity();
+      },
+
+      updateJournalEntry: (id: string, updates: Partial<Omit<JournalEntry, 'id' | 'createdAt'>>) => {
+        set((state) => ({
+          journalEntries: state.journalEntries.map((entry) =>
+            entry.id === id
+              ? { ...entry, ...updates, updatedAt: Date.now() }
+              : entry
+          ),
+        }));
+      },
+
+      deleteJournalEntry: (id: string) => {
+        set((state) => ({
+          journalEntries: state.journalEntries.filter((entry) => entry.id !== id),
+        }));
+      },
+
       getProgressPercentage: () => {
         const completed = get().completedChapters.length;
         return Math.round((completed / TOTAL_CHAPTERS) * 100);
@@ -395,6 +465,32 @@ export const useAppStore = create<AppState>()(
           });
         }
       },
+
+      // ── Onboarding Actions ────────────────────────────────────────
+
+      completeOnboarding: () => {
+        set({ hasCompletedOnboarding: true });
+      },
+
+      // ── Search History Actions ─────────────────────────────────────
+
+      addRecentSearch: (query: string) => {
+        const trimmed = query.trim();
+        if (!trimmed) return;
+        set((state) => {
+          // Remove duplicate if exists, then prepend
+          const filtered = state.recentSearches.filter(
+            (s) => s.toLowerCase() !== trimmed.toLowerCase()
+          );
+          return {
+            recentSearches: [trimmed, ...filtered].slice(0, 5),
+          };
+        });
+      },
+
+      clearRecentSearches: () => {
+        set({ recentSearches: [] });
+      },
     }),
     {
       name: 'alchimie-du-miroir',
@@ -411,6 +507,9 @@ export const useAppStore = create<AppState>()(
         lastActivityDate: state.lastActivityDate,
         currentStreak: state.currentStreak,
         longestStreak: state.longestStreak,
+        journalEntries: state.journalEntries,
+        hasCompletedOnboarding: state.hasCompletedOnboarding,
+        recentSearches: state.recentSearches,
       }),
     }
   )

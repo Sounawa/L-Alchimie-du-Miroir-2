@@ -27,6 +27,7 @@ import {
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export function AppHeader() {
   const {
@@ -80,7 +81,7 @@ export function AppHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-sm">
+    <header className="sticky top-0 z-40 border-b border-stone-200/50 dark:border-stone-700/30 bg-background/60 backdrop-blur-xl supports-[backdrop-filter]:bg-background/50">
       <div className="flex h-14 items-center gap-2 px-3 md:px-4">
         {/* Hamburger menu */}
         <Button
@@ -93,12 +94,21 @@ export function AppHeader() {
           <Menu className="h-5 w-5" />
         </Button>
 
-        {/* Title */}
+        {/* Title with fade transition */}
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <BookOpen className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 hidden sm:block" />
-          <h2 className="text-sm font-semibold truncate">
-            {headerTitle}
-          </h2>
+          <AnimatePresence mode="wait">
+            <motion.h2
+              key={headerTitle}
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 4 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="text-sm font-semibold truncate"
+            >
+              {headerTitle}
+            </motion.h2>
+          </AnimatePresence>
         </div>
 
         {/* Right-side actions */}

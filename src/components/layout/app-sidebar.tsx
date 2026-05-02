@@ -15,6 +15,12 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import {
   BookOpen,
   Home,
   List,
@@ -25,9 +31,17 @@ import {
   MessageSquare,
   X,
   Flame,
+  PenLine,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
+
+// Part color indicators
+const partDotColor: Record<string, string> = {
+  A: 'bg-amber-500 dark:bg-amber-400',
+  B: 'bg-emerald-500 dark:bg-emerald-400',
+  C: 'bg-violet-500 dark:bg-violet-400',
+}
 
 function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: boolean }) {
   const {
@@ -44,7 +58,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
   const progressPercent = getProgressPercentage()
   const parts = siteContent.parts
 
-  const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter', chapterId?: string) => {
+  const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter' | 'glossary' | 'journal', chapterId?: string) => {
     navigate(view, chapterId ?? null)
     // Only close sidebar on mobile
     if (isMobile) onClose()
@@ -54,6 +68,8 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
     { icon: Home, label: 'Accueil', view: 'cover' as const },
     { icon: List, label: 'Table des matières', view: 'toc' as const },
     { icon: BarChart3, label: 'Ma progression', view: 'progress' as const },
+    { icon: BookOpen, label: 'Glossaire', view: 'glossary' as const },
+    { icon: PenLine, label: 'Journal', view: 'journal' as const },
   ]
 
   return (
@@ -135,78 +151,87 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
       {/* Chapter list by parts */}
       <ScrollArea className="flex-1 px-3">
         <div className="py-2">
-          {parts.map((part) => (
-            <div key={part.id} className="mb-3">
-              {/* Part header */}
-              <div className="px-3 py-1.5">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-                  Partie {part.letter} — {part.title}
-                </p>
-              </div>
+          <TooltipProvider delayDuration={300}>
+            {parts.map((part) => (
+              <div key={part.id} className="mb-3">
+                {/* Part header with color dot */}
+                <div className="px-3 py-1.5 flex items-center gap-1.5">
+                  <span className={`inline-block h-2 w-2 rounded-full shrink-0 ${partDotColor[part.letter] || 'bg-amber-500'}`} />
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                    Partie {part.letter} — {part.title}
+                  </p>
+                </div>
 
-              {/* Chapter items */}
-              {part.chapters.map((chapter) => {
-                const isComplete = isChapterComplete(chapter.id)
-                const isBooked = isBookmarked(chapter.id)
-                const isActive = currentView === 'chapter' && currentChapterId === chapter.id
+                {/* Chapter items */}
+                {part.chapters.map((chapter) => {
+                  const isComplete = isChapterComplete(chapter.id)
+                  const isBooked = isBookmarked(chapter.id)
+                  const isActive = currentView === 'chapter' && currentChapterId === chapter.id
 
-                return (
-                  <motion.button
-                    key={chapter.id}
-                    onClick={() => handleNavigate('chapter', chapter.id)}
-                    className={`
-                      group flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm
-                      transition-colors duration-150 mb-0.5
-                      ${isActive
-                        ? 'bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200'
-                        : 'text-foreground/80 hover:bg-muted'
-                      }
-                    `}
-                    whileHover={{ x: 3 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    {/* Status icon */}
-                    <span className="shrink-0 w-4 h-4 flex items-center justify-center">
-                      {isComplete ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                      ) : (
-                        <span className="block h-3.5 w-3.5 rounded-sm border border-muted-foreground/30" />
-                      )}
-                    </span>
-
-                    {/* Chapter number + title */}
-                    <span className="flex-1 text-left truncate">
-                      <span className="font-medium text-xs text-muted-foreground mr-1">
-                        {chapter.number}
-                      </span>
-                      <span className={isComplete ? 'line-through opacity-60' : ''}>
-                        {chapter.title}
-                      </span>
-                    </span>
-
-                    {/* Bookmark indicator */}
-                    <AnimatePresence>
-                      {isBooked && (
-                        <motion.span
-                          initial={{ scale: 0, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          exit={{ scale: 0, opacity: 0 }}
-                          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                  return (
+                    <Tooltip key={chapter.id}>
+                      <TooltipTrigger asChild>
+                        <motion.button
+                          onClick={() => handleNavigate('chapter', chapter.id)}
+                          className={`
+                            group flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm
+                            transition-colors duration-150 mb-0.5
+                            ${isActive
+                              ? 'bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200'
+                              : 'text-foreground/80 hover:bg-muted'
+                            }
+                          `}
+                          whileHover={{ x: 3 }}
+                          whileTap={{ scale: 0.98 }}
                         >
-                          <Bookmark className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
+                          {/* Status icon */}
+                          <span className="shrink-0 w-4 h-4 flex items-center justify-center">
+                            {isComplete ? (
+                              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                            ) : (
+                              <span className="block h-3.5 w-3.5 rounded-sm border border-muted-foreground/30" />
+                            )}
+                          </span>
 
-                    {/* Active indicator */}
-                    {isActive && (
-                      <ChevronRight className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
-                    )}
-                  </motion.button>
-                )
-              })}
-            </div>
-          ))}
+                          {/* Chapter number + title */}
+                          <span className="flex-1 text-left truncate">
+                            <span className="font-medium text-xs text-muted-foreground mr-1">
+                              {chapter.number}
+                            </span>
+                            <span className={isComplete ? 'line-through opacity-60' : ''}>
+                              {chapter.title}
+                            </span>
+                          </span>
+
+                          {/* Bookmark indicator */}
+                          <AnimatePresence>
+                            {isBooked && (
+                              <motion.span
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0, opacity: 0 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                              >
+                                <Bookmark className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
+
+                          {/* Active indicator */}
+                          {isActive && (
+                            <ChevronRight className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                          )}
+                        </motion.button>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" className="text-xs">
+                        {chapter.subtitle || chapter.title}
+                      </TooltipContent>
+                    </Tooltip>
+                  )
+                })}
+              </div>
+            ))}
+          </TooltipProvider>
         </div>
       </ScrollArea>
 

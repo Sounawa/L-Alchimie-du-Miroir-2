@@ -31,6 +31,7 @@ import {
   Heart,
   Flame,
   Trophy,
+  ArrowRight,
 } from 'lucide-react'
 
 const fadeUp = {
@@ -63,6 +64,7 @@ export function ProgressView() {
   const toggleChapterComplete = useAppStore((s) => s.toggleChapterComplete)
   const currentStreak = useAppStore((s) => s.currentStreak)
   const longestStreak = useAppStore((s) => s.longestStreak)
+  const currentChapterId = useAppStore((s) => s.currentChapterId)
 
   const progressPercent = getProgressPercentage()
   const completedCount = completedChapters.length
@@ -120,6 +122,11 @@ export function ProgressView() {
 
   const motivation = getMotivationalMessage(progressPercent)
 
+  // Find next incomplete chapter for CTA
+  const nextIncompleteChapter = useMemo(() => {
+    return allChapters.find((c) => !completedChapters.some((cc) => cc.chapterId === c.id))
+  }, [completedChapters])
+
   let sectionIndex = 0
 
   return (
@@ -143,6 +150,72 @@ export function ProgressView() {
           Suivez votre cheminement spirituel à travers les chapitres
         </p>
       </motion.div>
+
+      {/* Timeline / Roadmap */}
+      <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+        <Card className="overflow-hidden">
+          <CardContent className="pt-4 pb-4">
+            <div className="flex items-center gap-1 overflow-x-auto pb-2 scrollbar-thin">
+              {allChapters.map((ch, idx) => {
+                const isComplete = completedChapters.some((c) => c.chapterId === ch.id)
+                const isCurrent = currentChapterId === ch.id
+                return (
+                  <div key={ch.id} className="flex items-center shrink-0">
+                    <button
+                      onClick={() => navigate('chapter', ch.id)}
+                      className="flex flex-col items-center gap-0.5"
+                      title={`${ch.number} — ${ch.title}`}
+                    >
+                      <div
+                        className={`flex items-center justify-center rounded-full border-2 transition-all duration-300 ${
+                          isComplete
+                            ? 'h-7 w-7 border-emerald-400 bg-emerald-400 dark:border-emerald-500 dark:bg-emerald-500'
+                            : isCurrent
+                              ? 'h-7 w-7 border-amber-500 bg-amber-100 dark:border-amber-400 dark:bg-amber-950/40'
+                              : 'h-6 w-6 border-stone-300 bg-stone-50 dark:border-stone-600 dark:bg-stone-800'
+                        }`}
+                      >
+                        {isComplete ? (
+                          <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+                        ) : isCurrent ? (
+                          <div className="h-2 w-2 rounded-full bg-amber-500 dark:bg-amber-400" />
+                        ) : null}
+                      </div>
+                      <span className={`text-[9px] leading-tight ${
+                        isCurrent ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-stone-400 dark:text-stone-500'
+                      }`}>
+                        {ch.number}
+                      </span>
+                    </button>
+                    {idx < allChapters.length - 1 && (
+                      <div className={`h-0.5 w-3 ${
+                        isComplete && completedChapters.some((c) => c.chapterId === allChapters[idx + 1].id)
+                          ? 'bg-emerald-400 dark:bg-emerald-500'
+                          : 'bg-stone-200 dark:bg-stone-700'
+                      }`} />
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Continue Reading CTA */}
+      {nextIncompleteChapter && (
+        <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <Button
+            onClick={() => navigate('chapter', nextIncompleteChapter.id)}
+            className="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-amber-50 shadow-lg shadow-amber-600/20 hover:from-amber-500 hover:to-amber-400 gap-2"
+            size="lg"
+          >
+            <BookOpen className="h-5 w-5" />
+            Continuer la lecture — {nextIncompleteChapter.number}
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </motion.div>
+      )}
 
       {/* Progress Ring / Bar */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">

@@ -88,6 +88,14 @@ export function CoverView() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-amber-50 via-stone-50 to-amber-100/30 dark:from-stone-950 dark:via-stone-900 dark:to-amber-950/20">
+      {/* Decorative Islamic-style border pattern */}
+      <div className="pointer-events-none absolute inset-3 sm:inset-5 border border-amber-300/20 dark:border-amber-600/15 rounded-xl sm:rounded-2xl" />
+      <div className="pointer-events-none absolute inset-4 sm:inset-6 border border-amber-400/10 dark:border-amber-500/10 rounded-lg sm:rounded-xl" />
+      {/* Corner ornaments */}
+      <div className="pointer-events-none absolute top-5 sm:top-8 left-5 sm:left-8 text-amber-400/30 dark:text-amber-500/20 text-lg select-none">✦</div>
+      <div className="pointer-events-none absolute top-5 sm:top-8 right-5 sm:right-8 text-amber-400/30 dark:text-amber-500/20 text-lg select-none">✦</div>
+      <div className="pointer-events-none absolute bottom-5 sm:bottom-8 left-5 sm:left-8 text-amber-400/30 dark:text-amber-500/20 text-lg select-none">✦</div>
+      <div className="pointer-events-none absolute bottom-5 sm:bottom-8 right-5 sm:right-8 text-amber-400/30 dark:text-amber-500/20 text-lg select-none">✦</div>
       {/* Subtle Islamic geometric pattern overlay */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.06] dark:opacity-[0.04]"
@@ -213,16 +221,34 @@ export function CoverView() {
           Édition 2025 — Pour usage personnel
         </motion.p>
 
-        {/* CTA Button */}
-        <motion.div variants={item} className="mt-4">
+        {/* CTA Button with breathing pulse */}
+        <motion.div variants={item} className="mt-4 relative">
+          {/* Breathing shadow pulse */}
+          <motion.div
+            className="absolute inset-0 rounded-md bg-amber-500/20 blur-xl"
+            animate={{ opacity: [0.3, 0.6, 0.3], scale: [0.95, 1.05, 0.95] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          />
           <Button
             onClick={() => navigate('toc')}
             size="lg"
-            className="bg-gradient-to-r from-amber-700 to-amber-600 px-8 py-6 text-base font-medium text-amber-50 shadow-lg shadow-amber-900/30 transition-all hover:from-amber-600 hover:to-amber-500 hover:shadow-amber-800/40 hover:brightness-110"
+            className="relative bg-gradient-to-r from-amber-700 to-amber-600 px-8 py-6 text-base font-medium text-amber-50 shadow-lg shadow-amber-900/30 transition-all hover:from-amber-600 hover:to-amber-500 hover:shadow-amber-800/40 hover:brightness-110"
           >
             Commencer la méditation →
           </Button>
         </motion.div>
+      </motion.div>
+
+      {/* Pulsing scroll down indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
+        animate={{ opacity: [0.4, 0.8, 0.4], y: [0, 6, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        <span className="text-xs text-stone-400 dark:text-stone-500/60 select-none">Défiler</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-stone-400 dark:text-stone-500/60">
+          <path d="M10 4 L10 14 M5 10 L10 15 L15 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </motion.div>
     </div>
   );

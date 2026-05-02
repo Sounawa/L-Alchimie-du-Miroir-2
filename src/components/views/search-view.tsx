@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Search, ArrowLeft, BookOpen, Keyboard, Sparkles } from 'lucide-react'
+import { Search, ArrowLeft, BookOpen, Keyboard, Sparkles, X, Clock } from 'lucide-react'
 
 interface SearchResult {
   chapterId: string
@@ -246,6 +246,9 @@ function highlightMatch(text: string, query: string): React.ReactNode {
 
 export function SearchView() {
   const navigate = useAppStore((s) => s.navigate)
+  const recentSearches = useAppStore((s) => s.recentSearches)
+  const addRecentSearch = useAppStore((s) => s.addRecentSearch)
+  const clearRecentSearches = useAppStore((s) => s.clearRecentSearches)
   const [query, setQuery] = useState('')
   const inputRef = useState<React.RefObject<HTMLInputElement | null>>({ current: null })
 
@@ -319,6 +322,11 @@ export function SearchView() {
             placeholder="Rechercher dans les chapitres, versets, exercices..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && query.trim().length >= 2) {
+                addRecentSearch(query.trim())
+              }
+            }}
             className="pl-10 pr-20 h-12 text-base border-amber-200/50 dark:border-amber-800/30 focus-visible:ring-amber-500/30"
             autoFocus
           />
@@ -335,6 +343,39 @@ export function SearchView() {
           </p>
         )}
       </motion.div>
+
+      {/* Recent search history */}
+      {query.trim().length < 2 && recentSearches.length > 0 && (
+        <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              <span>Recherches récentes</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearRecentSearches}
+              className="h-6 px-2 text-[10px] text-muted-foreground hover:text-destructive"
+            >
+              <X className="h-3 w-3 mr-1" />
+              Effacer
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {recentSearches.map((search) => (
+              <button
+                key={search}
+                onClick={() => setQuery(search)}
+                className="inline-flex items-center gap-1 rounded-full border border-amber-200/60 bg-amber-50/60 px-2.5 py-1 text-xs text-stone-600 transition-colors hover:border-amber-300 hover:bg-amber-100/60 hover:text-amber-700 dark:border-amber-800/30 dark:bg-amber-950/20 dark:text-stone-400 dark:hover:border-amber-700 dark:hover:bg-amber-950/40 dark:hover:text-amber-300"
+              >
+                <Search className="h-2.5 w-2.5" />
+                {search}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+      )}
 
       {/* Results */}
       <AnimatePresence mode="wait">
