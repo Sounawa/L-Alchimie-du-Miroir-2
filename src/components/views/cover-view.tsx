@@ -91,37 +91,28 @@ function seededRandom(seed: number) {
 function SparkleField() {
   const sparkles = useMemo<Sparkle[]>(() => {
     const rng = seededRandom(42);
-    return Array.from({ length: 30 }, (_, i) => ({
+    return Array.from({ length: 40 }, (_, i) => ({
       id: i,
       x: rng() * 100,
       y: rng() * 100,
       size: rng() * 3 + 1,
-      delay: rng() * 5,
-      duration: rng() * 3 + 2,
+      delay: rng() * 8,
+      duration: rng() * 8 + 8,
     }));
   }, []);
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       {sparkles.map((s) => (
-        <motion.div
+        <div
           key={s.id}
           className="absolute rounded-full bg-amber-400/60 dark:bg-amber-300/50"
           style={{
             left: `${s.x}%`,
-            top: `${s.y}%`,
+            bottom: `${-10 + (s.y % 30)}%`,
             width: s.size,
             height: s.size,
-          }}
-          animate={{
-            opacity: [0, 0.8, 0],
-            scale: [0.5, 1.2, 0.5],
-          }}
-          transition={{
-            duration: s.duration,
-            delay: s.delay,
-            repeat: Infinity,
-            ease: 'easeInOut',
+            animation: `starRise ${s.duration}s ${s.delay}s ease-out infinite`,
           }}
         />
       ))}

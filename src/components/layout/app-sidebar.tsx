@@ -45,6 +45,19 @@ const partDotColor: Record<string, string> = {
   C: 'bg-violet-500 dark:bg-violet-400',
 }
 
+// Part left-border colors for active state
+const partBorderColor: Record<string, string> = {
+  A: 'border-l-amber-500 dark:border-l-amber-400',
+  B: 'border-l-emerald-500 dark:border-l-emerald-400',
+  C: 'border-l-violet-500 dark:border-l-violet-400',
+}
+
+// Get part letter from chapter ID (e.g., 'a1' -> 'A', 'b3' -> 'B')
+function getPartLetter(chapterId: string): string {
+  const letter = chapterId.charAt(0).toUpperCase()
+  return letter === 'A' || letter === 'B' || letter === 'C' ? letter : 'A'
+}
+
 function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: boolean }) {
   const {
     navigate,
@@ -60,7 +73,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
   const progressPercent = getProgressPercentage()
   const parts = siteContent.parts
 
-  const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter' | 'glossary' | 'journal' | 'settings' | 'tasbih', chapterId?: string) => {
+  const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks', chapterId?: string) => {
     navigate(view, chapterId ?? null)
     // Only close sidebar on mobile
     if (isMobile) onClose()
@@ -72,6 +85,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
     { icon: BarChart3, label: 'Ma progression', view: 'progress' as const },
     { icon: BookOpen, label: 'Glossaire', view: 'glossary' as const },
     { icon: PenLine, label: 'Journal', view: 'journal' as const },
+    { icon: Bookmark, label: 'Favoris', view: 'bookmarks' as const },
     { icon: Hash, label: 'Tasbih', view: 'tasbih' as const },
     { icon: Settings, label: 'Paramètres', view: 'settings' as const },
   ]
@@ -171,6 +185,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
                   const isComplete = isChapterComplete(chapter.id)
                   const isBooked = isBookmarked(chapter.id)
                   const isActive = currentView === 'chapter' && currentChapterId === chapter.id
+                  const partLetter = getPartLetter(chapter.id)
 
                   return (
                     <Tooltip key={chapter.id}>
@@ -181,8 +196,8 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
                             group flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm
                             transition-colors duration-150 mb-0.5
                             ${isActive
-                              ? 'bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200'
-                              : 'text-foreground/80 hover:bg-muted'
+                              ? `bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200 border-l-[3px] ${partBorderColor[partLetter] || 'border-l-amber-500'} sidebar-active-glow`
+                              : 'text-foreground/80 hover:bg-muted border-l-[3px] border-l-transparent'
                             }
                           `}
                           whileHover={{ x: 3 }}

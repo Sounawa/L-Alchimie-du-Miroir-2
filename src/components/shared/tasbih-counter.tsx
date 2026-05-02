@@ -33,12 +33,14 @@ export function TasbihCounter() {
   const [showDhikrPicker, setShowDhikrPicker] = useState(false)
   const [showTargetPicker, setShowTargetPicker] = useState(false)
   const [customTarget, setCustomTarget] = useState('')
+  const [showCelebration, setShowCelebration] = useState(false)
 
   const currentDhikr = dhikrOptions.find((d) => d.id === tasbihDhikr) || dhikrOptions[0]
   const progress = tasbihTarget > 0 ? Math.min(tasbihCount / tasbihTarget, 1) : 0
   const isComplete = tasbihCount >= tasbihTarget && tasbihTarget > 0
 
   const handleTap = useCallback(() => {
+    const nextCount = tasbihCount + 1
     incrementTasbih()
     // Visual feedback - ripple
     setRippleKey((k) => k + 1)
@@ -48,7 +50,13 @@ export function TasbihCounter() {
     // Pulse effect
     setShowPulse(true)
     setTimeout(() => setShowPulse(false), 200)
-  }, [incrementTasbih])
+
+    // Show celebration when target is first reached
+    if (nextCount >= tasbihTarget && tasbihTarget > 0 && tasbihCount < tasbihTarget) {
+      setShowCelebration(true)
+      setTimeout(() => setShowCelebration(false), 3000)
+    }
+  }, [incrementTasbih, tasbihCount, tasbihTarget])
 
   const handleReset = useCallback(() => {
     resetTasbih()
@@ -81,6 +89,50 @@ export function TasbihCounter() {
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6 sm:py-8 flex flex-col items-center">
+      {/* Completion Celebration Overlay */}
+      <AnimatePresence>
+        {showCelebration && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+          >
+            {/* Radial light rays */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              {Array.from({ length: 12 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute"
+                  style={{
+                    width: '3px',
+                    height: '120px',
+                    background: 'linear-gradient(to top, rgba(245, 158, 11, 0.5), transparent)',
+                    transform: `rotate(${i * 30}deg)`,
+                    transformOrigin: 'center bottom',
+                    animation: `completionBurst 2s ease-out ${i * 0.05}s forwards`,
+                    borderRadius: '2px',
+                  }}
+                />
+              ))}
+            </div>
+            {/* Center glow */}
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 1.5, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+              className="relative rounded-2xl border border-amber-300/50 bg-gradient-to-br from-amber-50 to-amber-100/90 dark:from-stone-800 dark:to-amber-950/40 px-8 py-6 text-center shadow-2xl backdrop-blur-sm"
+            >
+              <div className="text-4xl mb-2">✨</div>
+              <h3 className="text-xl font-bold text-amber-700 dark:text-amber-300 mb-1">Alhamdulillah !</h3>
+              <p className="text-sm text-stone-600 dark:text-stone-300/80">Objectif atteint ! Que Dieu accepte votre dhikr.</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}

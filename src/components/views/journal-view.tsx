@@ -46,6 +46,19 @@ const moods = [
   { emoji: '🙏', label: 'Reconnaissant' },
 ]
 
+// Mood-to-color mapping for left border and avatar background
+const moodColors: Record<string, { border: string; bg: string; avatarBg: string }> = {
+  '😊': { border: 'border-l-amber-400 dark:border-l-amber-500', bg: 'bg-amber-50 dark:bg-amber-950/30', avatarBg: 'bg-amber-100 dark:bg-amber-900/40' },
+  '😌': { border: 'border-l-emerald-400 dark:border-l-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-950/30', avatarBg: 'bg-emerald-100 dark:bg-emerald-900/40' },
+  '🤔': { border: 'border-l-stone-400 dark:border-l-stone-500', bg: 'bg-stone-50 dark:bg-stone-800/30', avatarBg: 'bg-stone-100 dark:bg-stone-800/50' },
+  '😢': { border: 'border-l-violet-400 dark:border-l-violet-500', bg: 'bg-violet-50 dark:bg-violet-950/30', avatarBg: 'bg-violet-100 dark:bg-violet-900/40' },
+  '🙏': { border: 'border-l-rose-400 dark:border-l-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/30', avatarBg: 'bg-rose-100 dark:bg-rose-900/40' },
+}
+
+function getMoodColor(mood: string) {
+  return moodColors[mood] || moodColors['😌']
+}
+
 const spiritualQuotes = [
   { text: '« Celui qui se connaît lui-même, connaît son Seigneur. »', source: 'Sagesse soufie' },
   { text: '« Le souvenir de Dieu est la plus grande des œuvres. »', source: 'Coran 29:45' },
@@ -366,11 +379,11 @@ export function JournalView() {
                 transition={{ delay: idx * 0.04, duration: 0.3, ease: 'easeOut' }}
                 layout
               >
-                <Card className="border-amber-200/40 dark:border-amber-800/20 hover:border-amber-300/60 dark:hover:border-amber-700/40 transition-colors hover:shadow-sm hover:shadow-amber-100/30 dark:hover:shadow-amber-900/10 group">
+                <Card className={`border-l-[3px] ${getMoodColor(entry.mood).border} ${getMoodColor(entry.mood).bg} border-amber-200/40 dark:border-amber-800/20 hover:border-amber-300/60 dark:hover:border-amber-700/40 transition-all hover:shadow-md hover:shadow-amber-100/40 dark:hover:shadow-amber-900/10 group`}>
                   <CardContent className="py-4 px-4">
                     <div className="flex items-start gap-3">
-                      {/* Mood emoji */}
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-950/30 text-xl">
+                      {/* Mood emoji avatar */}
+                      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${getMoodColor(entry.mood).avatarBg} text-2xl shadow-sm`}>
                         {entry.mood}
                       </div>
 

@@ -15,7 +15,9 @@ import { SearchView } from '@/components/views/search-view'
 import { GlossaryView } from '@/components/views/glossary-view'
 import { JournalView } from '@/components/views/journal-view'
 import { SettingsView } from '@/components/views/settings-view'
+import { BookmarksView } from '@/components/views/bookmarks-view'
 import { TasbihCounter } from '@/components/shared/tasbih-counter'
+import { ShortcutsOverlay } from '@/components/shared/shortcuts-overlay'
 import { ReadingProgressBar } from '@/components/shared/reading-progress-bar'
 import { ViewTransition } from '@/components/shared/view-transition'
 import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
@@ -79,6 +81,8 @@ export default function Home() {
         return <SettingsView />
       case 'tasbih':
         return <TasbihCounter />
+      case 'bookmarks':
+        return <BookmarksView />
       default:
         return <CoverView />
     }
@@ -94,6 +98,7 @@ export default function Home() {
         <AppFooter />
         {chatOpen && <AiChatPanel />}
         <OnboardingOverlay />
+        <ShortcutsOverlay />
       </div>
     )
   }
@@ -118,6 +123,7 @@ export default function Home() {
       </div>
       <AppFooter />
       <OnboardingOverlay />
+      <ShortcutsOverlay />
     </div>
   )
 }

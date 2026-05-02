@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, ArrowUp, ChevronLeft, ChevronRight, CheckCircle2, Bookmark, BookmarkCheck, List, ChevronDown } from 'lucide-react'
+import { ArrowLeft, ArrowUp, ChevronLeft, ChevronRight, CheckCircle2, Bookmark, BookmarkCheck, List, ChevronDown, Clock } from 'lucide-react'
 import { useAppStore } from '@/store/use-app-store'
 import { allChapters, getChapterById } from '@/data/chapters'
 import type { Chapter } from '@/data/chapters'
@@ -12,6 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { useToast } from '@/hooks/use-toast'
 
 import { VerseDisplay } from '@/components/chapter/verse-display'
+import { ChapterNotesSummary } from '@/components/shared/chapter-notes-summary'
 import { WordAnalysisTable } from '@/components/chapter/word-analysis-table'
 import { ComparisonTableBlock } from '@/components/chapter/comparison-table-block'
 import { CalloutBlock } from '@/components/chapter/callout-block'
@@ -44,6 +45,26 @@ function DecorativeDivider() {
       <span className="h-px flex-1 bg-gradient-to-l from-transparent to-amber-300/40 dark:to-amber-600/30" />
     </div>
   )
+}
+
+// Calculate reading time for a chapter
+function getChapterReadingTime(chapter: Chapter): number {
+  let wordCount = 0
+  if (chapter.arabicVerse) wordCount += chapter.arabicVerse.split(/\s+/).length
+  if (chapter.translation) wordCount += chapter.translation.split(/\s+/).length
+  wordCount += chapter.wordAnalysis.reduce((acc, w) => acc + (w.mirrorDimension?.split(/\s+/).length || 0) + (w.literalMeaning?.split(/\s+/).length || 0), 0)
+  wordCount += chapter.mirrorQuestions.reduce((acc, q) => acc + (q.question?.split(/\s+/).length || 0) + (q.meditation?.split(/\s+/).length || 0), 0)
+  wordCount += chapter.munajatPrompts.reduce((acc, p) => acc + (p?.split(/\s+/).length || 0), 0)
+  wordCount += chapter.exercises.reduce((acc, e) => acc + (e.question?.split(/\s+/).length || 0), 0)
+  if (chapter.coherencePoints) wordCount += chapter.coherencePoints.reduce((acc, p) => acc + (p?.split(/\s+/).length || 0), 0)
+  if (chapter.bulletPoints) wordCount += chapter.bulletPoints.reduce((acc, p) => acc + (p?.split(/\s+/).length || 0), 0)
+  if (chapter.callouts) wordCount += chapter.callouts.reduce((acc, c) => acc + (c.title?.split(/\s+/).length || 0) + (c.content?.split(/\s+/).length || 0), 0)
+  if (chapter.treasuresList) wordCount += chapter.treasuresList.reduce((acc, t) => acc + (t?.split(/\s+/).length || 0), 0)
+  if (chapter.metaphorTable) wordCount += chapter.metaphorTable.reduce((acc, m) => acc + (m.interpretation?.split(/\s+/).length || 0) + (m.metaphor?.split(/\s+/).length || 0), 0)
+  if (chapter.extraSections) wordCount += chapter.extraSections.reduce((acc, s) => acc + (s.translation?.split(/\s+/).length || 0) + (s.commentary?.split(/\s+/).length || 0), 0)
+  if (chapter.quotes) wordCount += chapter.quotes.reduce((acc, q) => acc + (q.text?.split(/\s+/).length || 0), 0)
+  const readMinutes = Math.ceil(wordCount / 200)
+  return Math.max(readMinutes, 3)
 }
 
 // Section header with gradient underline
@@ -296,6 +317,16 @@ export function ChapterView() {
             {chapter.title}
           </h1>
           <p className="text-lg text-muted-foreground">{chapter.subtitle}</p>
+          {/* Reading time badge */}
+          <div className="flex justify-center mt-1">
+            <Badge
+              variant="outline"
+              className="text-[11px] border-amber-300/60 dark:border-amber-700/40 bg-amber-50/60 dark:bg-amber-950/20 text-amber-700 dark:text-amber-300 gap-1"
+            >
+              <Clock className="h-3 w-3" />
+              {getChapterReadingTime(chapter)} min de lecture
+            </Badge>
+          </div>
         </motion.div>
 
         {/* Mini TOC in chapter */}
@@ -512,6 +543,11 @@ export function ChapterView() {
 
         {/* Decorative end divider */}
         <DecorativeDivider />
+
+        {/* Chapter Notes Summary */}
+        <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <ChapterNotesSummary chapterId={chapterId} />
+        </motion.div>
 
         {/* Chapter navigation with titles */}
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="pt-4 border-t border-stone-200/60 dark:border-stone-700/30">

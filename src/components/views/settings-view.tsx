@@ -117,6 +117,76 @@ export function SettingsView() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 sm:py-8 space-y-6">
+      {/* Live Preview Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Card className="border-amber-200/60 dark:border-amber-800/30 overflow-hidden">
+          <CardContent className="p-0">
+            {/* Miniature book page */}
+            <div className="relative mx-4 my-4 rounded-lg border border-amber-200/50 dark:border-amber-700/30 bg-gradient-to-b from-amber-50/80 via-stone-50 to-amber-50/60 dark:from-amber-950/30 dark:via-stone-900/50 dark:to-amber-950/20 p-5 shadow-inner">
+              {/* Page margin line */}
+              <div className="absolute left-12 top-0 bottom-0 w-px bg-amber-200/30 dark:bg-amber-700/20" />
+              {/* Chapter number */}
+              <div className="text-center mb-3">
+                <span className="text-[9px] font-semibold uppercase tracking-widest text-amber-600/50 dark:text-amber-400/40">
+                  Chapitre A1
+                </span>
+              </div>
+              {/* Arabic verse sample */}
+              <p
+                dir="rtl"
+                lang="ar"
+                className="arabic-verse text-center text-base text-amber-800/70 dark:text-amber-200/60 mb-2"
+                style={{
+                  fontFamily:
+                    fontFamily === 'system'
+                      ? 'var(--font-geist-sans), sans-serif'
+                      : fontFamily === 'serif'
+                        ? 'Georgia, serif'
+                        : '"Literata", "Merriweather", Georgia, serif',
+                }}
+              >
+                بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+              </p>
+              {/* Translation sample */}
+              <p
+                className="text-center text-xs leading-relaxed text-stone-600/70 dark:text-stone-300/60 italic"
+                style={{
+                  fontFamily:
+                    fontFamily === 'system'
+                      ? 'var(--font-geist-sans), sans-serif'
+                      : fontFamily === 'serif'
+                        ? 'Georgia, serif'
+                        : '"Literata", "Merriweather", Georgia, serif',
+                  filter: readingMode === 'soothing' ? 'sepia(0.15) brightness(0.95)' : undefined,
+                }}
+              >
+                Au nom de Dieu, le Tout-Miséricordieux, le Très-Miséricordieux
+              </p>
+              {/* Decorative divider */}
+              <div className="flex items-center justify-center gap-2 mt-3">
+                <span className="h-px flex-1 bg-amber-300/20 dark:bg-amber-600/20" />
+                <span className="text-[8px] text-amber-400/30 dark:text-amber-500/20 select-none">✦</span>
+                <span className="h-px flex-1 bg-amber-300/20 dark:bg-amber-600/20" />
+              </div>
+              {/* Reading mode indicator */}
+              <div className="flex items-center justify-center gap-2 mt-2">
+                <span className="text-[8px] text-amber-600/40 dark:text-amber-400/30 uppercase tracking-wider">
+                  Mode : {readingModeOptions.find((o) => o.value === readingMode)?.label || 'Normal'}
+                </span>
+                <span className="text-[8px] text-stone-300 dark:text-stone-600">•</span>
+                <span className="text-[8px] text-amber-600/40 dark:text-amber-400/30 uppercase tracking-wider">
+                  Police : {fontOptions.find((o) => o.value === fontFamily)?.label || 'Système'}
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}

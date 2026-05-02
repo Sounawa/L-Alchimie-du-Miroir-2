@@ -14,6 +14,10 @@ import { useTheme } from 'next-themes'
  * - ← / → → Navigate to previous/next chapter (when in chapter view)
  * - B → Toggle bookmark on current chapter
  * - D → Toggle dark mode
+ * - T → Navigate to Tasbih counter
+ * - G → Navigate to Glossary
+ * - J → Navigate to Journal
+ * - ? or Shift+/ → Show keyboard shortcuts help overlay
  */
 export function useKeyboardShortcuts() {
   const navigate = useAppStore((s) => s.navigate)
@@ -23,6 +27,8 @@ export function useKeyboardShortcuts() {
   const addBookmark = useAppStore((s) => s.addBookmark)
   const removeBookmark = useAppStore((s) => s.removeBookmark)
   const isBookmarked = useAppStore((s) => s.isBookmarked)
+  const toggleShortcuts = useAppStore((s) => s.toggleShortcuts)
+  const showShortcuts = useAppStore((s) => s.showShortcuts)
 
   const { setTheme, theme } = useTheme()
 
@@ -44,10 +50,42 @@ export function useKeyboardShortcuts() {
       // Don't handle shortcuts when typing in inputs (except Ctrl+K above)
       if (isInputFocused) return
 
-      // Escape → Close chat / sidebar / go back
+      // Escape → Close shortcuts overlay first, then close chat / sidebar / go back
       if (e.key === 'Escape') {
         e.preventDefault()
+        if (showShortcuts) {
+          toggleShortcuts()
+          return
+        }
         goBack()
+        return
+      }
+
+      // ? or Shift+/ → Show keyboard shortcuts help overlay
+      if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+        e.preventDefault()
+        toggleShortcuts()
+        return
+      }
+
+      // T → Navigate to Tasbih
+      if (e.key === 't' || e.key === 'T') {
+        e.preventDefault()
+        navigate('tasbih')
+        return
+      }
+
+      // G → Navigate to Glossary
+      if (e.key === 'g' || e.key === 'G') {
+        e.preventDefault()
+        navigate('glossary')
+        return
+      }
+
+      // J → Navigate to Journal
+      if (e.key === 'j' || e.key === 'J') {
+        e.preventDefault()
+        navigate('journal')
         return
       }
 
@@ -104,5 +142,7 @@ export function useKeyboardShortcuts() {
     isBookmarked,
     setTheme,
     theme,
+    toggleShortcuts,
+    showShortcuts,
   ])
 }

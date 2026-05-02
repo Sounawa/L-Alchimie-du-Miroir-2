@@ -597,3 +597,62 @@ The application is a Quranic meditation guide with these major features fully im
 6. **LOW**: Add social sharing (share progress, quotes)
 7. **LOW**: Add multi-language support (Arabic UI, English UI)
 8. **LOW**: Performance optimization (lazy loading for heavy components)
+
+---
+Task ID: 17-b
+Agent: Feature Addition Agent
+Task: Add new features - Bookmarks view, Study stats, Study reminder, Keyboard shortcuts overlay, Chapter notes summary
+
+Work Log:
+- Updated Zustand store (`/src/store/use-app-store.ts`):
+  - Extended `ViewType` to include `'bookmarks'`
+  - Added `reminderDismissedDate: string` (ISO date string) state field
+  - Added `showShortcuts: boolean` state field (transient - not persisted)
+  - Added `dismissReminder: () => void` action (sets today's date)
+  - Added `isReminderDismissed: () => boolean` action (checks if today's date matches)
+  - Added `toggleShortcuts: () => void` action (toggles shortcuts overlay)
+  - Added `reminderDismissedDate` to `partialize` for persistence (showShortcuts intentionally NOT persisted)
+  - Added both fields to `resetAllData()`
+- Created BookmarksView (`/src/components/views/bookmarks-view.tsx`):
+  - Beautiful card layout showing all bookmarked chapters
+  - Each card: chapter number badge, title, bookmark label, date when bookmarked (French locale), "Retirer des favoris" button, navigation button
+  - Cards have amber gradient backgrounds, hover effects, theme-aware styling
+  - Engaging empty state with animated bookmark icon and "Parcourir les chapitres" CTA button
+  - Staggered entrance animations, all text in French
+- Created StudyStats component (`/src/components/shared/study-stats.tsx`):
+  - 8 detailed study statistics in a grid: Total reading time, Chapters completed this week, Average completion rate, Most productive day, Current streak, Longest streak, Notes written, Journal entries
+  - Each stat as a Card with icon, value, and label, amber/emerald/orange color palette
+  - All text in French
+- Created StudyReminder component (`/src/components/shared/study-reminder.tsx`):
+  - Daily study reminder banner in TOC view, shows when no chapter completed today AND (has streak or has completions)
+  - Motivational French messages with "Commencer" button navigating to next incomplete chapter
+  - Dismiss button stores today's date (persists, resets next day)
+  - Animated entrance/exit with AnimatePresence, amber gradient background
+- Updated keyboard shortcuts hook (`/src/hooks/use-keyboard-shortcuts.ts`):
+  - Added T → Tasbih, G → Glossary, J → Journal, ? or Shift+/ → Shortcuts overlay
+  - Escape now closes shortcuts overlay first
+- Created ShortcutsOverlay component (`/src/components/shared/shortcuts-overlay.tsx`):
+  - Modal overlay with 2-column layout, shortcuts grouped by category (Navigation, Actions, Views)
+  - Keyboard keys as styled `<kbd>` elements, AnimatePresence for smooth open/close
+  - Backdrop blur, close on click or Escape, amber-themed header
+- Created ChapterNotesSummary component (`/src/components/shared/chapter-notes-summary.tsx`):
+  - Appears in ChapterView above "Complete chapter" section
+  - Notes grouped by fieldId with field labels (Munajat, Exercice N, Section N), truncated content
+  - "Modifier" button scrolls to corresponding section, collapsible
+  - Empty state: "Aucune note pour ce chapitre" message
+- Updated page.tsx: Added BookmarksView case, ShortcutsOverlay in both cover and main views
+- Updated app-sidebar.tsx: Added "Favoris" nav item with Bookmark icon after "Journal"
+- Updated progress-view.tsx: Added "Statistiques détaillées" section with StudyStats component
+- Updated toc-view.tsx: Added StudyReminder at top of progress summary section
+- Updated chapter-view.tsx: Added ChapterNotesSummary above chapter navigation
+- Fixed pre-existing lint error in tasbih-counter.tsx (moved setShowCelebration from useEffect to handleTap callback)
+- All lint checks pass, dev server compiles successfully
+
+Stage Summary:
+- 5 new features: Bookmarks Quick-Access View, Study Statistics, Study Reminder, Enhanced Keyboard Navigation with Shortcuts Overlay, Chapter Notes Summary
+- 1 new view route (bookmarks)
+- 6 new files: bookmarks-view.tsx, study-stats.tsx, study-reminder.tsx, shortcuts-overlay.tsx, chapter-notes-summary.tsx
+- 7 existing files updated: use-app-store.ts, use-keyboard-shortcuts.ts, page.tsx, app-sidebar.tsx, progress-view.tsx, toc-view.tsx, chapter-view.tsx
+- Zustand store extended with 3 new state fields, 3 new actions, 1 new ViewType
+- 1 pre-existing lint error fixed (tasbih-counter set-state-in-effect)
+- Zero lint errors, clean compilation

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { CheckCircle2, Bookmark, ChevronRight, BookOpen, Flame, Trophy, Clock } from 'lucide-react';
 import { DailyInspiration } from '@/components/shared/daily-inspiration';
+import { StudyReminder } from '@/components/shared/study-reminder';
 
 const toc = getTableOfContents();
 
@@ -116,6 +117,7 @@ export function TocView() {
 
         {/* Résumé de progression mini-card */}
         <motion.div variants={fadeIn} className="mb-6">
+          <StudyReminder />
           <div className="rounded-xl border border-amber-200/50 bg-gradient-to-r from-amber-50/80 via-stone-50 to-amber-50/60 p-4 dark:border-amber-800/30 dark:from-amber-950/20 dark:via-stone-900 dark:to-amber-950/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">

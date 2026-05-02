@@ -6,9 +6,12 @@ import { BookOpen, List, BarChart3, Heart } from 'lucide-react'
 export function AppFooter() {
   const navigate = useAppStore((s) => s.navigate)
   const currentView = useAppStore((s) => s.currentView)
+  const getProgressPercentage = useAppStore((s) => s.getProgressPercentage)
 
   // Don't show footer on cover view
   if (currentView === 'cover') return null
+
+  const progressPercent = getProgressPercentage()
 
   const footerLinks = [
     { icon: List, label: 'Table des matières', view: 'toc' as const },
@@ -18,6 +21,14 @@ export function AppFooter() {
 
   return (
     <footer className="border-t border-amber-200/30 dark:border-amber-800/20 bg-gradient-to-b from-amber-50/40 via-stone-50/30 to-amber-50/60 dark:from-amber-950/20 dark:via-stone-900/30 dark:to-amber-950/10">
+      {/* Dynamic progress bar at top */}
+      <div className="h-1 w-full bg-stone-200/50 dark:bg-stone-700/30">
+        <div
+          className="h-full bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 transition-all duration-500 ease-out"
+          style={{ width: `${progressPercent}%` }}
+        />
+      </div>
+
       {/* Decorative ornament line */}
       <div className="flex items-center justify-center gap-3 pt-4 pb-2">
         <span className="h-px flex-1 max-w-20 bg-gradient-to-r from-transparent to-amber-300/40 dark:to-amber-600/30" />

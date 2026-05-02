@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type ViewType = 'cover' | 'toc' | 'intro' | 'chapter' | 'progress' | 'search' | 'glossary' | 'journal' | 'settings' | 'tasbih';
+type ViewType = 'cover' | 'toc' | 'intro' | 'chapter' | 'progress' | 'search' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks';
 
 type FontFamily = 'system' | 'serif' | 'reading';
 type ReadingMode = 'normal' | 'focus' | 'soothing';
@@ -93,6 +93,12 @@ interface AppState {
   tasbihTarget: number;
   tasbihDhikr: string;
 
+  // Study reminder
+  reminderDismissedDate: string; // ISO date string
+
+  // Keyboard shortcuts overlay (transient - not persisted)
+  showShortcuts: boolean;
+
   // Actions
   navigate: (view: ViewType, chapterId?: string | null) => void;
   goBack: () => void;
@@ -140,6 +146,13 @@ interface AppState {
   resetTasbih: () => void;
   setTasbihTarget: (target: number) => void;
   setTasbihDhikr: (dhikr: string) => void;
+
+  // Study reminder actions
+  dismissReminder: () => void;
+  isReminderDismissed: () => boolean;
+
+  // Keyboard shortcuts overlay actions
+  toggleShortcuts: () => void;
 
   // Data export/import
   exportAllData: () => string;
@@ -217,6 +230,12 @@ export const useAppStore = create<AppState>()(
       tasbihCount: 0,
       tasbihTarget: 33,
       tasbihDhikr: 'subhanallah',
+
+      // ── Study Reminder ──────────────────────────────────────────
+      reminderDismissedDate: '',
+
+      // ── Keyboard Shortcuts Overlay ────────────────────────────────
+      showShortcuts: false,
 
       // ── Actions ─────────────────────────────────────────────────
 
@@ -556,6 +575,22 @@ export const useAppStore = create<AppState>()(
         set({ tasbihDhikr: dhikr, tasbihCount: 0 });
       },
 
+      // ── Study Reminder Actions ──────────────────────────────────
+
+      dismissReminder: () => {
+        set({ reminderDismissedDate: getTodayDateString() });
+      },
+
+      isReminderDismissed: () => {
+        return get().reminderDismissedDate === getTodayDateString();
+      },
+
+      // ── Keyboard Shortcuts Overlay Actions ────────────────────────
+
+      toggleShortcuts: () => {
+        set((state) => ({ showShortcuts: !state.showShortcuts }));
+      },
+
       // ── Data Export/Import Actions ──────────────────────────────
 
       exportAllData: () => {
@@ -636,6 +671,8 @@ export const useAppStore = create<AppState>()(
           sidebarOpen: false,
           chatOpen: false,
           searchQuery: '',
+          reminderDismissedDate: '',
+          showShortcuts: false,
         });
       },
     }),
@@ -662,6 +699,7 @@ export const useAppStore = create<AppState>()(
         tasbihCount: state.tasbihCount,
         tasbihTarget: state.tasbihTarget,
         tasbihDhikr: state.tasbihDhikr,
+        reminderDismissedDate: state.reminderDismissedDate,
       }),
     }
   )

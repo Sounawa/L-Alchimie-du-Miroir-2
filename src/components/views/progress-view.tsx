@@ -32,7 +32,9 @@ import {
   Flame,
   Trophy,
   ArrowRight,
+  BarChart3,
 } from 'lucide-react'
+import { StudyStats } from '@/components/shared/study-stats'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -313,6 +315,15 @@ export function ProgressView() {
         </Card>
       </motion.div>
 
+      {/* Statistiques détaillées */}
+      <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+        <div className="flex items-center gap-2 mb-3">
+          <BarChart3 className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+          <h2 className="text-lg font-semibold">Statistiques détaillées</h2>
+        </div>
+        <StudyStats />
+      </motion.div>
+
       {/* Chapter List */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
         <Card>
@@ -374,6 +385,68 @@ export function ProgressView() {
                 </button>
               )
             })}
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Chapter Completion Checklist */}
+      <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              Liste de complétion
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="max-h-80 overflow-y-auto">
+              {allChapters.map((chapter, idx) => {
+                const isComplete = completedChapters.some((c) => c.chapterId === chapter.id)
+                const completionDate = getCompletionDate(chapter.id)
+                const partLetter = chapter.id.charAt(0).toUpperCase()
+                const dotColor = partLetter === 'A'
+                  ? 'bg-amber-500 dark:bg-amber-400'
+                  : partLetter === 'B'
+                    ? 'bg-emerald-500 dark:bg-emerald-400'
+                    : 'bg-violet-500 dark:bg-violet-400'
+
+                return (
+                  <div
+                    key={chapter.id}
+                    className={`flex items-center gap-3 px-4 py-2 text-sm transition-colors hover:bg-amber-50/40 dark:hover:bg-amber-950/10 ${
+                      idx % 2 === 0 ? 'bg-stone-50/50 dark:bg-stone-900/20' : ''
+                    }`}
+                  >
+                    {/* Part color dot */}
+                    <span className={`shrink-0 h-2 w-2 rounded-full ${dotColor}`} />
+
+                    {/* Chapter number + title */}
+                    <span className="font-medium text-xs text-amber-600 dark:text-amber-400 bg-amber-100/60 dark:bg-amber-950/30 px-1.5 py-0.5 rounded shrink-0">
+                      {chapter.number}
+                    </span>
+                    <span className={`flex-1 min-w-0 truncate text-xs ${isComplete ? 'line-through opacity-50' : ''}`}>
+                      {chapter.title}
+                    </span>
+
+                    {/* Completion status */}
+                    <span className="shrink-0">
+                      {isComplete ? (
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                      ) : (
+                        <Circle className="h-4 w-4 text-stone-300 dark:text-stone-600" />
+                      )}
+                    </span>
+
+                    {/* Date completed */}
+                    {completionDate && (
+                      <span className="text-[10px] text-muted-foreground/60 shrink-0 hidden sm:inline">
+                        {completionDate}
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
           </CardContent>
         </Card>
       </motion.div>
