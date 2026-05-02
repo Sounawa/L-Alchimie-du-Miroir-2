@@ -41,7 +41,7 @@ export function ExtraSections({ chapterId, sections }: ExtraSectionsProps) {
                   </p>
                 </div>
 
-                <p className="italic text-muted-foreground">
+                <p className="italic text-muted-foreground leading-relaxed">
                   {section.translation}
                 </p>
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '@/store/use-app-store'
 import { Button } from '@/components/ui/button'
@@ -51,6 +51,17 @@ export function OnboardingOverlay() {
   const completeOnboarding = useAppStore((s) => s.completeOnboarding)
   const [currentStep, setCurrentStep] = useState(0)
 
+  // Escape key to dismiss onboarding
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        completeOnboarding()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [completeOnboarding])
+
   if (hasCompletedOnboarding) return null
 
   const step = steps[currentStep]
@@ -94,6 +105,14 @@ export function OnboardingOverlay() {
         <div
           className="pointer-events-none absolute inset-0 islamic-pattern opacity-[0.06] dark:opacity-[0.04]"
         />
+
+        {/* Skip button */}
+        <button
+          onClick={completeOnboarding}
+          className="absolute top-3 right-4 z-20 text-xs text-stone-400 hover:text-amber-600 dark:text-stone-500 dark:hover:text-amber-300 cursor-pointer transition-colors"
+        >
+          Passer
+        </button>
 
         {/* Content */}
         <div className="relative p-6 sm:p-8 space-y-5">
@@ -169,9 +188,9 @@ export function OnboardingOverlay() {
 
           {/* Navigation - centered layout with dots above buttons */}
           <div className="mt-6 flex flex-col items-center gap-4">
-            {/* Progress dots - enlarged, gold active */}
-            <div className="flex flex-col items-center gap-1.5">
-              <div className="flex items-center gap-3">
+            {/* Progress dots - horizontally centered above button row */}
+            <div className="flex flex-col items-center gap-1.5 w-full">
+              <div className="flex items-center justify-center gap-3">
                 {steps.map((_, idx) => (
                   <button
                     key={idx}

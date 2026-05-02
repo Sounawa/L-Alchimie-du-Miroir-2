@@ -289,7 +289,7 @@ export function GlossaryView() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + idx * 0.06, duration: 0.3, ease: 'easeOut' }}
                 >
-                  <Card className="border-amber-200/40 dark:border-amber-800/20 hover:border-amber-300/60 dark:hover:border-amber-700/40 transition-colors hover:shadow-sm hover:shadow-amber-100/30 dark:hover:shadow-amber-900/10">
+                  <Card className="border-amber-200/40 dark:border-amber-800/20 hover:border-amber-300/60 dark:hover:border-amber-700/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 hover:shadow-amber-100/30 dark:hover:shadow-amber-900/10">
                     <CardContent className="py-4 px-4">
                       <div className="flex items-start gap-3">
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100/60 dark:bg-amber-900/20 mt-0.5">

@@ -30,8 +30,8 @@ export function MirrorQuestionsTable({ questions }: MirrorQuestionsTableProps) {
           <TableBody>
             {questions.map((q, i) => (
               <TableRow key={i}>
-                <TableCell className="font-semibold whitespace-normal">{q.question}</TableCell>
-                <TableCell className="italic text-muted-foreground whitespace-normal">
+                <TableCell className="font-semibold whitespace-normal leading-relaxed">{q.question}</TableCell>
+                <TableCell className="italic text-muted-foreground whitespace-normal leading-relaxed">
                   {q.meditation}
                 </TableCell>
               </TableRow>

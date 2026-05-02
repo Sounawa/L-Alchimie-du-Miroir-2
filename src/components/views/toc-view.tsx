@@ -214,6 +214,15 @@ export function TocView() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: partIdx * 0.1, duration: 0.5, ease: 'easeOut' }}
           >
+            {/* Decorative divider between parts */}
+            {partIdx > 0 && (
+              <div className="flex items-center justify-center gap-2 my-6">
+                <span className="h-px w-12 bg-gradient-to-r from-transparent to-stone-300/40 dark:to-stone-600/30" />
+                <span className="text-stone-300/60 dark:text-stone-600/40 text-[10px] tracking-[0.3em] select-none">✦ ───── ✦</span>
+                <span className="h-px w-12 bg-gradient-to-l from-transparent to-stone-300/40 dark:to-stone-600/30" />
+              </div>
+            )}
+
             {/* Part header with color dot */}
             <div className="my-8">
               <div className="flex items-center gap-3">
@@ -237,7 +246,7 @@ export function TocView() {
                 <motion.div key={entry.id} variants={slideIn}>
                   <button
                     onClick={() => navigate('chapter', entry.id)}
-                    className={`group flex w-full items-center gap-2 rounded-xl border-l-2 ${partBorderColor[part.letter] || 'border-l-amber-500'} px-3 py-3 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:border-l-[3px] hover:translate-x-1 hover:pl-4 ${currentChapterId === entry.id ? 'bg-amber-50/80 dark:bg-amber-900/15 border-l-[3px]' : ''}`}
+                    className={`group flex w-full items-center gap-2 rounded-xl border-l-2 ${partBorderColor[part.letter] || 'border-l-amber-500'} px-3 py-3 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:border-l-[3px] hover:-translate-y-0.5 hover:translate-x-1 hover:pl-4 ${currentChapterId === entry.id ? 'bg-amber-50/80 dark:bg-amber-900/15 border-l-[3px]' : ''}`}
                   >
                     {/* Completion icon */}
                     <span className="w-5 shrink-0">
@@ -297,7 +306,7 @@ export function TocView() {
           <motion.div key={entry.id} variants={slideIn}>
             <button
               onClick={() => navigate('chapter', entry.id)}
-              className="group flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:translate-x-1 hover:pl-4"
+              className="group flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:-translate-y-0.5 hover:translate-x-1 hover:pl-4"
             >
               <span className="w-5 shrink-0">
                 <span className="block size-4 rounded-full border border-stone-300 dark:border-stone-600/30" />

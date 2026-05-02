@@ -269,13 +269,12 @@ export function CoverView() {
           Un guide de tadabbur progressif
         </motion.p>
 
-        {/* Edition with decorative separator */}
-        <motion.p
-          variants={item}
-          className="text-xs text-stone-500 dark:text-stone-400/60 tracking-wider"
-        >
-          ✦ Édition 2025 — Pour usage personnel ✦
-        </motion.p>
+        {/* Edition with decorative separator — perfectly centered */}
+        <motion.div variants={item} className="w-full text-center">
+          <p className="text-xs text-stone-500 dark:text-stone-400/60 tracking-wider">
+            ✦ Édition 2025 — Pour usage personnel ✦
+          </p>
+        </motion.div>
 
         {/* Citation du Jour */}
         <motion.div variants={item} className="mt-4 max-w-md">
@@ -293,7 +292,9 @@ export function CoverView() {
           <Button
             onClick={() => navigate('toc')}
             size="lg"
-            className="relative rounded-full bg-gradient-to-r from-amber-800 via-amber-700 to-amber-800 px-10 py-6 text-base font-medium text-amber-50 shadow-lg shadow-amber-900/30 transition-all duration-300 hover:from-amber-700 hover:via-amber-600 hover:to-amber-700 hover:shadow-amber-800/40 hover:brightness-110 hover:scale-[1.03]"
+            role="button"
+            aria-label="Commencer la méditation"
+            className="relative rounded-full bg-gradient-to-r from-amber-800 via-amber-700 to-amber-800 px-10 py-6 text-base font-medium text-amber-50 shadow-lg shadow-amber-900/30 transition-all duration-300 hover:from-amber-700 hover:via-amber-600 hover:to-amber-700 hover:shadow-amber-800/40 hover:brightness-110 hover:scale-[1.03] focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2"
           >
             Commencer la méditation →
           </Button>

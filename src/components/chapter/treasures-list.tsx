@@ -21,7 +21,7 @@ export function TreasuresList({ treasures }: TreasuresListProps) {
               <span className="text-amber-600 dark:text-amber-400 font-bold text-lg shrink-0 min-w-[2ch] text-right">
                 {i + 1}.
               </span>
-              <div>
+              <div className="leading-relaxed">
                 {name && (
                   <span className="font-bold text-amber-900 dark:text-amber-200">{name} :</span>
                 )}{' '}

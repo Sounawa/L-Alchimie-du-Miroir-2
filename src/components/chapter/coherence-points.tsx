@@ -18,7 +18,7 @@ export function CoherencePoints({ points }: CoherencePointsProps) {
               <span className="text-amber-600 dark:text-amber-400 font-bold text-lg shrink-0">
                 {i + 1}.
               </span>
-              <div>
+              <div className="leading-relaxed">
                 {title && (
                   <span className="font-bold">{title} :</span>
                 )}{' '}

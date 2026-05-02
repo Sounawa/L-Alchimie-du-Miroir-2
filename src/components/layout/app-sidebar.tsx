@@ -40,6 +40,7 @@ import {
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { HijriDateDisplay } from '@/components/shared/hijri-date-display'
 
 // Part color indicators
 const partDotColor: Record<string, string> = {
@@ -147,6 +148,11 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
           </div>
         </div>
         <Progress value={progressPercent} className="h-2" />
+      </div>
+
+      {/* Hijri Date Display */}
+      <div className="px-4 py-2">
+        <HijriDateDisplay />
       </div>
 
       <Separator />

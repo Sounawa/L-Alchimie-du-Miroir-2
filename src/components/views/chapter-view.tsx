@@ -32,7 +32,7 @@ import { CompletionSummaryCard } from '@/components/shared/completion-summary-ca
 // Decorative divider component
 function DecorativeDivider() {
   return (
-    <div className="flex items-center justify-center gap-3 py-3">
+    <div className="flex items-center justify-center gap-3 my-6">
       <span className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-300/30 to-amber-400/50 dark:via-amber-600/20 dark:to-amber-600/30" />
       <span className="text-amber-400/50 dark:text-amber-500/40 text-xs tracking-[0.3em] select-none">✦</span>
       <span className="h-px flex-1 bg-gradient-to-l from-transparent via-amber-300/30 to-amber-400/50 dark:via-amber-600/20 dark:to-amber-600/30" />

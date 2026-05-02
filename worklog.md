@@ -1049,3 +1049,204 @@ Stage Summary:
 4. **MEDIUM**: Enhance mobile experience with touch gestures
 5. **LOW**: Add social sharing for progress and quotes
 6. **LOW**: Add community features (shared reading plans)
+
+---
+Task ID: 20-b
+Agent: Feature Enhancement Agent
+Task: Add Quranic Verse Audio Player Enhancement and Hijri Date Display
+
+Work Log:
+- Enhanced Verse Audio Player (`/src/components/shared/verse-audio-player.tsx`):
+  - Added playback speed control: small toggle button cycling through 1x / 0.75x / 0.5x speeds using `SPEED_CYCLE` array and `cycleSpeed` callback
+  - Added repeat mode: 🔄 Repeat button cycling through 1, 3, or 7 repetitions (common for Quran memorization) using `REPEAT_CYCLE` array and `cycleRepeat` callback
+  - Added progress indicator: small amber progress bar (w-16, h-1.5) that fills during playback using `setInterval` at 100ms tracking `audioRef.current.currentTime / duration`
+  - Visual improvements:
+    - Replaced simple play/pause icons with animated waveform bars during playback (3 bars with staggered animation, 0.2s delay each, cycling heights 6→14→8→14→6px)
+    - Added subtle pulse glow effect around the button during playback using `motion.div` with blur-md and scale animation
+    - Made the button larger (h-10 w-10) for easier tapping on mobile
+    - Waveform bars are wider (3px) and more visible
+  - Added repeat progress indicator showing "X/Y" during multi-repeat playback
+  - Speed changes apply immediately even during active playback via `useEffect` on `playbackSpeed`
+  - Repeat count and speed cycling stop current playback before changing settings
+  - Progress tracking starts/stops with play/pause, cleans up interval on unmount
+  - Audio onended handler properly chains repeats: resets currentTime to 0 and replays until repeatCount is reached
+  - All new controls use shadcn/ui Tooltip for accessible labels
+
+- Created Hijri Date Display (`/src/components/shared/hijri-date-display.tsx`):
+  - Implemented approximate Gregorian-to-Hijri conversion using Julian Day Number algorithm
+  - Epoch: July 16, 622 CE = 1 Muharram 1 AH (JDN 1948440)
+  - Uses lunar year length of 354.36667 days and lunar month of 29.53059 days for calculation
+  - All 12 Hijri months in Arabic: محرم, صفر, ربيع الأول, ربيع الثاني, جمادى الأولى, جمادى الثانية, رجب, شعبان, رمضان, شوال, ذو القعدة, ذو الحجة
+  - French transliterations for each month (Mouharram, Safar, Rabiʿ al-Awwal, etc.)
+  - Display format: "X [Month Arabic] [Year] AH" with French month name below
+  - Important Islamic events for specific months:
+    - Month 1 (Muharram): Nouvel an hégirien
+    - Month 7 (Rajab): Isra et Mi'raj
+    - Month 8 (Sha'ban): Sha'ban bénit (preparation before Ramadan)
+    - Month 9 (Ramadan): Ramadan (sacred fasting month)
+    - Month 10 (Shawwal): Aïd al-Fitr
+    - Month 12 (Dhul Hijjah): Aïd al-Adha
+  - Styled as elegant card with amber gradient background, Moon icon, and "Date hégirien" label
+  - Subtle entrance animation using Framer Motion (opacity 0→1, y 8→0, 0.5s ease-out)
+  - Clickable to show tooltip with full date in both calendars (Hijri + Gregorian)
+  - Islamic events shown with ✦ ornament when applicable
+  - "Appuyez pour plus de détails" hint text with hover effect
+  - Full theme-aware styling (light/dark mode)
+  - Uses `useMemo` for date computation (only recalculates on mount)
+
+- Integrated HijriDateDisplay into sidebar (`/src/components/layout/app-sidebar.tsx`):
+  - Added import for `HijriDateDisplay` component
+  - Placed between progress bar section and Separator, below the streak badge
+  - Wrapped in `px-4 py-2` container for proper spacing
+
+- Lint passes clean, dev server compiles successfully
+
+Stage Summary:
+- 2 features implemented: Enhanced Verse Audio Player and Hijri Date Display
+- Verse Audio Player: playback speed control (1x/0.75x/0.5x), repeat mode (1/3/7 times), progress bar, animated waveform bars, pulse glow effect, larger button
+- Hijri Date Display: approximate Gregorian-to-Hijri conversion, 12 Arabic months with French names, Islamic events for 6 months, elegant card with entrance animation, clickable tooltip with dual-calendar date
+- Sidebar integration: HijriDateDisplay placed below progress/streak section
+- Zero lint errors, clean compilation
+
+---
+Task ID: 20-a
+Agent: UX Polish Agent
+Task: Fix critical UX issues and improve styling based on VLM feedback
+
+Work Log:
+- Bug Fix 1: Onboarding Overlay (`/src/components/shared/onboarding-overlay.tsx`):
+  - Added `useEffect` hook that listens for `Escape` key and calls `completeOnboarding()` to dismiss the overlay
+  - Added "Passer" (Skip) text button in the top-right corner of the modal that calls `completeOnboarding()`
+  - Styled skip button as small, subtle text: `text-xs text-stone-400 hover:text-amber-600 dark:text-stone-500 dark:hover:text-amber-300 cursor-pointer transition-colors`
+  - Added `useEffect` import to component
+  - Fixed progress dots alignment: changed container from `flex items-center gap-3` to `flex items-center justify-center gap-3` for perfect horizontal centering, and added `w-full` to the parent div
+- Bug Fix 2: Cover View CTA Button (`/src/components/views/cover-view.tsx`):
+  - Added `role="button"` and `aria-label="Commencer la méditation"` to the CTA button
+  - Added `focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2` for keyboard focus visibility
+- Styling 1 - Alignment Fixes:
+  - Cover View: Wrapped edition line in `<motion.div>` with `w-full text-center` for mathematical centering
+  - Onboarding: Fixed progress dots centering with `justify-center` and `w-full`
+- Styling 2 - Micro-Animations:
+  - TOC View: Added `hover:-translate-y-0.5` to chapter entry buttons for subtle lift effect
+  - TOC View: Added `hover:-translate-y-0.5` to annex entry buttons
+  - Glossary View: Added `hover:-translate-y-0.5 hover:shadow-md transition-all duration-200` to resource Cards
+  - Journal View: Added `hover:-translate-y-0.5` and `duration-200` to entry Cards and inspirational quote Card
+- Styling 3 - Typography Readability:
+  - Verse Display (`verse-display.tsx`): Added `leading-[2.5]` to Arabic verse text for adequate line-height
+  - Bullet Points List (`bullet-points-list.tsx`): Added `leading-relaxed` to description div
+  - Coherence Points (`coherence-points.tsx`): Added `leading-relaxed` to description div
+  - Treasures List (`treasures-list.tsx`): Added `leading-relaxed` to description div
+  - Mirror Questions Table (`mirror-questions-table.tsx`): Added `leading-relaxed` to both table cells
+  - Extra Sections (`extra-sections.tsx`): Added `leading-relaxed` to translation text
+- Styling 4 - Visual Separators:
+  - TOC View: Added decorative divider `✦ ───── ✦` between Part A/B/C sections (centered, very light stone color, with gradient side lines)
+  - Chapter View: Changed DecorativeDivider spacing from `py-3` to `my-6` for consistent spacing above and below between major content sections
+- All changes pass lint clean, dev server compiles successfully
+
+Stage Summary:
+- 2 critical UX bugs fixed: onboarding Escape key + Skip button, CTA button accessibility
+- 4 styling improvements: alignment fixes, micro-animations, typography readability, visual separators
+- 10 files modified across shared components, views, and chapter sub-components
+- Zero lint errors, clean compilation
+
+---
+Task ID: 20-a
+Agent: Bug Fix & Styling Agent
+Task: Fix onboarding UX bug, improve styling based on VLM feedback
+
+Work Log:
+- Fixed critical UX bug: Onboarding overlay now dismisses with Escape key (useEffect listener)
+- Added "Passer" (Skip) button in top-right corner of onboarding modal
+- Added accessibility: Cover CTA button has role, aria-label, focus-visible ring
+- Fixed alignment: Onboarding progress dots and edition text centered properly
+- Added micro-animations: hover:-translate-y-0.5 on cards in TOC, Glossary, Journal views
+- Improved typography: leading-relaxed on body text, leading-[2.5] on Arabic verses
+- Added visual separators: ✦ ───── ✦ between Part A/B/C sections in TOC
+- Consistent decorative divider spacing: my-6 in chapter view
+
+Stage Summary:
+- 2 bug fixes (Escape key dismiss, CTA accessibility)
+- 4 styling improvements (alignment, micro-animations, typography, separators)
+- Zero lint errors, clean compilation
+
+---
+Task ID: 20-b
+Agent: Feature Addition Agent
+Task: Enhance verse audio player + add Hijri date display
+
+Work Log:
+- Enhanced verse-audio-player.tsx: playback speed (1x/0.75x/0.5x), repeat mode (1/3/7), progress bar, animated waveform bars, pulse glow, larger button
+- Created hijri-date-display.tsx: approximate Gregorian-to-Hijri conversion, 12 months in Arabic + French, Islamic event indicators, tooltip with dual calendar dates
+- Integrated HijriDateDisplay into app-sidebar.tsx (below progress/streak section)
+
+Stage Summary:
+- 2 features enhanced/added: Verse Audio Player + Hijri Date Display
+- Verse player: speed control, repeat mode, progress bar, waveform animation
+- Hijri date: JDN algorithm, Arabic + French display, Islamic events
+- Zero lint errors, clean compilation
+
+---
+Task ID: 20 (Session Summary)
+Agent: Main (Session Coordinator)
+Task: QA testing, bug fixes, styling improvements, new features
+
+Work Log:
+- Assessed project status via worklog (Tasks 1-19 complete)
+- Performed QA testing with agent-browser + VLM analysis
+- Identified critical UX bug: onboarding overlay not dismissible with keyboard
+- VLM rated design at 7/10, identified improvement areas
+- Delegated bug fixes and styling polish (20-a): Escape key dismiss, skip button, alignment, micro-animations, typography, separators
+- Delegated feature additions (20-b): Enhanced verse audio player, Hijri date display
+- Verified all changes: lint passes clean, server responds 200
+- Onboarding fix verified: Escape key now properly dismisses overlay
+
+Stage Summary:
+- 2 bug fixes (onboarding Escape key, CTA accessibility)
+- 4 styling improvements (alignment, micro-animations, typography, separators)
+- 2 features (enhanced verse player, Hijri date display)
+- VLM design quality: 7-8/10 (ongoing improvements)
+- All lint checks pass, compilation successful
+
+# ═══════════════════════════════════════════════════════
+# HANDOVER DOCUMENT — Session 20 Status
+# ═══════════════════════════════════════════════════════
+
+## Current Project Status
+
+**Project**: L'Alchimie du Miroir — Niveau 2
+**Phase**: Feature-complete with 17 chapters, rich interactivity, polished design
+
+### Key Changes This Session
+1. **Bug Fix**: Onboarding overlay now dismissible with Escape key + Skip button
+2. **Styling**: Alignment fixes, micro-animations, typography readability, visual separators
+3. **Features**: Enhanced verse audio player (speed/repeat/progress), Hijri date display in sidebar
+
+### Complete Feature List (All Working)
+- 17 chapters across 3 parts (A: 7, B: 3, C: 7)
+- AI Chat with context awareness
+- Dark mode with smooth transitions
+- Full-text search (accent-insensitive)
+- Progress tracking with SVG ring, streak tracking, timeline
+- Bookmarks, Journal, Glossary views
+- Tasbih counter, Settings view, Memorization mode
+- Reading Plans (3 plans), Word of the Day, Chapter Comparison
+- Onboarding overlay (now dismissible with Escape/Skip)
+- Keyboard shortcuts with overlay
+- PWA support (manifest + service worker)
+- TTS audio with speed control, repeat mode, progress bar
+- Hijri date display in sidebar
+- Data export/import/reset
+
+## Unresolved Issues / Risks / Priority Recommendations
+
+### Known Issues
+1. Agent-browser cannot click SPA navigation elements (Zustand-driven, no href)
+2. VLM rates design at 7-8/10 (functional but could be more "inspirational")
+
+### Priority Recommendations for Next Phase
+1. **HIGH**: Add more Quranic-inspired visual motifs (geometric patterns, calligraphic borders)
+2. **HIGH**: Refine color palette cohesion - extend amber accent more consistently
+3. **MEDIUM**: Add smooth hover transitions on all sidebar navigation items
+4. **MEDIUM**: Enhance dark mode with warmer tones throughout
+5. **LOW**: Add community features (shared reading plans, group progress)
+6. **LOW**: Add more audio features (different reciters, tajwid highlighting)

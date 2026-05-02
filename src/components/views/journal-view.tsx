@@ -252,7 +252,7 @@ export function JournalView() {
 
       {/* Inspirational quote */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
-        <Card className="border-amber-200/40 dark:border-amber-800/20 bg-gradient-to-r from-amber-50/60 via-amber-50/30 to-amber-100/40 dark:from-amber-950/20 dark:via-amber-950/10 dark:to-amber-900/20 mb-6">
+        <Card className="border-amber-200/40 dark:border-amber-800/20 bg-gradient-to-r from-amber-50/60 via-amber-50/30 to-amber-100/40 dark:from-amber-950/20 dark:via-amber-950/10 dark:to-amber-900/20 mb-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
           <CardContent className="py-4 px-4">
             <div className="flex items-start gap-3">
               <Sparkles className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
@@ -379,7 +379,7 @@ export function JournalView() {
                 transition={{ delay: idx * 0.04, duration: 0.3, ease: 'easeOut' }}
                 layout
               >
-                <Card className={`border-l-[3px] ${getMoodColor(entry.mood).border} ${getMoodColor(entry.mood).bg} border-amber-200/40 dark:border-amber-800/20 hover:border-amber-300/60 dark:hover:border-amber-700/40 transition-all hover:shadow-md hover:shadow-amber-100/40 dark:hover:shadow-amber-900/10 group`}>
+                <Card className={`border-l-[3px] ${getMoodColor(entry.mood).border} ${getMoodColor(entry.mood).bg} border-amber-200/40 dark:border-amber-800/20 hover:border-amber-300/60 dark:hover:border-amber-700/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 hover:shadow-amber-100/40 dark:hover:shadow-amber-900/10 group`}>
                   <CardContent className="py-4 px-4">
                     <div className="flex items-start gap-3">
                       {/* Mood emoji avatar */}

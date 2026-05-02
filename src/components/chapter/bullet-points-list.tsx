@@ -19,7 +19,7 @@ export function BulletPointsList({ points }: BulletPointsListProps) {
               className="flex items-start gap-2 transition-colors hover:text-foreground text-muted-foreground"
             >
               <span className="text-amber-500 dark:text-amber-400 shrink-0 mt-0.5">◆</span>
-              <div>
+              <div className="leading-relaxed">
                 {title && (
                   <span className="font-bold text-foreground">{title} :</span>
                 )}{' '}
