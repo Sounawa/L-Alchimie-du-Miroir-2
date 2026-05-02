@@ -3,8 +3,8 @@
 import { useAppStore } from '@/store/use-app-store';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { X, Heart } from 'lucide-react';
-import { useMemo } from 'react';
+import { X, Heart, Copy, Check } from 'lucide-react';
+import { useMemo, useState, useCallback } from 'react';
 
 interface DuaEntry {
   arabic: string;
@@ -97,12 +97,24 @@ function getDayOfYear(): number {
 export function DuaOfTheDay() {
   const dismissDuaOfDay = useAppStore((s) => s.dismissDuaOfDay);
   const isDuaOfDayDismissed = useAppStore((s) => s.isDuaOfDayDismissed);
+  const [copied, setCopied] = useState(false);
 
   const dua = useMemo(() => {
     const dayOfYear = getDayOfYear();
     const index = dayOfYear % duas.length;
     return duas[index];
   }, []);
+
+  const handleCopy = useCallback(async () => {
+    const text = `${dua.arabic}\n\n${dua.french}\n— ${dua.source}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback: do nothing
+    }
+  }, [dua]);
 
   if (isDuaOfDayDismissed()) return null;
 
@@ -113,33 +125,50 @@ export function DuaOfTheDay() {
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className="mb-6"
     >
-      <div className="rounded-xl border border-amber-400/50 dark:border-amber-700/30 bg-gradient-to-br from-amber-100/70 via-amber-50/90 to-amber-100/50 dark:from-amber-950/40 dark:via-amber-900/20 dark:to-amber-950/30 shadow-sm shadow-amber-300/30 dark:shadow-amber-900/10 overflow-hidden relative">
+      <div className="rounded-xl border border-emerald-400/40 dark:border-emerald-700/30 bg-gradient-to-br from-emerald-50/80 via-teal-50/60 to-emerald-50/50 dark:from-emerald-950/30 dark:via-teal-900/15 dark:to-emerald-950/20 shadow-sm shadow-emerald-200/30 dark:shadow-emerald-900/10 overflow-hidden relative">
         {/* Decorative ornaments */}
-        <div className="absolute top-2 left-3 text-amber-400/30 dark:text-amber-600/20 text-xs select-none">✦</div>
-        <div className="absolute top-2 right-3 text-amber-400/30 dark:text-amber-600/20 text-xs select-none">✦</div>
+        <div className="absolute top-2 left-3 text-emerald-400/25 dark:text-emerald-600/20 text-xs select-none">✦</div>
+        <div className="absolute top-2 right-3 text-emerald-400/25 dark:text-emerald-600/20 text-xs select-none">✦</div>
+
+        {/* Subtle teal glow background */}
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-emerald-200/20 dark:bg-emerald-800/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-teal-200/20 dark:bg-teal-800/10 rounded-full blur-2xl pointer-events-none" />
 
         {/* Header */}
-        <div className="flex items-center justify-between px-4 pt-3 pb-2">
+        <div className="flex items-center justify-between px-4 pt-3 pb-2 relative">
           <div className="flex items-center gap-2">
-            <Heart className="h-4 w-4 text-amber-500 dark:text-amber-400" />
-            <span className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400/80">
+            <Heart className="h-4 w-4 text-emerald-500 dark:text-emerald-400 fill-emerald-500/20 dark:fill-emerald-400/20" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400/80">
               Du&apos;a du Jour
             </span>
           </div>
-          <button
-            onClick={dismissDuaOfDay}
-            className="rounded-full p-1 text-stone-400 hover:text-stone-600 dark:text-stone-500 dark:hover:text-stone-300 transition-colors"
-          >
-            <X className="h-3.5 w-3.5" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handleCopy}
+              className="rounded-full p-1.5 text-stone-400 hover:text-emerald-600 dark:text-stone-500 dark:hover:text-emerald-300 transition-colors hover:bg-emerald-100/50 dark:hover:bg-emerald-900/20"
+              title="Copier le du'a"
+            >
+              {copied ? (
+                <Check className="h-3.5 w-3.5 text-emerald-500" />
+              ) : (
+                <Copy className="h-3.5 w-3.5" />
+              )}
+            </button>
+            <button
+              onClick={dismissDuaOfDay}
+              className="rounded-full p-1 text-stone-400 hover:text-stone-600 dark:text-stone-500 dark:hover:text-stone-300 transition-colors"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
         </div>
 
         {/* Content */}
-        <div className="px-5 pb-5">
+        <div className="px-5 pb-5 relative">
           {/* Arabic du'a */}
           <div className="text-center mb-4">
             <p
-              className="arabic-verse text-2xl md:text-3xl leading-relaxed text-amber-800 dark:text-amber-200"
+              className="arabic-verse text-2xl md:text-3xl leading-relaxed text-emerald-800 dark:text-emerald-200"
               lang="ar"
               dir="rtl"
             >
@@ -149,9 +178,9 @@ export function DuaOfTheDay() {
 
           {/* Decorative separator */}
           <div className="flex items-center justify-center gap-2 mb-4">
-            <span className="h-px w-8 bg-gradient-to-r from-transparent to-amber-400/40 dark:to-amber-600/30" />
-            <span className="text-amber-400/50 dark:text-amber-600/40 text-[10px]">✦</span>
-            <span className="h-px w-8 bg-gradient-to-l from-transparent to-amber-400/40 dark:to-amber-600/30" />
+            <span className="h-px w-8 bg-gradient-to-r from-transparent to-emerald-400/40 dark:to-emerald-600/30" />
+            <span className="text-emerald-400/50 dark:text-emerald-600/40 text-[10px]">✦</span>
+            <span className="h-px w-8 bg-gradient-to-l from-transparent to-emerald-400/40 dark:to-emerald-600/30" />
           </div>
 
           {/* French translation */}
@@ -163,8 +192,8 @@ export function DuaOfTheDay() {
 
           {/* Source attribution */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[10px] text-amber-500/60 dark:text-amber-400/70">—</span>
-            <p className="text-[10px] text-amber-600/60 dark:text-amber-400/70 font-medium">
+            <span className="text-[10px] text-emerald-500/60 dark:text-emerald-400/70">—</span>
+            <p className="text-[10px] text-emerald-600/60 dark:text-emerald-400/70 font-medium">
               {dua.source}
             </p>
           </div>
@@ -172,9 +201,9 @@ export function DuaOfTheDay() {
 
         {/* Bottom decorative ornament */}
         <div className="flex items-center justify-center pb-2 gap-2">
-          <span className="h-px w-6 bg-gradient-to-r from-transparent to-amber-400/20 dark:to-amber-600/15" />
-          <span className="text-amber-400/30 dark:text-amber-600/20 text-[8px] select-none">✦ ✦ ✦</span>
-          <span className="h-px w-6 bg-gradient-to-l from-transparent to-amber-400/20 dark:to-amber-600/15" />
+          <span className="h-px w-6 bg-gradient-to-r from-transparent to-emerald-400/20 dark:to-emerald-600/15" />
+          <span className="text-emerald-400/30 dark:text-emerald-600/20 text-[8px] select-none">✦ ✦ ✦</span>
+          <span className="h-px w-6 bg-gradient-to-l from-transparent to-emerald-400/20 dark:to-emerald-600/15" />
         </div>
       </div>
     </motion.div>

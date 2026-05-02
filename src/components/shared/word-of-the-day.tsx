@@ -315,14 +315,18 @@ export function WordOfTheDay() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
+      transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
       className="mb-6"
     >
-      <div className="rounded-xl border border-amber-300/50 dark:border-amber-700/30 bg-gradient-to-br from-amber-50/80 via-amber-100/40 to-amber-50/60 dark:from-amber-950/30 dark:via-amber-900/15 dark:to-amber-950/20 shadow-sm shadow-amber-200/30 dark:shadow-amber-900/10 overflow-hidden">
+      <div className="rounded-xl border border-amber-300/50 dark:border-amber-700/30 bg-gradient-to-br from-amber-50/90 via-yellow-50/60 to-amber-50/70 dark:from-amber-950/30 dark:via-amber-900/15 dark:to-amber-950/20 shadow-sm shadow-amber-200/30 dark:shadow-amber-900/10 overflow-hidden relative">
+        {/* Subtle gold glow background */}
+        <div className="absolute -top-8 -left-8 w-28 h-28 bg-amber-200/25 dark:bg-amber-800/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -bottom-6 -right-6 w-20 h-20 bg-yellow-200/20 dark:bg-yellow-800/10 rounded-full blur-2xl pointer-events-none" />
+
         {/* Header */}
-        <div className="flex items-center justify-between px-4 pt-3 pb-2">
+        <div className="flex items-center justify-between px-4 pt-3 pb-2 relative">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+            <Sparkles className="h-4 w-4 text-amber-500 dark:text-amber-400 fill-amber-500/20 dark:fill-amber-400/20" />
             <span className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400/80">
               Mot du Jour
             </span>
@@ -336,9 +340,9 @@ export function WordOfTheDay() {
         </div>
 
         {/* Content */}
-        <div className="px-5 pb-5">
-          {/* Arabic word */}
-          <div className="text-center mb-4">
+        <div className="px-5 pb-5 relative">
+          {/* Arabic word — large centered */}
+          <div className="text-center mb-3">
             <p
               className="arabic-verse text-4xl md:text-5xl leading-relaxed text-amber-800 dark:text-amber-200"
               lang="ar"
@@ -346,9 +350,16 @@ export function WordOfTheDay() {
             >
               {word.arabic}
             </p>
-            <p className="mt-2 text-sm italic text-stone-500 dark:text-stone-400/70">
+            <p className="mt-2 text-base italic text-amber-600/70 dark:text-amber-300/60 font-medium">
               {word.transliteration}
             </p>
+          </div>
+
+          {/* Gold decorative separator */}
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <span className="h-px w-10 bg-gradient-to-r from-transparent to-amber-400/40 dark:to-amber-600/30" />
+            <span className="text-amber-400/50 dark:text-amber-600/40 text-[10px]">✦</span>
+            <span className="h-px w-10 bg-gradient-to-l from-transparent to-amber-400/40 dark:to-amber-600/30" />
           </div>
 
           {/* Meaning */}
@@ -358,7 +369,7 @@ export function WordOfTheDay() {
             </p>
           </div>
 
-          {/* Mirror dimension callout */}
+          {/* Mirror dimension callout — gold/amber */}
           <div className="mb-4 rounded-lg border border-amber-300/40 dark:border-amber-700/20 bg-amber-100/30 dark:bg-amber-950/20 px-3 py-2.5">
             <p className="text-[10px] uppercase tracking-wider text-amber-600/70 dark:text-amber-400/70 font-medium mb-1">
               ✦ Dimension miroir
@@ -392,6 +403,13 @@ export function WordOfTheDay() {
             <BookOpen className="h-3.5 w-3.5 mr-1.5" />
             En savoir plus
           </Button>
+        </div>
+
+        {/* Bottom decorative ornament */}
+        <div className="flex items-center justify-center pb-2 gap-2">
+          <span className="h-px w-6 bg-gradient-to-r from-transparent to-amber-400/20 dark:to-amber-600/15" />
+          <span className="text-amber-400/30 dark:text-amber-600/20 text-[8px] select-none">✦ ✦ ✦</span>
+          <span className="h-px w-6 bg-gradient-to-l from-transparent to-amber-400/20 dark:to-amber-600/15" />
         </div>
       </div>
     </motion.div>

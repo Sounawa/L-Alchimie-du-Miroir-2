@@ -38,6 +38,7 @@ import {
 } from 'lucide-react'
 import { StudyStats } from '@/components/shared/study-stats'
 import { ReadingStatsPanel } from '@/components/shared/reading-stats-panel'
+import { CompletionCertificate } from '@/components/shared/completion-certificate'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -472,6 +473,11 @@ export function ProgressView() {
             })}
           </CardContent>
         </Card>
+      </motion.div>
+
+      {/* Seven Levels Completion Certificate */}
+      <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+        <CompletionCertificate />
       </motion.div>
 
       {/* Statistiques détaillées */}

@@ -180,10 +180,30 @@ function SectionHeader({ children, id, part = 'A', icon }: { children: React.Rea
   const iconColor = partIconColor[part] || partIconColor.A
   const headerColor = partHeaderColor[part] || partHeaderColor.A
   const gradientLine = partGradientLine[part] || partGradientLine.A
+  const isPartC = part === 'C'
+
   return (
     <div className="mb-2" id={id}>
       <div className="flex items-center gap-2">
-        {icon && <span className={iconColor}>{icon}</span>}
+        {icon && (
+          <span className={`relative ${iconColor}`}>
+            {/* Glowing ring for Partie C */}
+            {isPartC && (
+              <span className="absolute inset-0 rounded-full bg-violet-400/20 dark:bg-violet-500/15 blur-[3px] animate-pulse" />
+            )}
+            <motion.span
+              className="relative inline-flex"
+              animate={isPartC ? { y: [0, -2, 0] } : {}}
+              transition={isPartC ? { duration: 3, repeat: Infinity, ease: 'easeInOut' } : {}}
+            >
+              {isPartC ? (
+                <span className="h-5 w-5 flex items-center justify-center [&_svg]:h-5 [&_svg]:w-5">{icon}</span>
+              ) : (
+                icon
+              )}
+            </motion.span>
+          </span>
+        )}
         <div className={headerColor}>{children}</div>
       </div>
       <div className={`mt-1.5 h-0.5 w-20 rounded-full bg-gradient-to-r ${gradientLine}`} />
@@ -327,15 +347,69 @@ function LevelSummaryCard({ chapterNumber }: { chapterNumber: string }) {
             />
           </div>
         </div>
-        {levelNum < 7 && (
-          <p className="mt-3 text-[10px] text-stone-400 dark:text-stone-500 italic">
-            Prochain niveau : <span className="font-medium text-violet-600/70 dark:text-violet-400/60">{sevenLevels[levelNum]?.name} — {sevenLevels[levelNum]?.label}</span>
-          </p>
-        )}
+        {/* Level Transition Card — bridge to next level */}
+        {levelNum < 7 && (() => {
+          const nextLevel = sevenLevels[levelNum]
+          const NextLevelIcon = nextLevel?.icon || Star
+          const bridgeDescriptions: Record<number, string> = {
+            1: 'De la récitation sacrée vers la compréhension des premiers sens',
+            2: 'De la compréhension vers la méditation profonde du texte',
+            3: 'De la réflexion vers la vision intérieure et cosmique',
+            4: 'De la contemplation vers l\'intégration vivante du dhikr',
+            5: 'Du rappel vers la confrontation honnête avec soi-même',
+            6: 'De la vérification vers l\'illumination spirituelle',
+          }
+          return (
+            <div className="mt-4 rounded-lg bg-gradient-to-r from-violet-100/60 via-violet-50/40 to-violet-100/60 dark:from-violet-900/20 dark:via-violet-950/15 dark:to-violet-900/20 border border-violet-200/40 dark:border-violet-700/20 p-3 relative overflow-hidden">
+              {/* Decorative background elements */}
+              <div className="absolute top-0 left-0 w-16 h-16 bg-violet-200/10 dark:bg-violet-800/5 rounded-full blur-xl pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-20 h-20 bg-violet-200/10 dark:bg-violet-800/5 rounded-full blur-xl pointer-events-none" />
+
+              <div className="relative z-10">
+                {/* Transition title */}
+                <div className="flex items-center gap-2 mb-2">
+                  <svg width="32" height="16" viewBox="0 0 32 16" className="shrink-0">
+                    <path d="M0 12 L8 12 L12 4 L20 4 L24 12 L32 12" stroke="currentColor" className="text-violet-400 dark:text-violet-500" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="12" cy="4" r="2.5" fill="currentColor" className="text-violet-400 dark:text-violet-500" />
+                    <circle cx="20" cy="4" r="2.5" fill="none" stroke="currentColor" className="text-violet-300 dark:text-violet-600" strokeWidth="1.5" strokeDasharray="2 2" />
+                    <path d="M28 8 L32 12 L28 16" stroke="currentColor" className="text-violet-400 dark:text-violet-500" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" transform="translate(0,-4)" />
+                  </svg>
+                  <span className="text-[10px] font-semibold text-violet-600 dark:text-violet-400 uppercase tracking-wider">
+                    Passage au niveau supérieur
+                  </span>
+                </div>
+
+                {/* Transition description */}
+                <p className="text-[11px] text-stone-600 dark:text-stone-300/80 leading-relaxed mb-2">
+                  Vous passez du <span className="font-semibold text-violet-600 dark:text-violet-300">Niveau {levelNum} ({level?.name})</span> au <span className="font-semibold text-violet-600 dark:text-violet-300">Niveau {levelNum + 1} ({nextLevel?.name})</span>
+                </p>
+                <p className="text-[10px] text-violet-600/60 dark:text-violet-400/50 italic">
+                  {bridgeDescriptions[levelNum]}
+                </p>
+
+                {/* Next level icon preview */}
+                <div className="flex items-center gap-2 mt-2 pt-2 border-t border-violet-200/30 dark:border-violet-700/15">
+                  <div className="flex items-center justify-center rounded-full bg-violet-100/80 dark:bg-violet-900/30 h-6 w-6">
+                    <NextLevelIcon className="h-3 w-3 text-violet-600 dark:text-violet-300" />
+                  </div>
+                  <span className="text-[10px] font-medium text-violet-600/70 dark:text-violet-400/60">
+                    Prochain : {nextLevel?.name} — {nextLevel?.label}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )
+        })()}
         {levelNum === 7 && (
-          <p className="mt-3 text-[10px] text-violet-500/70 dark:text-violet-400/60 font-medium">
-            ✦ Vous avez atteint le sommet du cheminement spirituel ✦
-          </p>
+          <div className="mt-4 rounded-lg bg-gradient-to-r from-yellow-100/50 via-amber-50/40 to-yellow-100/50 dark:from-yellow-900/15 dark:via-amber-950/10 dark:to-yellow-900/15 border border-yellow-300/40 dark:border-yellow-700/20 p-3 text-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-t from-amber-200/5 to-transparent pointer-events-none" />
+            <p className="relative z-10 text-[11px] text-amber-700 dark:text-amber-300 font-medium">
+              ✦ Vous avez atteint le sommet du cheminement spirituel ✦
+            </p>
+            <p className="relative z-10 text-[10px] text-amber-600/60 dark:text-amber-400/50 mt-1 italic">
+              Que la lumière de Tajalli continue de vous illuminer
+            </p>
+          </div>
         )}
       </div>
     </div>

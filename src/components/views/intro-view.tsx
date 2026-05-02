@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Sparkles, BookOpen, Lightbulb, BookMarked, Clock, Layers, Star } from 'lucide-react';
+import { ArrowLeft, Sparkles, BookOpen, Lightbulb, BookMarked, Clock, Layers, Star, ArrowRight } from 'lucide-react';
 
 const container = {
   hidden: { opacity: 0 },
@@ -29,12 +29,43 @@ const fadeIn = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
 };
 
+// Staggered row animation for structure table
+const rowVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    x: 0,
+    transition: { delay: i * 0.15, duration: 0.5, ease: 'easeOut' },
+  }),
+};
+
 // Icons for the structure table rows
 const partIcons = [
   <Star key="a" className="size-4 text-amber-500" />,
   <BookMarked key="b" className="size-4 text-amber-500" />,
   <Layers key="c" className="size-4 text-amber-500" />,
 ];
+
+// Part colors for badges
+const partColors: Record<number, string> = {
+  0: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
+  1: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
+  2: 'bg-violet-100 text-violet-800 dark:bg-violet-900/40 dark:text-violet-300',
+};
+
+// Islamic pattern divider component
+function IslamicDivider() {
+  return (
+    <div className="flex items-center justify-center gap-3 py-4">
+      <span className="h-px flex-1 max-w-24 bg-gradient-to-r from-transparent via-amber-400/30 to-amber-400/30 dark:via-amber-600/20 dark:to-amber-600/20" />
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-amber-400/40 dark:text-amber-600/30 shrink-0">
+        <path d="M12 2L14 8L20 10L14 12L12 18L10 12L4 10L10 8L12 2Z" stroke="currentColor" strokeWidth="1" fill="none" />
+        <circle cx="12" cy="10" r="2" stroke="currentColor" strokeWidth="0.5" fill="none" />
+      </svg>
+      <span className="h-px flex-1 max-w-24 bg-gradient-to-l from-transparent via-amber-400/30 to-amber-400/30 dark:via-amber-600/20 dark:to-amber-600/20" />
+    </div>
+  );
+}
 
 export function IntroView() {
   const navigate = useAppStore((s) => s.navigate);
@@ -97,7 +128,7 @@ export function IntroView() {
         </motion.section>
 
         <motion.div variants={fadeIn}>
-          <Separator className="my-8 bg-stone-200/60 dark:bg-stone-700/30" />
+          <IslamicDivider />
         </motion.div>
 
         {/* Ce qui change au Niveau 2 */}
@@ -109,7 +140,7 @@ export function IntroView() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {intro.whatChanges.map((change, idx) => (
               <motion.div key={idx} variants={fadeIn}>
-                <Card className="border-stone-200/80 bg-white/80 shadow-sm transition-all hover:border-amber-300/60 hover:shadow-md hover:shadow-amber-100/50 dark:border-stone-700/30 dark:bg-stone-800/40 dark:hover:border-amber-700/30 dark:hover:bg-stone-800/60 dark:hover:shadow-amber-900/10">
+                <Card className="border-stone-200/80 bg-white/80 shadow-sm transition-all duration-300 hover:border-amber-300/60 hover:shadow-md hover:shadow-amber-100/50 hover:scale-[1.02] dark:border-stone-700/30 dark:bg-stone-800/40 dark:hover:border-amber-700/30 dark:hover:bg-stone-800/60 dark:hover:shadow-amber-900/10">
                   <CardHeader>
                     <CardTitle className="text-sm text-amber-700 dark:text-amber-200/80">
                       {change.title}
@@ -125,15 +156,59 @@ export function IntroView() {
         </motion.section>
 
         <motion.div variants={fadeIn}>
-          <Separator className="my-8 bg-stone-200/60 dark:bg-stone-700/30" />
+          <IslamicDivider />
         </motion.div>
 
-        {/* Structure du Niveau 2 */}
+        {/* Structure du Niveau 2 — Enhanced with animated part cards */}
         <motion.section variants={fadeIn} className="mb-10">
           <h2 className="mb-5 flex items-center gap-2 text-lg font-semibold text-amber-600 dark:text-amber-300/80">
             <Layers className="size-4" />
             Structure du Niveau 2
           </h2>
+
+          {/* Animated part cards */}
+          <div className="grid grid-cols-1 gap-4 mb-6">
+            {intro.structure.map((row, idx) => (
+              <motion.div
+                key={idx}
+                custom={idx}
+                variants={rowVariants}
+                initial="hidden"
+                animate="visible"
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.99 }}
+                className="cursor-pointer"
+                onClick={() => navigate('toc')}
+              >
+                <div className={`rounded-xl border border-stone-200/80 dark:border-stone-700/30 bg-white/80 dark:bg-stone-800/40 p-4 shadow-sm transition-all duration-300 hover:border-amber-300/60 hover:shadow-md hover:shadow-amber-100/50 dark:hover:border-amber-700/30 dark:hover:shadow-amber-900/10`}>
+                  <div className="flex items-center gap-3">
+                    <div className={`shrink-0 flex items-center justify-center w-10 h-10 rounded-lg ${partColors[idx] || 'bg-amber-100 text-amber-800'}`}>
+                      {partIcons[idx] || <Star className="size-4" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-stone-800 dark:text-stone-200/90">
+                        {row.part}
+                      </h3>
+                      <p className="text-sm text-stone-600 dark:text-stone-300/80 truncate">
+                        {row.content}
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="text-sm font-medium text-amber-600 dark:text-amber-400/80">
+                        {row.chapters}
+                      </p>
+                      <div className="flex items-center gap-1 justify-end text-xs text-stone-500 dark:text-stone-400/80">
+                        <Clock className="size-3" />
+                        {row.duration}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Also keep the table for detailed reference */}
           <div className="overflow-hidden rounded-lg border border-stone-200/80 bg-white/80 dark:border-stone-700/30 dark:bg-stone-900/40">
             <Table>
               <TableHeader>
@@ -176,26 +251,30 @@ export function IntroView() {
         </motion.section>
 
         <motion.div variants={fadeIn}>
-          <Separator className="my-8 bg-stone-200/60 dark:bg-stone-700/30" />
+          <IslamicDivider />
         </motion.div>
 
-        {/* Advice callout */}
+        {/* Advice callout — with pulsing glow border */}
         <motion.section variants={fadeIn} className="mb-10">
-          <div className="rounded-lg border border-amber-300/50 bg-amber-50/80 p-5 dark:border-amber-700/30 dark:bg-amber-950/20">
-            <div className="mb-2 flex items-center gap-2">
-              <span className="text-amber-500 dark:text-amber-400">✦</span>
-              <h3 className="text-sm font-semibold text-amber-700 dark:text-amber-300/80">
-                Conseil
-              </h3>
+          <div className="rounded-xl border-2 border-amber-300/60 dark:border-amber-600/40 bg-amber-50/80 dark:bg-amber-950/20 p-5 relative overflow-hidden animate-pulse-glow-border">
+            {/* Pulsing glow effect */}
+            <div className="absolute inset-0 rounded-xl border-2 border-amber-400/30 dark:border-amber-500/20 pointer-events-none" style={{ animation: 'pulseGlow 3s ease-in-out infinite' }} />
+            <div className="relative">
+              <div className="mb-2 flex items-center gap-2">
+                <span className="text-amber-500 dark:text-amber-400">✦</span>
+                <h3 className="text-sm font-semibold text-amber-700 dark:text-amber-300/80">
+                  Conseil
+                </h3>
+              </div>
+              <p className="text-sm leading-relaxed text-amber-800/70 dark:text-amber-200/60">
+                {intro.advice}
+              </p>
             </div>
-            <p className="text-sm leading-relaxed text-amber-800/70 dark:text-amber-200/60">
-              {intro.advice}
-            </p>
           </div>
         </motion.section>
 
         <motion.div variants={fadeIn}>
-          <Separator className="my-8 bg-stone-200/60 dark:bg-stone-700/30" />
+          <IslamicDivider />
         </motion.div>
 
         {/* Hadith quotes */}
@@ -231,18 +310,31 @@ export function IntroView() {
           </div>
         </motion.section>
 
-        {/* CTA to first chapter */}
+        {/* CTA "Commencer" button that navigates to TOC */}
         <motion.div variants={fadeIn} className="mt-8 text-center">
           <Separator className="mb-8 bg-stone-200/60 dark:bg-stone-700/30" />
           <p className="mb-4 text-sm text-stone-500 dark:text-stone-400/80">
             Prêt à commencer votre méditation ?
           </p>
           <Button
-            onClick={() => navigate('chapter', 'a1')}
+            onClick={() => navigate('toc')}
             size="lg"
-            className="bg-gradient-to-r from-amber-700 to-amber-600 px-8 text-amber-50 shadow-lg shadow-amber-900/30 transition-all hover:from-amber-600 hover:to-amber-500 hover:brightness-110"
+            className="bg-gradient-to-r from-amber-700 to-amber-600 px-8 text-amber-50 shadow-lg shadow-amber-900/30 transition-all hover:from-amber-600 hover:to-amber-500 hover:brightness-110 hover:scale-[1.02] active:scale-95"
           >
-            Commencer avec A1 — Bismillah →
+            Commencer
+            <ArrowRight className="h-4 w-4 ml-2" />
+          </Button>
+        </motion.div>
+
+        {/* Original CTA for chapter A1 */}
+        <motion.div variants={fadeIn} className="mt-6 text-center">
+          <Button
+            onClick={() => navigate('chapter', 'a1')}
+            variant="outline"
+            size="sm"
+            className="border-amber-300/50 dark:border-amber-700/30 text-amber-700 hover:bg-amber-100/50 dark:text-amber-300 dark:hover:bg-amber-900/20"
+          >
+            Ou commencer avec A1 — Bismillah →
           </Button>
         </motion.div>
       </motion.div>

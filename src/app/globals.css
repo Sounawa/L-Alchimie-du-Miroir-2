@@ -1063,3 +1063,50 @@ html {
 .milestone-pop {
   animation: milestonePop 0.5s ease-out forwards;
 }
+
+/* ═══════════════════════════════════════════════════
+   Sidebar Ripple Effect (on chapter item click)
+   ═══════════════════════════════════════════════════ */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.animate-ripple {
+  animation: ripple 0.6s ease-out forwards;
+}
+
+/* ═══════════════════════════════════════════════════
+   Pulsing Glow Border (Intro View Conseil callout)
+   ═══════════════════════════════════════════════════ */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(245, 158, 11, 0.15), 0 0 8px rgba(245, 158, 11, 0.05);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.3), 0 0 24px rgba(245, 158, 11, 0.1);
+  }
+}
+
+@keyframes pulseGlowDark {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(245, 158, 11, 0.08), 0 0 8px rgba(245, 158, 11, 0.03);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.15), 0 0 24px rgba(245, 158, 11, 0.06);
+  }
+}
+
+.animate-pulse-glow-border {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.dark .animate-pulse-glow-border {
+  animation: pulseGlowDark 3s ease-in-out infinite;
+}

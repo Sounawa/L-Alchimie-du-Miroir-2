@@ -13,6 +13,7 @@ import { DuaOfTheDay } from '@/components/shared/dua-of-the-day';
 import { StudyReminder } from '@/components/shared/study-reminder';
 import { ReflectionCard } from '@/components/shared/reflection-card';
 import { VerseOfTheDay } from '@/components/shared/verse-of-the-day';
+import { SpiritualJourneyMap } from '@/components/shared/spiritual-journey-map';
 import { useRef, useEffect, useState, useMemo } from 'react';
 
 const toc = getTableOfContents();
@@ -361,7 +362,27 @@ export function TocView() {
               </div>
             </div>
 
-            {/* Partie C: Enhanced Seven Levels Roadmap */}
+            {/* Partie C: Spiritual Journey Map */}
+            {part.letter === 'C' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+                className="mb-5"
+              >
+                <div className="relative rounded-xl border border-violet-200/60 dark:border-violet-700/30 bg-gradient-to-b from-violet-50/50 via-stone-50/20 to-amber-50/30 dark:from-violet-950/20 dark:via-stone-900/10 dark:to-amber-950/10 p-5 shadow-sm overflow-hidden">
+                  {/* Decorative top label */}
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <Mountain className="h-4 w-4 text-violet-500 dark:text-violet-400" />
+                    <span className="text-xs font-semibold tracking-wider uppercase text-violet-600 dark:text-violet-400">Carte du Cheminement Spirituel</span>
+                    <Mountain className="h-4 w-4 text-violet-500 dark:text-violet-400" />
+                  </div>
+                  <SpiritualJourneyMap />
+                </div>
+              </motion.div>
+            )}
+
+            {/* Partie C: Enhanced Seven Levels Roadmap (compact list) */}
             {part.letter === 'C' && (
               <div className="mb-5">
                 {/* Visual path with connected levels */}

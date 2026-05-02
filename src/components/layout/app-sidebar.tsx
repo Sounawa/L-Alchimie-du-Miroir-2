@@ -1,8 +1,8 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import { useAppStore } from '@/store/use-app-store'
-import { siteContent, allChapters } from '@/data/chapters'
+import { siteContent, allChapters, getChapterById } from '@/data/chapters'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
@@ -37,6 +37,7 @@ import {
   GraduationCap,
   Calendar,
   ArrowLeftRight,
+  Clock,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -56,10 +57,94 @@ const partBorderColor: Record<string, string> = {
   C: 'border-l-violet-500 dark:border-l-violet-400',
 }
 
+// Part badge colors
+const partBadgeColors: Record<string, string> = {
+  A: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+  B: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+  C: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300',
+}
+
 // Get part letter from chapter ID (e.g., 'a1' -> 'A', 'b3' -> 'B')
 function getPartLetter(chapterId: string): string {
   const letter = chapterId.charAt(0).toUpperCase()
   return letter === 'A' || letter === 'B' || letter === 'C' ? letter : 'A'
+}
+
+/** Estimate reading time for a chapter in minutes */
+function getReadingTime(chapterId: string): number {
+  const chapter = getChapterById(chapterId)
+  if (!chapter) return 20
+
+  let wordCount = 0
+  const countWords = (text: string) => text.split(/\s+/).filter(Boolean).length
+
+  wordCount += countWords(chapter.arabicVerse)
+  wordCount += countWords(chapter.translation)
+  chapter.wordAnalysis?.forEach(w => {
+    wordCount += countWords(w.arabic)
+    wordCount += countWords(w.literalMeaning)
+    wordCount += countWords(w.mirrorDimension)
+  })
+  chapter.mirrorQuestions?.forEach(q => {
+    wordCount += countWords(q.question)
+    wordCount += countWords(q.meditation)
+  })
+  chapter.munajatPrompts?.forEach(p => { wordCount += countWords(p) })
+  chapter.exercises?.forEach(e => { wordCount += countWords(e.question) })
+  chapter.coherencePoints?.forEach(c => { wordCount += countWords(c) })
+  chapter.bulletPoints?.forEach(b => { wordCount += countWords(b) })
+  chapter.treasuresList?.forEach(t => { wordCount += countWords(t) })
+  chapter.metaphorTable?.forEach(m => {
+    wordCount += countWords(m.element)
+    wordCount += countWords(m.metaphor)
+    wordCount += countWords(m.interpretation)
+  })
+  chapter.extraSections?.forEach(s => {
+    wordCount += countWords(s.translation)
+    wordCount += countWords(s.commentary)
+  })
+  chapter.quotes?.forEach(q => {
+    wordCount += countWords(q.text)
+  })
+
+  // ~200 words/min for French, minimum 10 minutes, round to nearest 5
+  const minutes = Math.max(10, Math.round(wordCount / 200 / 5) * 5)
+  return minutes
+}
+
+// Ripple effect component
+function RippleButton({ children, onClick, className }: { children: React.ReactNode; onClick: () => void; className?: string }) {
+  const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number }>>([])
+
+  const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    const id = Date.now()
+    setRipples(prev => [...prev, { id, x, y }])
+    setTimeout(() => {
+      setRipples(prev => prev.filter(r => r.id !== id))
+    }, 600)
+    onClick()
+  }, [onClick])
+
+  return (
+    <button onClick={handleClick} className={className}>
+      {ripples.map(ripple => (
+        <span
+          key={ripple.id}
+          className="absolute rounded-full bg-amber-400/20 dark:bg-amber-300/10 animate-ripple pointer-events-none"
+          style={{
+            left: ripple.x - 10,
+            top: ripple.y - 10,
+            width: 20,
+            height: 20,
+          }}
+        />
+      ))}
+      {children}
+    </button>
+  )
 }
 
 function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: boolean }) {
@@ -72,19 +157,22 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
     getProgressPercentage,
     toggleChat,
     currentStreak,
+    completedChapters,
   } = useAppStore()
 
   const progressPercent = getProgressPercentage()
   const parts = siteContent.parts
 
-  // Count uncompleted chapters per part
-  const uncompletedByPart: Record<string, number> = {}
+  // Count completed chapters per part
+  const completedByPart: Record<string, number> = {}
+  const totalByPart: Record<string, number> = {}
   for (const part of parts) {
-    let count = 0
+    let completed = 0
     for (const ch of part.chapters) {
-      if (!isChapterComplete(ch.id)) count++
+      totalByPart[part.letter] = part.chapters.length
+      if (isChapterComplete(ch.id)) completed++
     }
-    uncompletedByPart[part.letter] = count
+    completedByPart[part.letter] = completed
   }
 
   const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization' | 'reading-plan' | 'comparison' | 'stats', chapterId?: string) => {
@@ -109,7 +197,12 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
   ]
 
   return (
-    <div className="flex h-full flex-col">
+    <motion.div
+      initial={{ x: -20, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+      className="flex h-full flex-col"
+    >
       {/* Logo + Title */}
       <div className="p-5 pb-3">
         <div className="flex items-center gap-3">
@@ -162,7 +255,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
 
       {/* Navigation items */}
       <div className="px-3 py-2">
-        {navItems.map((item) => {
+        {navItems.map((item, idx) => {
           const isActive = currentView === item.view && item.view !== 'chapter'
           return (
             <motion.button
@@ -170,7 +263,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
               onClick={() => handleNavigate(item.view)}
               className={`
                 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium
-                transition-all duration-200 mb-0.5
+                transition-all duration-200 mb-0.5 relative overflow-hidden
                 ${isActive
                   ? 'bg-amber-100/80 text-amber-900 dark:bg-amber-900/25 dark:text-amber-200 border-l-[3px] border-l-amber-500 dark:border-l-amber-400'
                   : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground border-l-[3px] border-l-transparent'
@@ -178,6 +271,9 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
               `}
               whileHover={{ x: 2 }}
               whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: idx * 0.03, duration: 0.2 }}
             >
               <item.icon className="h-4 w-4 shrink-0" />
               <span>{item.label}</span>
@@ -196,46 +292,54 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
         <ScrollArea className="h-full px-3">
           <div className="py-2">
             <TooltipProvider delayDuration={300}>
-              {parts.map((part) => (
-                <div key={part.id} className="mb-3">
-                  {/* Part header with color dot and uncompleted badge */}
+              {parts.map((part, partIdx) => (
+                <motion.div
+                  key={part.id}
+                  className="mb-3"
+                  initial={{ opacity: 0, x: -15 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: partIdx * 0.1, duration: 0.3 }}
+                >
+                  {/* Part header with color dot and completion percentage */}
                   <div className="px-3 py-1.5 flex items-center gap-1.5">
                     <span className={`inline-block h-2 w-2 rounded-full shrink-0 ${partDotColor[part.letter] || 'bg-amber-500'}`} />
                     <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
                       Partie {part.letter} — {part.title}
                     </p>
-                    {(uncompletedByPart[part.letter] || 0) > 0 && (
-                      <Badge
-                        variant="secondary"
-                        className="ml-auto text-[9px] px-1 py-0 h-4 bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 border-0"
-                      >
-                        {uncompletedByPart[part.letter]}
-                      </Badge>
-                    )}
+                    {/* Completion percentage badge */}
+                    <Badge
+                      variant="secondary"
+                      className="ml-auto text-[9px] px-1 py-0 h-4 border-0"
+                      style={{
+                        backgroundColor: part.letter === 'A' ? 'rgba(245, 158, 11, 0.15)' : part.letter === 'B' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(139, 92, 246, 0.15)',
+                        color: part.letter === 'A' ? '#b45309' : part.letter === 'B' ? '#047857' : '#6d28d9',
+                      }}
+                    >
+                      {completedByPart[part.letter] || 0}/{totalByPart[part.letter] || 0}
+                    </Badge>
                   </div>
 
                 {/* Chapter items */}
-                {part.chapters.map((chapter) => {
+                {part.chapters.map((chapter, chIdx) => {
                   const isComplete = isChapterComplete(chapter.id)
                   const isBooked = isBookmarked(chapter.id)
                   const isActive = currentView === 'chapter' && currentChapterId === chapter.id
                   const partLetter = getPartLetter(chapter.id)
+                  const readingTime = getReadingTime(chapter.id)
 
                   return (
                     <Tooltip key={chapter.id}>
                       <TooltipTrigger asChild>
-                        <motion.button
+                        <RippleButton
                           onClick={() => handleNavigate('chapter', chapter.id)}
                           className={`
                             group flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm
-                            transition-all duration-200 mb-0.5
+                            transition-all duration-200 mb-0.5 relative overflow-hidden
                             ${isActive
                               ? `bg-amber-100/80 text-amber-900 dark:bg-amber-900/25 dark:text-amber-200 border-l-[3px] ${partBorderColor[partLetter] || 'border-l-amber-500'}`
                               : 'text-foreground/80 hover:bg-muted/60 border-l-[3px] border-l-transparent'
                             }
                           `}
-                          whileHover={{ x: 3 }}
-                          whileTap={{ scale: 0.98 }}
                         >
                           {/* Status icon + reading indicator */}
                           <span className="shrink-0 w-4 h-4 flex items-center justify-center relative">
@@ -260,6 +364,12 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
                             </span>
                           </span>
 
+                          {/* Reading time indicator */}
+                          <span className="shrink-0 flex items-center gap-0.5 text-[10px] text-muted-foreground/60 dark:text-muted-foreground/40">
+                            <Clock className="h-2.5 w-2.5" />
+                            {readingTime}
+                          </span>
+
                           {/* Bookmark indicator */}
                           <AnimatePresence>
                             {isBooked && (
@@ -278,7 +388,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
                           {isActive && (
                             <ChevronRight className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
                           )}
-                        </motion.button>
+                        </RippleButton>
                       </TooltipTrigger>
                       <TooltipContent side="right" className="text-xs">
                         {chapter.subtitle || chapter.title}
@@ -286,7 +396,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
                     </Tooltip>
                   )
                 })}
-              </div>
+              </motion.div>
             ))}
           </TooltipProvider>
           </div>
@@ -311,7 +421,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
           <span className="text-sm">Assistant IA</span>
         </Button>
       </div>
-    </div>
+    </motion.div>
   )
 }
 

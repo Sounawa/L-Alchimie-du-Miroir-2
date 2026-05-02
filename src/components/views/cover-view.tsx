@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useMemo, useState, useEffect, useRef, useSyncExternalStore } from 'react';
 import { VerseOfTheDay } from '@/components/shared/verse-of-the-day';
+import { DuaOfTheDay } from '@/components/shared/dua-of-the-day';
+import { WordOfTheDay } from '@/components/shared/word-of-the-day';
 
 // 7 inspiring Islamic/spiritual quotes in French for daily rotation
 const dailyQuotes = [
@@ -353,6 +355,16 @@ export function CoverView() {
         {/* Verse of the Day */}
         <motion.div variants={item} className="mt-4 max-w-md w-full">
           <VerseOfTheDay />
+        </motion.div>
+
+        {/* Du'a of the Day */}
+        <motion.div variants={item} className="mt-2 max-w-md w-full">
+          <DuaOfTheDay />
+        </motion.div>
+
+        {/* Word of the Day */}
+        <motion.div variants={item} className="mt-2 max-w-md w-full">
+          <WordOfTheDay />
         </motion.div>
 
         {/* CTA Button with shimmer reflection effect */}

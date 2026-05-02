@@ -184,6 +184,19 @@ export function VerseDisplay({ arabicVerse, translation, translationSource, chap
             <div className={`absolute bottom-5 left-5 w-5 h-5 border-b border-l ${partCornerThin[pk]} rounded-bl-sm`} />
             <div className={`absolute bottom-5 right-5 w-5 h-5 border-b border-r ${partCornerThin[pk]} rounded-br-sm`} />
 
+            {/* Part C: Extra violet corner accent diamonds */}
+            {pk === 'C' && (
+              <>
+                <div className="absolute top-2 left-2 w-3 h-3 rotate-45 border border-violet-400/40 dark:border-violet-500/30 bg-violet-300/10 dark:bg-violet-600/10" />
+                <div className="absolute top-2 right-2 w-3 h-3 rotate-45 border border-violet-400/40 dark:border-violet-500/30 bg-violet-300/10 dark:bg-violet-600/10" />
+                <div className="absolute bottom-2 left-2 w-3 h-3 rotate-45 border border-violet-400/40 dark:border-violet-500/30 bg-violet-300/10 dark:bg-violet-600/10" />
+                <div className="absolute bottom-2 right-2 w-3 h-3 rotate-45 border border-violet-400/40 dark:border-violet-500/30 bg-violet-300/10 dark:bg-violet-600/10" />
+                {/* Violet ornamental side accents */}
+                <div className="absolute top-1/2 left-1 -translate-y-1/2 w-1.5 h-8 rounded-full bg-gradient-to-b from-violet-400/30 via-violet-500/40 to-violet-400/30 dark:from-violet-500/20 dark:via-violet-400/30 dark:to-violet-500/20" />
+                <div className="absolute top-1/2 right-1 -translate-y-1/2 w-1.5 h-8 rounded-full bg-gradient-to-b from-violet-400/30 via-violet-500/40 to-violet-400/30 dark:from-violet-500/20 dark:via-violet-400/30 dark:to-violet-500/20" />
+              </>
+            )}
+
             {/* Arabic verse with subtle breathing animation */}
             <motion.p
               dir="rtl"
