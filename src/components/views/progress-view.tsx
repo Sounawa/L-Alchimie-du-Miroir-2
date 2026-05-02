@@ -225,7 +225,7 @@ export function ProgressView() {
           <CardContent className="pt-6 relative">
             <div className="flex flex-col items-center gap-4">
               {/* Animated progress circle */}
-              <div className="relative w-40 h-40">
+              <div className={`relative w-40 h-40 ${progressPercent > 0 ? 'progress-circle-glow' : ''}`}>
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
                   <circle
                     cx="60"
@@ -246,7 +246,13 @@ export function ProgressView() {
                     strokeLinecap="round"
                     strokeDasharray={`${2 * Math.PI * 52}`}
                     strokeDashoffset={`${2 * Math.PI * 52 * (1 - progressPercent / 100)}`}
-                    className="text-amber-500 dark:text-amber-400 transition-all duration-1000 ease-out"
+                    className="text-amber-500 dark:text-amber-400"
+                    style={{
+                      transition: 'stroke-dashoffset 1.2s ease-out',
+                      animation: progressPercent > 0 ? 'progressStrokeDraw 1.2s ease-out' : undefined,
+                      '--circumference': `${2 * Math.PI * 52}`,
+                      '--target-offset': `${2 * Math.PI * 52 * (1 - progressPercent / 100)}`,
+                    } as React.CSSProperties}
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">

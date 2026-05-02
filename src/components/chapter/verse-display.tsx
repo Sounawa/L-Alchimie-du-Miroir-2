@@ -9,11 +9,12 @@ interface VerseDisplayProps {
 export function VerseDisplay({ arabicVerse, translation, translationSource }: VerseDisplayProps) {
   return (
     <div className="space-y-6">
-      {/* Illuminated manuscript frame */}
+      {/* Illuminated manuscript frame with animated gradient border */}
       <div className="relative">
-        {/* Outer decorative border */}
-        <div className="rounded-xl border-2 border-amber-300/60 dark:border-amber-600/40 p-1">
-          <div className="rounded-lg border border-amber-200/60 dark:border-amber-700/50 bg-gradient-to-b from-amber-50 via-amber-50/80 to-amber-100/60 dark:from-amber-950/40 dark:via-amber-950/30 dark:to-amber-950/20 p-6 md:p-10 relative overflow-hidden">
+        {/* Animated gradient border layer */}
+        <div className="verse-gradient-border rounded-xl p-[2px]">
+          {/* Inner border to create the "border" effect */}
+          <div className="rounded-[10px] border border-amber-200/60 dark:border-amber-700/50 bg-gradient-to-b from-amber-50 via-amber-50/80 to-amber-100/60 dark:from-amber-950/40 dark:via-amber-950/30 dark:to-amber-950/20 p-6 md:p-10 relative overflow-hidden">
 
             {/* Subtle background pattern */}
             <div

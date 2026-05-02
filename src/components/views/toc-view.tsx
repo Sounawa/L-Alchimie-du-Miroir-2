@@ -1,15 +1,39 @@
 'use client';
 
 import { useAppStore } from '@/store/use-app-store';
-import { siteContent, getTableOfContents } from '@/data/chapters';
+import { siteContent, getTableOfContents, getChapterById } from '@/data/chapters';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle2, Bookmark, ChevronRight, BookOpen, Flame, Trophy } from 'lucide-react';
+import { CheckCircle2, Bookmark, ChevronRight, BookOpen, Flame, Trophy, Clock } from 'lucide-react';
 import { DailyInspiration } from '@/components/shared/daily-inspiration';
 
 const toc = getTableOfContents();
+
+// Calculate reading time estimate for a chapter (~200 words/min for French)
+function getReadingTime(chapterId: string): number {
+  const chapter = getChapterById(chapterId);
+  if (!chapter) return 5;
+  let wordCount = 0;
+  // Count words in main text fields
+  if (chapter.arabicVerse) wordCount += chapter.arabicVerse.split(/\s+/).length;
+  if (chapter.translation) wordCount += chapter.translation.split(/\s+/).length;
+  wordCount += chapter.wordAnalysis.reduce((acc, w) => acc + (w.mirrorDimension?.split(/\s+/).length || 0) + (w.literalMeaning?.split(/\s+/).length || 0), 0);
+  wordCount += chapter.mirrorQuestions.reduce((acc, q) => acc + (q.question?.split(/\s+/).length || 0) + (q.meditation?.split(/\s+/).length || 0), 0);
+  wordCount += chapter.munajatPrompts.reduce((acc, p) => acc + (p?.split(/\s+/).length || 0), 0);
+  wordCount += chapter.exercises.reduce((acc, e) => acc + (e.question?.split(/\s+/).length || 0), 0);
+  if (chapter.coherencePoints) wordCount += chapter.coherencePoints.reduce((acc, p) => acc + (p?.split(/\s+/).length || 0), 0);
+  if (chapter.bulletPoints) wordCount += chapter.bulletPoints.reduce((acc, p) => acc + (p?.split(/\s+/).length || 0), 0);
+  if (chapter.callouts) wordCount += chapter.callouts.reduce((acc, c) => acc + (c.title?.split(/\s+/).length || 0) + (c.content?.split(/\s+/).length || 0), 0);
+  if (chapter.treasuresList) wordCount += chapter.treasuresList.reduce((acc, t) => acc + (t?.split(/\s+/).length || 0), 0);
+  if (chapter.metaphorTable) wordCount += chapter.metaphorTable.reduce((acc, m) => acc + (m.interpretation?.split(/\s+/).length || 0) + (m.metaphor?.split(/\s+/).length || 0), 0);
+  if (chapter.extraSections) wordCount += chapter.extraSections.reduce((acc, s) => acc + (s.translation?.split(/\s+/).length || 0) + (s.commentary?.split(/\s+/).length || 0), 0);
+  if (chapter.quotes) wordCount += chapter.quotes.reduce((acc, q) => acc + (q.text?.split(/\s+/).length || 0), 0);
+  // Add meditation time
+  const readMinutes = Math.ceil(wordCount / 200);
+  return Math.max(readMinutes, 3); // minimum 3 minutes
+}
 
 const container = {
   hidden: { opacity: 0 },
@@ -197,6 +221,12 @@ export function TocView() {
                     {bookmarked && (
                       <Bookmark className="size-3.5 shrink-0 fill-amber-500 text-amber-500 dark:fill-amber-400/60 dark:text-amber-400/60" />
                     )}
+
+                    {/* Reading time */}
+                    <span className="shrink-0 text-[10px] text-stone-400 dark:text-stone-500/60 flex items-center gap-0.5">
+                      <Clock className="size-3" />
+                      {getReadingTime(entry.id)} min
+                    </span>
 
                     {/* Chevron */}
                     <ChevronRight className="size-4 shrink-0 text-stone-400 transition-colors group-hover:text-amber-500 dark:text-stone-600/50 dark:group-hover:text-amber-400/60" />

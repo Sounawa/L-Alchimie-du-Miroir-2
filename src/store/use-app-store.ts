@@ -1,7 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type ViewType = 'cover' | 'toc' | 'intro' | 'chapter' | 'progress' | 'search' | 'glossary' | 'journal';
+type ViewType = 'cover' | 'toc' | 'intro' | 'chapter' | 'progress' | 'search' | 'glossary' | 'journal' | 'settings' | 'tasbih';
+
+type FontFamily = 'system' | 'serif' | 'reading';
+type ReadingMode = 'normal' | 'focus' | 'soothing';
 
 interface JournalEntry {
   id: string;
@@ -81,6 +84,15 @@ interface AppState {
   // Search history
   recentSearches: string[];
 
+  // Font & Reading
+  fontFamily: FontFamily;
+  readingMode: ReadingMode;
+
+  // Tasbih
+  tasbihCount: number;
+  tasbihTarget: number;
+  tasbihDhikr: string;
+
   // Actions
   navigate: (view: ViewType, chapterId?: string | null) => void;
   goBack: () => void;
@@ -118,6 +130,21 @@ interface AppState {
   // Search history actions
   addRecentSearch: (query: string) => void;
   clearRecentSearches: () => void;
+
+  // Font & Reading actions
+  setFontFamily: (font: FontFamily) => void;
+  setReadingMode: (mode: ReadingMode) => void;
+
+  // Tasbih actions
+  incrementTasbih: () => void;
+  resetTasbih: () => void;
+  setTasbihTarget: (target: number) => void;
+  setTasbihDhikr: (dhikr: string) => void;
+
+  // Data export/import
+  exportAllData: () => string;
+  importData: (jsonString: string) => boolean;
+  resetAllData: () => void;
 }
 
 const TOTAL_CHAPTERS = 17; // A1-A7 + B1-B10
@@ -181,6 +208,15 @@ export const useAppStore = create<AppState>()(
 
       // ── Search History ────────────────────────────────────────────
       recentSearches: [],
+
+      // ── Font & Reading ──────────────────────────────────────────
+      fontFamily: 'system',
+      readingMode: 'normal',
+
+      // ── Tasbih ──────────────────────────────────────────────────
+      tasbihCount: 0,
+      tasbihTarget: 33,
+      tasbihDhikr: 'subhanallah',
 
       // ── Actions ─────────────────────────────────────────────────
 
@@ -491,6 +527,117 @@ export const useAppStore = create<AppState>()(
       clearRecentSearches: () => {
         set({ recentSearches: [] });
       },
+
+      // ── Font & Reading Actions ─────────────────────────────────
+
+      setFontFamily: (font: FontFamily) => {
+        set({ fontFamily: font });
+      },
+
+      setReadingMode: (mode: ReadingMode) => {
+        set({ readingMode: mode });
+      },
+
+      // ── Tasbih Actions ─────────────────────────────────────────
+
+      incrementTasbih: () => {
+        set((state) => ({ tasbihCount: state.tasbihCount + 1 }));
+      },
+
+      resetTasbih: () => {
+        set({ tasbihCount: 0 });
+      },
+
+      setTasbihTarget: (target: number) => {
+        set({ tasbihTarget: target, tasbihCount: 0 });
+      },
+
+      setTasbihDhikr: (dhikr: string) => {
+        set({ tasbihDhikr: dhikr, tasbihCount: 0 });
+      },
+
+      // ── Data Export/Import Actions ──────────────────────────────
+
+      exportAllData: () => {
+        const state = get();
+        const exportData = {
+          _meta: {
+            app: "L'Alchimie du Miroir",
+            version: '2.0',
+            exportedAt: new Date().toISOString(),
+          },
+          notes: state.notes.map((n) => ({
+            ...n,
+            chapterId: n.chapterId,
+          })),
+          completedChapters: state.completedChapters,
+          journalEntries: state.journalEntries,
+          bookmarks: state.bookmarks,
+          settings: {
+            fontSize: state.fontSize,
+            fontFamily: state.fontFamily,
+            readingMode: state.readingMode,
+            tasbihTarget: state.tasbihTarget,
+            tasbihDhikr: state.tasbihDhikr,
+            tasbihCount: state.tasbihCount,
+          },
+        };
+        return JSON.stringify(exportData, null, 2);
+      },
+
+      importData: (jsonString: string): boolean => {
+        try {
+          const data = JSON.parse(jsonString);
+          if (!data._meta || data._meta.app !== "L'Alchimie du Miroir") {
+            return false;
+          }
+          const updates: Partial<AppState> = {};
+          if (Array.isArray(data.notes)) updates.notes = data.notes;
+          if (Array.isArray(data.completedChapters)) updates.completedChapters = data.completedChapters;
+          if (Array.isArray(data.journalEntries)) updates.journalEntries = data.journalEntries;
+          if (Array.isArray(data.bookmarks)) updates.bookmarks = data.bookmarks;
+          if (data.settings) {
+            if (data.settings.fontSize) updates.fontSize = data.settings.fontSize;
+            if (data.settings.fontFamily) updates.fontFamily = data.settings.fontFamily;
+            if (data.settings.readingMode) updates.readingMode = data.settings.readingMode;
+            if (data.settings.tasbihTarget) updates.tasbihTarget = data.settings.tasbihTarget;
+            if (data.settings.tasbihDhikr) updates.tasbihDhikr = data.settings.tasbihDhikr;
+            if (typeof data.settings.tasbihCount === 'number') updates.tasbihCount = data.settings.tasbihCount;
+          }
+          set(updates);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+
+      resetAllData: () => {
+        set({
+          currentView: 'cover',
+          currentChapterId: null,
+          previousView: null,
+          fontSize: 16,
+          fontFamily: 'system',
+          readingMode: 'normal',
+          completedChapters: [],
+          notes: [],
+          bookmarks: [],
+          chatMessages: [],
+          dailyInspirationDismissed: '',
+          lastActivityDate: '',
+          currentStreak: 0,
+          longestStreak: 0,
+          journalEntries: [],
+          hasCompletedOnboarding: true,
+          recentSearches: [],
+          tasbihCount: 0,
+          tasbihTarget: 33,
+          tasbihDhikr: 'subhanallah',
+          sidebarOpen: false,
+          chatOpen: false,
+          searchQuery: '',
+        });
+      },
     }),
     {
       name: 'alchimie-du-miroir',
@@ -499,6 +646,8 @@ export const useAppStore = create<AppState>()(
         currentView: state.currentView,
         currentChapterId: state.currentChapterId,
         fontSize: state.fontSize,
+        fontFamily: state.fontFamily,
+        readingMode: state.readingMode,
         completedChapters: state.completedChapters,
         notes: state.notes,
         bookmarks: state.bookmarks,
@@ -510,6 +659,9 @@ export const useAppStore = create<AppState>()(
         journalEntries: state.journalEntries,
         hasCompletedOnboarding: state.hasCompletedOnboarding,
         recentSearches: state.recentSearches,
+        tasbihCount: state.tasbihCount,
+        tasbihTarget: state.tasbihTarget,
+        tasbihDhikr: state.tasbihDhikr,
       }),
     }
   )

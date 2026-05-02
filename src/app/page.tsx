@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import { useAppStore } from '@/store/use-app-store'
 import { AppHeader } from '@/components/layout/app-header'
 import { AppSidebar } from '@/components/layout/app-sidebar'
@@ -14,6 +14,8 @@ import { ProgressView } from '@/components/views/progress-view'
 import { SearchView } from '@/components/views/search-view'
 import { GlossaryView } from '@/components/views/glossary-view'
 import { JournalView } from '@/components/views/journal-view'
+import { SettingsView } from '@/components/views/settings-view'
+import { TasbihCounter } from '@/components/shared/tasbih-counter'
 import { ReadingProgressBar } from '@/components/shared/reading-progress-bar'
 import { ViewTransition } from '@/components/shared/view-transition'
 import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
@@ -25,6 +27,8 @@ export default function Home() {
   const fontSize = useAppStore((s) => s.fontSize)
   const chatOpen = useAppStore((s) => s.chatOpen)
   const sidebarOpen = useAppStore((s) => s.sidebarOpen)
+  const fontFamily = useAppStore((s) => s.fontFamily)
+  const readingMode = useAppStore((s) => s.readingMode)
   const mainRef = useRef<HTMLDivElement>(null)
 
   // Register keyboard shortcuts
@@ -36,6 +40,22 @@ export default function Home() {
       mainRef.current.scrollTop = 0
     }
   }, [currentView, currentChapterId])
+
+  // Font family style
+  const fontClass = useMemo(() => {
+    switch (fontFamily) {
+      case 'serif':
+        return 'font-serif'
+      case 'reading':
+        return 'font-reading'
+      default:
+        return ''
+    }
+  }, [fontFamily])
+
+  // Reading mode flags
+  const isFocusMode = readingMode === 'focus'
+  const isSoothingMode = readingMode === 'soothing'
 
   const renderView = () => {
     switch (currentView) {
@@ -55,6 +75,10 @@ export default function Home() {
         return <GlossaryView />
       case 'journal':
         return <JournalView />
+      case 'settings':
+        return <SettingsView />
+      case 'tasbih':
+        return <TasbihCounter />
       default:
         return <CoverView />
     }
@@ -63,7 +87,7 @@ export default function Home() {
   // Cover view: hide header and sidebar for immersive full-screen experience
   if (currentView === 'cover') {
     return (
-      <div className="min-h-screen flex flex-col" style={{ fontSize: `${fontSize}px` }}>
+      <div className={`min-h-screen flex flex-col ${fontClass}`} style={{ fontSize: `${fontSize}px` }}>
         <ViewTransition>
           <CoverView />
         </ViewTransition>
@@ -75,14 +99,16 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ fontSize: `${fontSize}px` }}>
-      <AppHeader />
+    <div className={`min-h-screen flex flex-col ${fontClass} ${isSoothingMode ? 'reading-soothing' : ''}`} style={{ fontSize: `${fontSize}px` }}>
+      {/* Header: hidden in focus mode */}
+      {!isFocusMode && <AppHeader />}
       <ReadingProgressBar />
       <div className="flex flex-1 relative">
-        <AppSidebar />
+        {/* Sidebar: hidden in focus mode */}
+        {!isFocusMode && <AppSidebar />}
         <main
           ref={mainRef}
-          className="flex-1 min-h-0 overflow-y-auto lg:ml-72"
+          className={`flex-1 min-h-0 overflow-y-auto ${!isFocusMode ? 'lg:ml-72' : ''}`}
         >
           <ViewTransition>
             {renderView()}

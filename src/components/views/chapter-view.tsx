@@ -315,6 +315,22 @@ export function ChapterView() {
           </motion.div>
         )}
 
+        {/* Bismillah header */}
+        <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
+          <div className="rounded-xl border border-amber-200/60 dark:border-amber-700/40 bg-gradient-to-r from-amber-50 via-amber-100/60 to-amber-50 dark:from-amber-950/30 dark:via-amber-900/20 dark:to-amber-950/30 px-6 py-4 text-center">
+            <p
+              dir="rtl"
+              lang="ar"
+              className="arabic-verse text-2xl md:text-3xl text-amber-800 dark:text-amber-200 mb-2"
+            >
+              بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+            </p>
+            <p className="text-sm italic text-amber-700/70 dark:text-amber-300/60">
+              Au nom de Dieu, le Tout-Miséricordieux, le Très-Miséricordieux
+            </p>
+          </div>
+        </motion.div>
+
         {/* Decorative divider */}
         <DecorativeDivider />
 
@@ -497,35 +513,53 @@ export function ChapterView() {
         {/* Decorative end divider */}
         <DecorativeDivider />
 
-        {/* Chapter navigation */}
-        <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="flex items-center justify-between pt-4 border-t border-stone-200/60 dark:border-stone-700/30">
-          {prevChapter ? (
-            <Button
-              variant="outline"
-              onClick={() => navigate('chapter', prevChapter.id)}
-              className="gap-1"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Chapitre précédent</span>
-              <span className="sm:hidden">Précédent</span>
-            </Button>
-          ) : (
-            <div />
-          )}
+        {/* Chapter navigation with titles */}
+        <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" className="pt-4 border-t border-stone-200/60 dark:border-stone-700/30">
+          <div className="flex items-stretch justify-between gap-3">
+            {prevChapter ? (
+              <button
+                onClick={() => navigate('chapter', prevChapter.id)}
+                className="group flex items-center gap-3 rounded-xl border border-stone-200/80 dark:border-stone-700/40 bg-stone-50/50 dark:bg-stone-800/30 px-4 py-3 text-left transition-all hover:border-amber-300/60 hover:bg-amber-50/50 dark:hover:border-amber-700/40 dark:hover:bg-amber-950/20 hover:shadow-sm flex-1 max-w-[48%]"
+              >
+                <ChevronLeft className="h-5 w-5 text-muted-foreground group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-xs text-muted-foreground group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Précédent</p>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-amber-300/50 dark:border-amber-700/40 text-amber-700 dark:text-amber-400 shrink-0">
+                      {prevChapter.number}
+                    </Badge>
+                    <span className="text-sm font-medium truncate group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors">
+                      {prevChapter.title}
+                    </span>
+                  </div>
+                </div>
+              </button>
+            ) : (
+              <div className="flex-1 max-w-[48%]" />
+            )}
 
-          {nextChapter ? (
-            <Button
-              variant="outline"
-              onClick={() => navigate('chapter', nextChapter.id)}
-              className="gap-1"
-            >
-              <span className="hidden sm:inline">Chapitre suivant</span>
-              <span className="sm:hidden">Suivant</span>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          ) : (
-            <div />
-          )}
+            {nextChapter ? (
+              <button
+                onClick={() => navigate('chapter', nextChapter.id)}
+                className="group flex items-center gap-3 rounded-xl border border-stone-200/80 dark:border-stone-700/40 bg-stone-50/50 dark:bg-stone-800/30 px-4 py-3 text-right transition-all hover:border-amber-300/60 hover:bg-amber-50/50 dark:hover:border-amber-700/40 dark:hover:bg-amber-950/20 hover:shadow-sm flex-1 max-w-[48%]"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-muted-foreground group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Suivant</p>
+                  <div className="flex items-center gap-1.5 mt-0.5 justify-end">
+                    <span className="text-sm font-medium truncate group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors">
+                      {nextChapter.title}
+                    </span>
+                    <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-amber-300/50 dark:border-amber-700/40 text-amber-700 dark:text-amber-400 shrink-0">
+                      {nextChapter.number}
+                    </Badge>
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors shrink-0" />
+              </button>
+            ) : (
+              <div className="flex-1 max-w-[48%]" />
+            )}
+          </div>
         </motion.div>
 
         {/* Complete chapter section — enhanced with celebration */}

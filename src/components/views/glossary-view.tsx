@@ -78,6 +78,16 @@ export function GlossaryView() {
     return Array.from(letterSet).sort()
   }, [glossary])
 
+  // Count of terms per letter (from full glossary, not filtered)
+  const termsPerLetter = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const item of glossary) {
+      const letter = item.term.charAt(0).toUpperCase()
+      counts.set(letter, (counts.get(letter) || 0) + 1)
+    }
+    return counts
+  }, [glossary])
+
   const scrollToLetter = useCallback((letter: string) => {
     const el = sectionRefs.current[letter]
     if (el) {
@@ -142,20 +152,27 @@ export function GlossaryView() {
         <div className="hidden md:flex flex-col items-center gap-1 sticky top-20 self-start shrink-0">
           {allLetters.map((letter) => {
             const isActive = letters.includes(letter)
+            const count = termsPerLetter.get(letter) || 0
             return (
               <button
                 key={letter}
                 onClick={() => scrollToLetter(letter)}
                 disabled={!isActive}
                 className={`
-                  w-7 h-7 rounded-md text-xs font-medium transition-all duration-150
+                  w-8 h-8 rounded-md text-xs font-medium transition-all duration-200 relative group
                   ${isActive
-                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-900/60 cursor-pointer'
+                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-900/60 hover:scale-110 cursor-pointer'
                     : 'text-muted-foreground/30 dark:text-muted-foreground/20 cursor-default'
                   }
                 `}
               >
                 {letter}
+                {/* Count tooltip on hover */}
+                {isActive && count > 0 && (
+                  <span className="absolute -right-1 -top-1 min-w-[14px] h-[14px] flex items-center justify-center rounded-full bg-amber-500 dark:bg-amber-600 text-[8px] text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 px-0.5">
+                    {count}
+                  </span>
+                )}
               </button>
             )
           })}

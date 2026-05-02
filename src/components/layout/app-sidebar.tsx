@@ -32,6 +32,8 @@ import {
   X,
   Flame,
   PenLine,
+  Settings,
+  Hash,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -58,7 +60,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
   const progressPercent = getProgressPercentage()
   const parts = siteContent.parts
 
-  const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter' | 'glossary' | 'journal', chapterId?: string) => {
+  const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter' | 'glossary' | 'journal' | 'settings' | 'tasbih', chapterId?: string) => {
     navigate(view, chapterId ?? null)
     // Only close sidebar on mobile
     if (isMobile) onClose()
@@ -70,6 +72,8 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
     { icon: BarChart3, label: 'Ma progression', view: 'progress' as const },
     { icon: BookOpen, label: 'Glossaire', view: 'glossary' as const },
     { icon: PenLine, label: 'Journal', view: 'journal' as const },
+    { icon: Hash, label: 'Tasbih', view: 'tasbih' as const },
+    { icon: Settings, label: 'Paramètres', view: 'settings' as const },
   ]
 
   return (

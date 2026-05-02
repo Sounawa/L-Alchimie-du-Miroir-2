@@ -6,6 +6,52 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useMemo } from 'react';
 
+// 7 inspiring Islamic/spiritual quotes in French for daily rotation
+const dailyQuotes = [
+  { text: "Le souvenir de Dieu est la paix du cœur. Chaque dhikr est une brique dans la maison de la sérénité.", source: "Sagesse soufie" },
+  { text: "Ne pleurez pas sur ce que vous avez perdu, mais réjouissez-vous de ce que Dieu vous a donné.", source: "Imam Al-Ghazali" },
+  { text: "La prière n'est pas une demande, c'est une conversation intime avec le Créateur de l'univers.", source: "Sagesse spirituelle" },
+  { text: "Celui qui connaît son âme connaît son Seigneur. Le miroir du cœur reflète la lumière divine.", source: "Ibn Arabi" },
+  { text: "La patience est la clé du soulagement. Après chaque difficulté vient la facilité.", source: "Coran 94:6" },
+  { text: "Le meilleur d'entre vous est celui qui a le meilleur caractère. La beauté de l'âme surpasse toute beauté.", source: "Hadith" },
+  { text: "Méditez sur la création, car elle est le livre de Dieu écrit dans le langage de la beauté.", source: "Sagesse contemplative" },
+];
+
+// Deterministic daily quote based on day of year
+function getDailyQuote() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const diff = now.getTime() - start.getTime();
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+  return dailyQuotes[dayOfYear % dailyQuotes.length];
+}
+
+function QuoteOfTheDay() {
+  const quote = useMemo(() => getDailyQuote(), []);
+
+  return (
+    <div className="animate-fade-in-up rounded-xl border border-amber-200/50 dark:border-amber-700/30 bg-gradient-to-br from-amber-50/80 via-stone-50/50 to-amber-50/60 dark:from-amber-950/20 dark:via-stone-900/30 dark:to-amber-950/10 px-6 py-4 relative overflow-hidden">
+      {/* Subtle decorative element */}
+      <div className="absolute top-0 left-0 w-16 h-16 bg-amber-200/20 dark:bg-amber-800/10 rounded-br-full" />
+      <div className="relative">
+        <p className="text-xs font-medium text-amber-600/60 dark:text-amber-400/50 mb-2 uppercase tracking-wider">
+          Citation du jour
+        </p>
+        <div className="relative">
+          <span className="absolute -top-2 -left-1 text-3xl text-amber-300/40 dark:text-amber-600/30 font-serif select-none leading-none">&ldquo;</span>
+          <p className="text-sm italic text-stone-700 dark:text-stone-300/80 leading-relaxed pl-4 pr-1">
+            {quote.text}
+          </p>
+          <span className="absolute -bottom-3 right-0 text-3xl text-amber-300/40 dark:text-amber-600/30 font-serif select-none leading-none">&rdquo;</span>
+        </div>
+        <p className="text-[11px] text-amber-700/60 dark:text-amber-400/50 mt-3 italic">
+          — {quote.source}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 const container = {
   hidden: { opacity: 0 },
   show: {
@@ -220,6 +266,11 @@ export function CoverView() {
         >
           Édition 2025 — Pour usage personnel
         </motion.p>
+
+        {/* Citation du Jour */}
+        <motion.div variants={item} className="mt-4 max-w-md">
+          <QuoteOfTheDay />
+        </motion.div>
 
         {/* CTA Button with breathing pulse */}
         <motion.div variants={item} className="mt-4 relative">
