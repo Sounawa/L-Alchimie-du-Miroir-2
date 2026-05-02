@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type ViewType = 'cover' | 'toc' | 'intro' | 'chapter' | 'progress' | 'search' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks';
+type ViewType = 'cover' | 'toc' | 'intro' | 'chapter' | 'progress' | 'search' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization';
 
 type FontFamily = 'system' | 'serif' | 'reading';
 type ReadingMode = 'normal' | 'focus' | 'soothing';
@@ -96,6 +96,9 @@ interface AppState {
   // Study reminder
   reminderDismissedDate: string; // ISO date string
 
+  // Memorization progress
+  memorizationProgress: Record<string, { level: string; bestScore: number; attempts: number }>;
+
   // Keyboard shortcuts overlay (transient - not persisted)
   showShortcuts: boolean;
 
@@ -150,6 +153,9 @@ interface AppState {
   // Study reminder actions
   dismissReminder: () => void;
   isReminderDismissed: () => boolean;
+
+  // Memorization actions
+  updateMemorizationProgress: (chapterId: string, level: string, score: number) => void;
 
   // Keyboard shortcuts overlay actions
   toggleShortcuts: () => void;
@@ -233,6 +239,9 @@ export const useAppStore = create<AppState>()(
 
       // ── Study Reminder ──────────────────────────────────────────
       reminderDismissedDate: '',
+
+      // ── Memorization Progress ──────────────────────────────────────
+      memorizationProgress: {},
 
       // ── Keyboard Shortcuts Overlay ────────────────────────────────
       showShortcuts: false,
@@ -585,6 +594,24 @@ export const useAppStore = create<AppState>()(
         return get().reminderDismissedDate === getTodayDateString();
       },
 
+      // ── Memorization Actions ────────────────────────────────────
+
+      updateMemorizationProgress: (chapterId: string, level: string, score: number) => {
+        set((state) => {
+          const current = state.memorizationProgress[chapterId]
+          return {
+            memorizationProgress: {
+              ...state.memorizationProgress,
+              [chapterId]: {
+                level,
+                bestScore: current ? Math.max(current.bestScore, score) : score,
+                attempts: current ? current.attempts + 1 : 1,
+              },
+            },
+          }
+        })
+      },
+
       // ── Keyboard Shortcuts Overlay Actions ────────────────────────
 
       toggleShortcuts: () => {
@@ -672,6 +699,7 @@ export const useAppStore = create<AppState>()(
           chatOpen: false,
           searchQuery: '',
           reminderDismissedDate: '',
+          memorizationProgress: {},
           showShortcuts: false,
         });
       },
@@ -700,6 +728,7 @@ export const useAppStore = create<AppState>()(
         tasbihTarget: state.tasbihTarget,
         tasbihDhikr: state.tasbihDhikr,
         reminderDismissedDate: state.reminderDismissedDate,
+        memorizationProgress: state.memorizationProgress,
       }),
     }
   )

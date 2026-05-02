@@ -17,6 +17,7 @@ import { JournalView } from '@/components/views/journal-view'
 import { SettingsView } from '@/components/views/settings-view'
 import { BookmarksView } from '@/components/views/bookmarks-view'
 import { TasbihCounter } from '@/components/shared/tasbih-counter'
+import { MemorizationView } from '@/components/views/memorization-view'
 import { ShortcutsOverlay } from '@/components/shared/shortcuts-overlay'
 import { ReadingProgressBar } from '@/components/shared/reading-progress-bar'
 import { ViewTransition } from '@/components/shared/view-transition'
@@ -83,6 +84,8 @@ export default function Home() {
         return <TasbihCounter />
       case 'bookmarks':
         return <BookmarksView />
+      case 'memorization':
+        return <MemorizationView />
       default:
         return <CoverView />
     }

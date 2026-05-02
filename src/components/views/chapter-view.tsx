@@ -1,8 +1,8 @@
 'use client'
 
-import { useMemo, useState, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, ArrowUp, ChevronLeft, ChevronRight, CheckCircle2, Bookmark, BookmarkCheck, List, ChevronDown, Clock } from 'lucide-react'
+import { useMemo, useState, useEffect, useCallback, useRef } from 'react'
+import { motion, AnimatePresence, useInView } from 'framer-motion'
+import { ArrowLeft, ArrowUp, ChevronLeft, ChevronRight, CheckCircle2, Bookmark, BookmarkCheck, List, ChevronDown, Clock, Sparkles, BookOpen, Eye, Lightbulb, Gem } from 'lucide-react'
 import { useAppStore } from '@/store/use-app-store'
 import { allChapters, getChapterById } from '@/data/chapters'
 import type { Chapter } from '@/data/chapters'
@@ -67,11 +67,49 @@ function getChapterReadingTime(chapter: Chapter): number {
   return Math.max(readMinutes, 3)
 }
 
-// Section header with gradient underline
-function SectionHeader({ children, id }: { children: React.ReactNode; id?: string }) {
+// Part-based background gradient
+const partBgGradient: Record<string, string> = {
+  A: 'from-amber-50/30 via-transparent to-amber-50/20 dark:from-amber-950/10 dark:via-transparent dark:to-amber-950/5',
+  B: 'from-emerald-50/20 via-transparent to-amber-50/20 dark:from-emerald-950/8 dark:via-transparent dark:to-amber-950/5',
+  C: 'from-violet-50/20 via-transparent to-amber-50/20 dark:from-violet-950/8 dark:via-transparent dark:to-amber-950/5',
+}
+
+// Part-based section icon color
+const partIconColor: Record<string, string> = {
+  A: 'text-amber-500 dark:text-amber-400',
+  B: 'text-emerald-500 dark:text-emerald-400',
+  C: 'text-violet-500 dark:text-violet-400',
+}
+
+// Animated section wrapper using IntersectionObserver
+function AnimatedSection({ children, className }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const isInView = useInView(ref, { once: true, margin: '-50px' })
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: isInView ? 1 : 0,
+        transform: isInView ? 'translateY(0)' : 'translateY(16px)',
+        transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+// Section header with gradient underline and colored icon
+function SectionHeader({ children, id, part = 'A', icon }: { children: React.ReactNode; id?: string; part?: string; icon?: React.ReactNode }) {
+  const iconColor = partIconColor[part] || partIconColor.A
   return (
     <div className="mb-1" id={id}>
-      {children}
+      <div className="flex items-center gap-2">
+        {icon && <span className={iconColor}>{icon}</span>}
+        {children}
+      </div>
       <div className="mt-1 h-0.5 w-16 rounded-full bg-gradient-to-r from-amber-500/60 to-transparent dark:from-amber-400/40" />
     </div>
   )
@@ -110,6 +148,7 @@ export function ChapterView() {
   const chapter = chapterId ? (getChapterById(chapterId) as Chapter | undefined) : undefined
   const completed = chapterId ? isChapterComplete(chapterId) : false
   const bookmarked = chapterId ? isBookmarked(chapterId) : false
+  const partLetter = chapter?.part || 'A'
 
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [showStickyTitle, setShowStickyTitle] = useState(false)
@@ -283,7 +322,7 @@ export function ChapterView() {
         )}
       </AnimatePresence>
 
-      <div className="max-w-3xl mx-auto px-4 py-6 space-y-6 scroll-smooth">
+      <div className={`max-w-3xl mx-auto px-4 py-6 space-y-6 scroll-smooth bg-gradient-to-b ${partBgGradient[partLetter] || partBgGradient.A} min-h-screen`}>
         {/* Back button and Bookmark */}
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
           <div className="flex items-center justify-between">
@@ -348,15 +387,20 @@ export function ChapterView() {
 
         {/* Bismillah header */}
         <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
-          <div className="rounded-xl border border-amber-200/60 dark:border-amber-700/40 bg-gradient-to-r from-amber-50 via-amber-100/60 to-amber-50 dark:from-amber-950/30 dark:via-amber-900/20 dark:to-amber-950/30 px-6 py-4 text-center">
+          <div className="rounded-xl border-2 border-amber-200/60 dark:border-amber-700/40 bg-gradient-to-r from-amber-50 via-amber-100/60 to-amber-50 dark:from-amber-950/30 dark:via-amber-900/20 dark:to-amber-950/30 px-6 py-5 text-center animate-border-glow relative overflow-hidden">
+            {/* Decorative corner accents */}
+            <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-amber-300/40 dark:border-amber-600/30 rounded-tl-sm" />
+            <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-amber-300/40 dark:border-amber-600/30 rounded-tr-sm" />
+            <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-amber-300/40 dark:border-amber-600/30 rounded-bl-sm" />
+            <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-amber-300/40 dark:border-amber-600/30 rounded-br-sm" />
             <p
               dir="rtl"
               lang="ar"
-              className="arabic-verse text-2xl md:text-3xl text-amber-800 dark:text-amber-200 mb-2"
+              className="arabic-verse text-2xl md:text-3xl text-amber-800 dark:text-amber-200 mb-2 relative z-10"
             >
               بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
             </p>
-            <p className="text-sm italic text-amber-700/70 dark:text-amber-300/60">
+            <p className="text-sm italic text-amber-700/70 dark:text-amber-300/60 relative z-10">
               Au nom de Dieu, le Tout-Miséricordieux, le Très-Miséricordieux
             </p>
           </div>
@@ -372,6 +416,7 @@ export function ChapterView() {
               arabicVerse={chapter.arabicVerse}
               translation={chapter.translation}
               translationSource={chapter.translationSource}
+              chapterTitle={`${chapter.number} — ${chapter.title}`}
             />
           </motion.div>
         )}
@@ -380,7 +425,7 @@ export function ChapterView() {
         {chapter.wordAnalysis.length > 0 && (
           <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-words">
             <DecorativeDivider />
-            <SectionHeader>
+            <SectionHeader part={partLetter} icon={<Sparkles className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Analyse des mots</h2>
             </SectionHeader>
             <WordAnalysisTable words={chapter.wordAnalysis} />
@@ -391,7 +436,7 @@ export function ChapterView() {
         {chapter.comparisonTable && (
           <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-comparison">
             <DecorativeDivider />
-            <SectionHeader>
+            <SectionHeader part={partLetter} icon={<Eye className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Tableau comparatif</h2>
             </SectionHeader>
             <ComparisonTableBlock
@@ -405,7 +450,7 @@ export function ChapterView() {
         {chapter.coherencePoints && chapter.coherencePoints.length > 0 && (
           <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-coherence">
             <DecorativeDivider />
-            <SectionHeader>
+            <SectionHeader part={partLetter} icon={<Lightbulb className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Cohérence</h2>
             </SectionHeader>
             <CoherencePoints points={chapter.coherencePoints} />
@@ -431,7 +476,7 @@ export function ChapterView() {
         {chapter.bulletPoints && chapter.bulletPoints.length > 0 && (
           <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-bullets">
             <DecorativeDivider />
-            <SectionHeader>
+            <SectionHeader part={partLetter} icon={<Sparkles className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Points clés</h2>
             </SectionHeader>
             <BulletPointsList points={chapter.bulletPoints} />
@@ -442,7 +487,7 @@ export function ChapterView() {
         {chapter.treasuresList && chapter.treasuresList.length > 0 && (
           <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-treasures">
             <DecorativeDivider />
-            <SectionHeader>
+            <SectionHeader part={partLetter} icon={<Gem className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Trésors</h2>
             </SectionHeader>
             <TreasuresList treasures={chapter.treasuresList} />
@@ -453,7 +498,7 @@ export function ChapterView() {
         {chapter.metaphorTable && chapter.metaphorTable.length > 0 && (
           <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-metaphors">
             <DecorativeDivider />
-            <SectionHeader>
+            <SectionHeader part={partLetter} icon={<Eye className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Métaphores</h2>
             </SectionHeader>
             <MetaphorTable metaphors={chapter.metaphorTable} />
@@ -464,7 +509,7 @@ export function ChapterView() {
         {chapter.mirrorQuestions.length > 0 && (
           <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-mirror">
             <DecorativeDivider />
-            <SectionHeader>
+            <SectionHeader part={partLetter} icon={<Lightbulb className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Questions miroir</h2>
             </SectionHeader>
             <MirrorQuestionsTable questions={chapter.mirrorQuestions} />
@@ -475,7 +520,7 @@ export function ChapterView() {
         {chapter.munajatPrompts.length > 0 && (
           <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-munajat">
             <DecorativeDivider />
-            <SectionHeader>
+            <SectionHeader part={partLetter} icon={<BookOpen className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Munajat — Méditation intime</h2>
             </SectionHeader>
             <MunajatSection
@@ -489,7 +534,7 @@ export function ChapterView() {
         {chapter.timerMinutes > 0 && (
           <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-timer">
             <DecorativeDivider />
-            <SectionHeader>
+            <SectionHeader part={partLetter} icon={<Clock className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Méditation silencieuse</h2>
             </SectionHeader>
             <TimerSection
@@ -503,7 +548,7 @@ export function ChapterView() {
         {chapter.exercises.length > 0 && (
           <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-exercises">
             <DecorativeDivider />
-            <SectionHeader>
+            <SectionHeader part={partLetter} icon={<Lightbulb className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Exercices</h2>
             </SectionHeader>
             <ExerciseSection
@@ -517,7 +562,7 @@ export function ChapterView() {
         {chapter.extraSections && chapter.extraSections.length > 0 && (
           <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible" id="section-extra">
             <DecorativeDivider />
-            <SectionHeader>
+            <SectionHeader part={partLetter} icon={<BookOpen className="h-4 w-4" />}>
               <h2 className="text-lg font-semibold text-amber-700 dark:text-amber-300/80">Sections supplémentaires</h2>
             </SectionHeader>
             <ExtraSections

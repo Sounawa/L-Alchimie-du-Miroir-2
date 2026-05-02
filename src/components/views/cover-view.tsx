@@ -124,7 +124,7 @@ export function CoverView() {
   const navigate = useAppStore((s) => s.navigate);
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-amber-50 via-stone-50 to-amber-100/30 dark:from-stone-950 dark:via-stone-900 dark:to-amber-950/20">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-amber-50/80 via-amber-50/40 to-amber-100/50 dark:from-stone-950 dark:via-stone-900 dark:to-amber-950/20">
       {/* Decorative Islamic-style border pattern */}
       <div className="pointer-events-none absolute inset-3 sm:inset-5 border border-amber-300/20 dark:border-amber-600/15 rounded-xl sm:rounded-2xl" />
       <div className="pointer-events-none absolute inset-4 sm:inset-6 border border-amber-400/10 dark:border-amber-500/10 rounded-lg sm:rounded-xl" />
@@ -133,9 +133,13 @@ export function CoverView() {
       <div className="pointer-events-none absolute top-5 sm:top-8 right-5 sm:right-8 text-amber-400/30 dark:text-amber-500/20 text-lg select-none">✦</div>
       <div className="pointer-events-none absolute bottom-5 sm:bottom-8 left-5 sm:left-8 text-amber-400/30 dark:text-amber-500/20 text-lg select-none">✦</div>
       <div className="pointer-events-none absolute bottom-5 sm:bottom-8 right-5 sm:right-8 text-amber-400/30 dark:text-amber-500/20 text-lg select-none">✦</div>
+      {/* Secondary warm radial glow for light mode */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,_rgba(251,191,36,0.10)_0%,_transparent_50%)] dark:bg-none" />
+      {/* Soft warm vignette in light mode */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_50%,_rgba(180,130,60,0.08)_100%)] dark:bg-none" />
       {/* Subtle Islamic geometric pattern overlay */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.06] dark:opacity-[0.04]"
+        className="pointer-events-none absolute inset-0 opacity-[0.08] dark:opacity-[0.04]"
         style={{
           backgroundImage: `
             radial-gradient(circle at 25% 25%, rgba(217, 169, 99, 0.3) 1px, transparent 1px),
@@ -159,8 +163,19 @@ export function CoverView() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="relative z-10 flex flex-col items-center gap-5 px-6 py-12 text-center md:gap-7 md:py-16"
+        className="relative z-10 flex flex-col items-center gap-6 px-6 py-12 text-center md:gap-8 md:py-16"
       >
+        {/* Decorative Bismillah calligraphy line */}
+        <motion.div variants={item} className="mb-2 opacity-40 dark:opacity-25">
+          <p
+            dir="rtl"
+            lang="ar"
+            className="arabic-verse text-lg md:text-xl text-amber-700 dark:text-amber-400/50 select-none"
+          >
+            بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+          </p>
+        </motion.div>
+
         {/* Mirror emoji with dramatic glow and float */}
         <motion.div variants={item} className="relative">
           <motion.span
@@ -180,10 +195,10 @@ export function CoverView() {
           />
         </motion.div>
 
-        {/* Title with shimmer */}
+        {/* Title with shimmer and gentle float */}
         <motion.h1
           variants={item}
-          className="relative bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-300 dark:via-yellow-200 dark:to-amber-300 bg-clip-text text-4xl font-serif tracking-wide text-transparent sm:text-5xl md:text-6xl"
+          className="animate-gentle-float relative bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-300 dark:via-yellow-200 dark:to-amber-300 bg-clip-text text-4xl font-serif tracking-wide text-transparent sm:text-5xl md:text-6xl"
           style={{
             backgroundSize: '200% auto',
             animation: 'shimmer 3s ease-in-out infinite',
@@ -202,7 +217,7 @@ export function CoverView() {
         {/* Subtitle */}
         <motion.p
           variants={item}
-          className="text-lg text-stone-600 dark:text-stone-300/80 md:text-xl"
+          className="text-lg text-stone-700 dark:text-stone-200/90 md:text-xl"
         >
           Méditer le Coran avec l&apos;Âme
         </motion.p>
@@ -245,7 +260,7 @@ export function CoverView() {
         {/* Author line */}
         <motion.p
           variants={item}
-          className="mt-3 text-sm italic text-stone-500 dark:text-stone-400/60"
+          className="mt-3 text-sm italic text-stone-600 dark:text-stone-300/70"
         >
           Un guide de tadabbur progressif
         </motion.p>
@@ -253,7 +268,7 @@ export function CoverView() {
         {/* Edition */}
         <motion.p
           variants={item}
-          className="text-xs text-stone-400 dark:text-stone-500/50"
+          className="text-xs text-stone-500 dark:text-stone-400/60"
         >
           Édition 2025 — Pour usage personnel
         </motion.p>
@@ -274,7 +289,7 @@ export function CoverView() {
           <Button
             onClick={() => navigate('toc')}
             size="lg"
-            className="relative bg-gradient-to-r from-amber-700 to-amber-600 px-8 py-6 text-base font-medium text-amber-50 shadow-lg shadow-amber-900/30 transition-all hover:from-amber-600 hover:to-amber-500 hover:shadow-amber-800/40 hover:brightness-110"
+            className="relative rounded-full bg-gradient-to-r from-amber-700 to-amber-600 px-10 py-6 text-base font-medium text-amber-50 shadow-lg shadow-amber-900/30 transition-all hover:from-amber-600 hover:to-amber-500 hover:shadow-amber-800/40 hover:brightness-110 hover:scale-105"
           >
             Commencer la méditation →
           </Button>

@@ -599,6 +599,27 @@ The application is a Quranic meditation guide with these major features fully im
 8. **LOW**: Performance optimization (lazy loading for heavy components)
 
 ---
+Task ID: 17-a
+Agent: Styling & QA Fix Agent
+Task: Fix QA issues and significantly improve visual styling across the app
+
+Work Log:
+- **QA Fix #1 — Low Contrast on Subtitles** (`cover-view.tsx`): Changed subtitle to `text-stone-700 dark:text-stone-200/90`, author line to `text-stone-600 dark:text-stone-300/70`, edition line to `text-stone-500 dark:text-stone-400/60`
+- **QA Fix #2 — Cover View Spacing & Visual Improvements** (`cover-view.tsx`): Increased gap to `gap-6`/`gap-8`, added `animate-gentle-float` to title, made CTA button `rounded-full` with `hover:scale-105`, added decorative Bismillah calligraphy line at top
+- **QA Fix #3 — Improve Cover View Light Mode** (`cover-view.tsx`): Changed gradient to `from-amber-50/80 via-amber-50/40 to-amber-100/50`, added secondary warm radial glow, added soft warm vignette, increased pattern opacity to 0.08
+- **QA Fix #4 — Better Onboarding Overlay Styling** (`onboarding-overlay.tsx`): Enlarged dots to `h-3 w-3`/`h-3 w-7`, added `animate-active-dot-pulse`, added `islamic-pattern` background, made "Commencer" button glow with `animate-gradient-wave`, increased spacing to `mb-5`
+- **QA Fix #5 — TOC View Improvements** (`toc-view.tsx`): Added parallax scroll effect (scroll*0.3), changed to `rounded-xl` cards with `hover:border-l-[3px]`, added "Dernière lecture" indicator with Eye icon, replaced inline pattern with `islamic-pattern` class
+- **QA Fix #6 — Chapter View Enhancements** (`chapter-view.tsx`): Added part-based gradient backgrounds (amber/emerald/violet), added colored section header icons (Sparkles, Eye, Lightbulb, Gem, BookOpen, Clock), added `AnimatedSection` with `useInView`, enhanced Bismillah card with `border-2`, `animate-border-glow`, decorative corner accents
+- **QA Fix #7 — Footer Enhancement** (`app-footer.tsx`): Added animated gradient wave divider, added "Résumé rapide" section (completed chapters, streak, percentage), increased padding, increased app name font weight
+- **QA Fix #8 — Global CSS Additions** (`globals.css`): Added `gentleFloat`, `borderGlow`/`borderGlowDark`, `activeDotPulse`, `sectionFadeIn`, `gradientWave` keyframes; added `.islamic-pattern`, `.glass-card`, `.animate-*` utility classes; improved scrollbar styles
+- **QA Fix #9 — Sidebar Improvements** (`app-sidebar.tsx`): Added gradient fade at scroll area bottom, added `animate-border-glow` on active chapter, added uncompleted chapters count badge per part, changed to `transition-all`
+
+All text in French, all styling theme-aware, no new npm packages, lint passes clean.
+
+Stage Summary:
+- 9 QA issues fixed across 6 component files + globals.css
+- 7 new CSS keyframe animations and 5 new utility classes
+- Zero lint errors, clean compilation
 Task ID: 17-b
 Agent: Feature Addition Agent
 Task: Add new features - Bookmarks view, Study stats, Study reminder, Keyboard shortcuts overlay, Chapter notes summary
@@ -655,4 +676,93 @@ Stage Summary:
 - 7 existing files updated: use-app-store.ts, use-keyboard-shortcuts.ts, page.tsx, app-sidebar.tsx, progress-view.tsx, toc-view.tsx, chapter-view.tsx
 - Zustand store extended with 3 new state fields, 3 new actions, 1 new ViewType
 - 1 pre-existing lint error fixed (tasbih-counter set-state-in-effect)
+- Zero lint errors, clean compilation
+
+---
+Task ID: 17-b
+Agent: Feature Addition Agent
+Task: Add Verse Memorization Mode, TTS Audio, Enhanced Statistics, Share Verse Feature
+
+Work Log:
+- Updated Zustand store (`/src/store/use-app-store.ts`):
+  - Extended `ViewType` to include `'memorization'`
+  - Added `memorizationProgress` state field: `Record<string, { level: string; bestScore: number; attempts: number }>`
+  - Added `updateMemorizationProgress(chapterId, level, score)` action that tracks bestScore and increments attempts
+  - Added `memorizationProgress` to `partialize` for localStorage persistence
+  - Added `memorizationProgress: {}` to `resetAllData()`
+- Created Memorization View (`/src/components/views/memorization-view.tsx`):
+  - Chapter selector dropdown (Select component) filtering chapters with arabicVerse
+  - Three difficulty levels: Facile (every 3rd word visible), Moyen (first word per phrase), Difficile (complete blackout)
+  - Progressive word reveal: tap hidden words to reveal individually, hint button reveals next hidden word
+  - Check button shows full verse for comparison with green/red highlighting
+  - Score tracking: percentage of correctly recalled hidden words
+  - Score result card with motivational French messages (90%+ = "Masha'Allah!", etc.)
+  - Previous attempts display showing bestScore, attempts count, and difficulty level
+  - Tips section with 5 memorization strategies
+  - Arabic text in Amiri font with `lang="ar"` and `dir="rtl"`, ornamental ✦ ✦ ✦ lines
+  - Framer Motion animations for word reveal (opacity + scale spring transitions)
+  - All text in French, amber/gold theme, theme-aware styling
+- Created TTS API route (`/src/app/api/tts/route.ts`):
+  - POST endpoint accepting `{ text, lang? }` body
+  - Uses z-ai-web-dev-sdk `zai.audio.tts.create()` with `voice: 'alloy'`
+  - Handles multiple audio buffer formats (Buffer, ArrayBuffer, Uint8Array, ReadableStream, base64)
+  - Returns audio as `audio/mpeg` with 24h cache header
+  - Backend-only SDK usage (never client-side)
+- Created VerseAudioPlayer component (`/src/components/shared/verse-audio-player.tsx`):
+  - Small floating "Écouter" button with Volume2 icon
+  - Loading spinner while TTS audio generates
+  - Play/pause toggle with waveform animation (3 animated bars with staggered delays)
+  - Uses HTML5 Audio element for playback with blob URL
+  - Audio state management: generates on first click, reuses cached audio on subsequent plays
+  - Amber/gold theme styling, responsive (icon only on mobile, icon + label on desktop)
+  - AnimatePresence transitions between idle/loading/playing states
+- Created ShareVerseCard component (`/src/components/shared/share-verse-card.tsx`):
+  - "Partager" button with Share2 icon
+  - Uses Web Share API when available (mobile devices)
+  - Falls back to modal preview card with clipboard copy
+  - Beautiful card preview with:
+    - Arabic verse in Amiri font (text-2xl/3xl, RTL)
+    - French translation in italic
+    - Translation source attribution
+    - Chapter title in header
+    - App branding footer (🪞 L'Alchimie du Miroir)
+    - Warm amber/gold gradient background
+    - ✦ ornamental decorations
+  - Copy button with success feedback (CheckCheck icon + toast)
+  - Modal with backdrop blur and spring animation
+- Enhanced StudyStats component (`/src/components/shared/study-stats.tsx`):
+  - Added expandable "Statistiques détaillées" section with chevron toggle
+  - Total reading time (estimated from completed chapters × timerMinutes)
+  - Average reading speed (chapters per week)
+  - Most read part (A/B/C) with chapter count
+  - Longest reading session (consecutive chapters completed in one day)
+  - CSS bar chart showing chapters completed per part (Part A amber, Part B emerald, Part C violet)
+  - Animated bar width transitions with framer-motion
+  - Reading pace indicator message: "Vous lisez X chapitres par semaine en moyenne"
+  - Motivational message based on pace (3+: excellent, 1.5+: bon, >0: take your time, 0: start)
+  - 4 new detailed stat cards with icons (Timer, TrendingUp, BookOpen, Flame)
+  - All in expandable section with AnimatePresence height animation
+- Updated verse-display.tsx:
+  - Added `chapterTitle` optional prop
+  - Integrated VerseAudioPlayer in verse card header area
+  - Integrated ShareVerseCard in verse card header area
+  - Both buttons positioned in top-right with amber styling
+- Updated chapter-view.tsx:
+  - Passes `chapterTitle` prop to VerseDisplay: `${chapter.number} — ${chapter.title}`
+- Updated app-sidebar.tsx:
+  - Added GraduationCap icon import
+  - Extended handleNavigate type union to include 'memorization'
+  - Added "Mémorisation" nav item with GraduationCap icon between "Favoris" and "Tasbih"
+- Updated page.tsx:
+  - Added MemorizationView import
+  - Added `case 'memorization': return <MemorizationView />` in renderView switch
+- All lint checks pass, dev server compiles successfully
+
+Stage Summary:
+- 4 new features implemented: Verse Memorization Mode, TTS Audio for Arabic Verses, Enhanced Statistics Dashboard, Share Verse Feature
+- Zustand store extended with 1 new state field (memorizationProgress), 1 new action (updateMemorizationProgress), 1 new ViewType ('memorization')
+- 5 new files created: memorization-view.tsx, tts/route.ts, verse-audio-player.tsx, share-verse-card.tsx, study-stats.tsx (rewritten)
+- 4 existing files updated: use-app-store.ts, verse-display.tsx, chapter-view.tsx, app-sidebar.tsx, page.tsx
+- TTS API uses z-ai-web-dev-sdk (backend-only) with proper error handling and multiple buffer format support
+- All text in French, all styling theme-aware with dark: variants, amber/gold color palette
 - Zero lint errors, clean compilation

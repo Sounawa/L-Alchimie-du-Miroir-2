@@ -92,18 +92,11 @@ export function OnboardingOverlay() {
 
         {/* Decorative geometric pattern */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.04] dark:opacity-[0.03]"
-          style={{
-            backgroundImage: `
-              radial-gradient(circle at 25% 25%, rgba(217, 169, 99, 0.4) 1px, transparent 1px),
-              radial-gradient(circle at 75% 75%, rgba(217, 169, 99, 0.4) 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 70px, 40px 70px',
-          }}
+          className="pointer-events-none absolute inset-0 islamic-pattern opacity-[0.06] dark:opacity-[0.04]"
         />
 
         {/* Content */}
-        <div className="relative p-6 sm:p-8">
+        <div className="relative p-6 sm:p-8 space-y-5">
           <AnimatePresence mode="wait">
             <motion.div
               key={step.id}
@@ -130,13 +123,13 @@ export function OnboardingOverlay() {
               </h2>
 
               {/* Description */}
-              <p className="mb-4 text-sm text-stone-600 dark:text-stone-300/80 max-w-sm leading-relaxed">
+              <p className="mb-5 text-sm text-stone-600 dark:text-stone-300/80 max-w-sm leading-relaxed">
                 {step.description}
               </p>
 
               {/* Step-specific content - Features */}
               {'features' in step && step.features && (
-                <div className="grid grid-cols-2 gap-3 w-full max-w-sm mb-4">
+                <div className="grid grid-cols-2 gap-3 w-full max-w-sm mb-5">
                   {step.features.map((feature) => (
                     <div
                       key={feature.label}
@@ -152,7 +145,7 @@ export function OnboardingOverlay() {
 
               {/* Step-specific content - Tips */}
               {'tips' in step && step.tips && (
-                <div className="flex flex-col gap-2 w-full max-w-sm mb-4">
+                <div className="flex flex-col gap-2.5 w-full max-w-sm mb-5">
                   {step.tips.map((tip) => (
                     <div
                       key={tip.text}
@@ -192,7 +185,7 @@ export function OnboardingOverlay() {
             </div>
 
             {/* Progress dots */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               {steps.map((_, idx) => (
                 <button
                   key={idx}
@@ -203,10 +196,10 @@ export function OnboardingOverlay() {
                   <div
                     className={`rounded-full transition-all duration-300 ${
                       idx === currentStep
-                        ? 'h-2 w-6 bg-amber-600 dark:bg-amber-400'
+                        ? 'h-3 w-7 bg-amber-600 dark:bg-amber-400 animate-active-dot-pulse'
                         : idx < currentStep
-                          ? 'h-2 w-2 bg-amber-400 dark:bg-amber-500'
-                          : 'h-2 w-2 bg-stone-300 dark:bg-stone-600'
+                          ? 'h-3 w-3 bg-amber-400 dark:bg-amber-500'
+                          : 'h-3 w-3 bg-stone-300 dark:bg-stone-600'
                     }`}
                   />
                 </button>
@@ -220,12 +213,15 @@ export function OnboardingOverlay() {
                 size="sm"
                 className={
                   isLastStep
-                    ? 'bg-gradient-to-r from-amber-600 to-amber-500 px-4 text-amber-50 shadow-lg shadow-amber-600/30 hover:from-amber-500 hover:to-amber-400'
+                    ? 'bg-gradient-to-r from-amber-600 to-amber-500 px-5 text-amber-50 shadow-lg shadow-amber-600/30 hover:from-amber-500 hover:to-amber-400 relative overflow-hidden'
                     : 'bg-gradient-to-r from-amber-700 to-amber-600 text-amber-50 hover:from-amber-600 hover:to-amber-500'
                 }
               >
                 {isLastStep ? (
-                  'Commencer'
+                  <>
+                    <span className="absolute inset-0 rounded-md bg-gradient-to-r from-amber-300/40 via-amber-200/60 to-amber-300/40 animate-gradient-wave" />
+                    <span className="relative z-10">Commencer</span>
+                  </>
                 ) : (
                   <>
                     Suivant

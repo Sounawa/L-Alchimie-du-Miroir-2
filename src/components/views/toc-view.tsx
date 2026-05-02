@@ -6,9 +6,10 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle2, Bookmark, ChevronRight, BookOpen, Flame, Trophy, Clock } from 'lucide-react';
+import { CheckCircle2, Bookmark, ChevronRight, BookOpen, Flame, Trophy, Clock, Eye } from 'lucide-react';
 import { DailyInspiration } from '@/components/shared/daily-inspiration';
 import { StudyReminder } from '@/components/shared/study-reminder';
+import { useRef, useEffect, useState } from 'react';
 
 const toc = getTableOfContents();
 
@@ -74,19 +75,31 @@ export function TocView() {
   const completedChapters = useAppStore((s) => s.completedChapters);
   const currentStreak = useAppStore((s) => s.currentStreak);
   const getProgressPercentage = useAppStore((s) => s.getProgressPercentage);
+  const currentChapterId = useAppStore((s) => s.currentChapterId);
+
+  // Parallax scroll effect for background pattern
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [patternOffset, setPatternOffset] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setPatternOffset(window.scrollY * 0.3);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Find the most recently completed chapter for "Dernière lecture"
+  const lastReadChapter = completedChapters.length > 0
+    ? completedChapters[completedChapters.length - 1]
+    : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50/50 via-stone-50 to-stone-100 dark:from-stone-950 dark:via-stone-900 dark:to-stone-950">
-      {/* Subtle geometric pattern */}
+      {/* Subtle geometric pattern with parallax */}
       <div
-        className="pointer-events-none fixed inset-0 opacity-[0.04] dark:opacity-[0.025]"
-        style={{
-          backgroundImage: `
-            radial-gradient(circle at 25% 25%, rgba(217, 169, 99, 0.3) 1px, transparent 1px),
-            radial-gradient(circle at 75% 75%, rgba(217, 169, 99, 0.3) 1px, transparent 1px)
-          `,
-          backgroundSize: '80px 140px, 80px 140px',
-        }}
+        className="pointer-events-none fixed inset-0 islamic-pattern opacity-[0.04] dark:opacity-[0.025]"
+        style={{ transform: `translateY(${patternOffset}px)` }}
       />
 
       <motion.div
@@ -147,6 +160,29 @@ export function TocView() {
           <DailyInspiration />
         </motion.div>
 
+        {/* Dernière lecture indicator */}
+        {lastReadChapter && (
+          <motion.div variants={fadeIn} className="mb-6">
+            <div className="rounded-xl border border-amber-200/50 bg-gradient-to-r from-amber-50/60 via-amber-50/30 to-transparent dark:border-amber-800/30 dark:from-amber-950/20 dark:via-amber-950/10 dark:to-transparent p-3 flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
+                <Eye className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] uppercase tracking-wider text-amber-600/60 dark:text-amber-400/50 font-medium">Dernière lecture</p>
+                <p className="text-sm font-medium text-stone-700 dark:text-stone-200/80 truncate">{lastReadChapter.title}</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('chapter', lastReadChapter.chapterId)}
+                className="text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 shrink-0"
+              >
+                Lire →
+              </Button>
+            </div>
+          </motion.div>
+        )}
+
         {/* Introduction row */}
         <motion.div variants={slideIn}>
           <button
@@ -195,7 +231,7 @@ export function TocView() {
                 <motion.div key={entry.id} variants={slideIn}>
                   <button
                     onClick={() => navigate('chapter', entry.id)}
-                    className={`group flex w-full items-center gap-2 rounded-lg border-l-2 ${partBorderColor[part.letter] || 'border-l-amber-500'} px-3 py-2.5 text-left transition-all hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10`}
+                    className={`group flex w-full items-center gap-2 rounded-xl border-l-2 ${partBorderColor[part.letter] || 'border-l-amber-500'} px-3 py-2.5 text-left transition-all duration-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/10 hover:shadow-sm hover:shadow-amber-200/20 dark:hover:shadow-amber-900/10 hover:border-l-[3px] ${currentChapterId === entry.id ? 'bg-amber-50/80 dark:bg-amber-900/15 border-l-[3px]' : ''}`}
                   >
                     {/* Completion icon */}
                     <span className="w-5 shrink-0">

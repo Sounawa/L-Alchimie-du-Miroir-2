@@ -330,3 +330,146 @@
 .animate-slide-in-breadcrumb {
   animation: slideInBreadcrumb 0.3s ease-out forwards;
 }
+
+/* Gentle floating animation for cover title */
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-gentle-float {
+  animation: gentleFloat 6s ease-in-out infinite;
+}
+
+/* Border glow animation for Bismillah and active items */
+@keyframes borderGlow {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(217, 169, 99, 0.15), inset 0 0 4px rgba(217, 169, 99, 0.05);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(217, 169, 99, 0.3), inset 0 0 8px rgba(217, 169, 99, 0.1);
+  }
+}
+
+.dark .animate-border-glow {
+  animation: borderGlowDark 6s ease-in-out infinite;
+}
+
+@keyframes borderGlowDark {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(217, 169, 99, 0.08), inset 0 0 4px rgba(217, 169, 99, 0.03);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(217, 169, 99, 0.18), inset 0 0 8px rgba(217, 169, 99, 0.06);
+  }
+}
+
+.animate-border-glow {
+  animation: borderGlow 6s ease-in-out infinite;
+}
+
+/* Islamic geometric pattern utility */
+.islamic-pattern {
+  background-image:
+    radial-gradient(circle at 25% 25%, rgba(217, 169, 99, 0.3) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, rgba(217, 169, 99, 0.3) 1px, transparent 1px),
+    linear-gradient(60deg, rgba(217, 169, 99, 0.15) 12%, transparent 12.5%, transparent 87%, rgba(217, 169, 99, 0.15) 87.5%),
+    linear-gradient(120deg, rgba(217, 169, 99, 0.15) 12%, transparent 12.5%, transparent 87%, rgba(217, 169, 99, 0.15) 87.5%),
+    linear-gradient(60deg, rgba(217, 169, 99, 0.15) 12%, transparent 12.5%, transparent 87%, rgba(217, 169, 99, 0.15) 87.5%),
+    linear-gradient(120deg, rgba(217, 169, 99, 0.15) 12%, transparent 12.5%, transparent 87%, rgba(217, 169, 99, 0.15) 87.5%);
+  background-size: 80px 140px, 80px 140px, 56px 97px, 56px 97px, 56px 97px, 56px 97px;
+}
+
+/* Glassmorphism card utility */
+.glass-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.dark .glass-card {
+  background: rgba(28, 25, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Elegant scrollbar styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(168, 162, 158, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 162, 158, 0.5);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(120, 113, 108, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 113, 108, 0.5);
+}
+
+/* Active dot pulse for onboarding */
+@keyframes activeDotPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(217, 119, 6, 0);
+  }
+}
+
+.animate-active-dot-pulse {
+  animation: activeDotPulse 2s ease-in-out infinite;
+}
+
+/* Section fade-in on scroll (used with IntersectionObserver) */
+@keyframes sectionFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-section-fade-in {
+  animation: sectionFadeIn 0.6s ease-out forwards;
+}
+
+/* Gradient wave animation for footer */
+@keyframes gradientWave {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-wave {
+  background-size: 200% 100%;
+  animation: gradientWave 4s ease infinite;
+}

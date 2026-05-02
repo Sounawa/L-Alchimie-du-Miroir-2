@@ -1,12 +1,16 @@
 'use client'
 
+import { VerseAudioPlayer } from '@/components/shared/verse-audio-player'
+import { ShareVerseCard } from '@/components/shared/share-verse-card'
+
 interface VerseDisplayProps {
   arabicVerse: string;
   translation: string;
   translationSource: string;
+  chapterTitle?: string;
 }
 
-export function VerseDisplay({ arabicVerse, translation, translationSource }: VerseDisplayProps) {
+export function VerseDisplay({ arabicVerse, translation, translationSource, chapterTitle }: VerseDisplayProps) {
   return (
     <div className="space-y-6">
       {/* Illuminated manuscript frame with animated gradient border */}
@@ -30,6 +34,17 @@ export function VerseDisplay({ arabicVerse, translation, translationSource }: Ve
 
             {/* Subtle golden radial glow behind text */}
             <div className="absolute inset-0 bg-gradient-radial from-amber-200/20 via-transparent to-transparent dark:from-amber-700/10 dark:via-transparent dark:to-transparent pointer-events-none" />
+
+            {/* Action buttons row in header area */}
+            <div className="flex items-center justify-end gap-1 mb-4 relative z-20">
+              <VerseAudioPlayer arabicText={arabicVerse} />
+              <ShareVerseCard
+                arabicVerse={arabicVerse}
+                translation={translation}
+                translationSource={translationSource}
+                chapterTitle={chapterTitle}
+              />
+            </div>
 
             {/* Top ornamental line */}
             <div className="text-center mb-6 text-amber-500 dark:text-amber-400 tracking-[0.5em] text-sm select-none">

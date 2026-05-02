@@ -34,6 +34,7 @@ import {
   PenLine,
   Settings,
   Hash,
+  GraduationCap,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -73,7 +74,17 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
   const progressPercent = getProgressPercentage()
   const parts = siteContent.parts
 
-  const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks', chapterId?: string) => {
+  // Count uncompleted chapters per part
+  const uncompletedByPart: Record<string, number> = {}
+  for (const part of parts) {
+    let count = 0
+    for (const ch of part.chapters) {
+      if (!isChapterComplete(ch.id)) count++
+    }
+    uncompletedByPart[part.letter] = count
+  }
+
+  const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization', chapterId?: string) => {
     navigate(view, chapterId ?? null)
     // Only close sidebar on mobile
     if (isMobile) onClose()
@@ -86,6 +97,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
     { icon: BookOpen, label: 'Glossaire', view: 'glossary' as const },
     { icon: PenLine, label: 'Journal', view: 'journal' as const },
     { icon: Bookmark, label: 'Favoris', view: 'bookmarks' as const },
+    { icon: GraduationCap, label: 'Mémorisation', view: 'memorization' as const },
     { icon: Hash, label: 'Tasbih', view: 'tasbih' as const },
     { icon: Settings, label: 'Paramètres', view: 'settings' as const },
   ]
@@ -166,19 +178,28 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
 
       <Separator />
 
-      {/* Chapter list by parts */}
-      <ScrollArea className="flex-1 px-3">
-        <div className="py-2">
-          <TooltipProvider delayDuration={300}>
-            {parts.map((part) => (
-              <div key={part.id} className="mb-3">
-                {/* Part header with color dot */}
-                <div className="px-3 py-1.5 flex items-center gap-1.5">
-                  <span className={`inline-block h-2 w-2 rounded-full shrink-0 ${partDotColor[part.letter] || 'bg-amber-500'}`} />
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-                    Partie {part.letter} — {part.title}
-                  </p>
-                </div>
+      {/* Chapter list by parts with fade gradient at bottom */}
+      <div className="flex-1 relative">
+        <ScrollArea className="h-full px-3">
+          <div className="py-2">
+            <TooltipProvider delayDuration={300}>
+              {parts.map((part) => (
+                <div key={part.id} className="mb-3">
+                  {/* Part header with color dot and uncompleted badge */}
+                  <div className="px-3 py-1.5 flex items-center gap-1.5">
+                    <span className={`inline-block h-2 w-2 rounded-full shrink-0 ${partDotColor[part.letter] || 'bg-amber-500'}`} />
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                      Partie {part.letter} — {part.title}
+                    </p>
+                    {(uncompletedByPart[part.letter] || 0) > 0 && (
+                      <Badge
+                        variant="secondary"
+                        className="ml-auto text-[9px] px-1 py-0 h-4 bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 border-0"
+                      >
+                        {uncompletedByPart[part.letter]}
+                      </Badge>
+                    )}
+                  </div>
 
                 {/* Chapter items */}
                 {part.chapters.map((chapter) => {
@@ -194,9 +215,9 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
                           onClick={() => handleNavigate('chapter', chapter.id)}
                           className={`
                             group flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm
-                            transition-colors duration-150 mb-0.5
+                            transition-all duration-150 mb-0.5
                             ${isActive
-                              ? `bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200 border-l-[3px] ${partBorderColor[partLetter] || 'border-l-amber-500'} sidebar-active-glow`
+                              ? `bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200 border-l-[3px] ${partBorderColor[partLetter] || 'border-l-amber-500'} sidebar-active-glow animate-border-glow`
                               : 'text-foreground/80 hover:bg-muted border-l-[3px] border-l-transparent'
                             }
                           `}
@@ -251,8 +272,11 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
               </div>
             ))}
           </TooltipProvider>
-        </div>
-      </ScrollArea>
+          </div>
+        </ScrollArea>
+        {/* Gradient fade at bottom of scroll area */}
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-background to-transparent" />
+      </div>
 
       <Separator />
 
