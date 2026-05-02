@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useMemo, useState, useEffect, useRef, useSyncExternalStore } from 'react';
+import { VerseOfTheDay } from '@/components/shared/verse-of-the-day';
 
 // 7 inspiring Islamic/spiritual quotes in French for daily rotation
 const dailyQuotes = [
@@ -308,6 +309,11 @@ export function CoverView() {
         {/* Citation du Jour */}
         <motion.div variants={item} className="mt-4 max-w-md">
           <QuoteOfTheDay />
+        </motion.div>
+
+        {/* Verse of the Day */}
+        <motion.div variants={item} className="mt-4 max-w-md w-full">
+          <VerseOfTheDay />
         </motion.div>
 
         {/* CTA Button with breathing pulse */}

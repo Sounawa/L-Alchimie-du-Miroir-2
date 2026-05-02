@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
-import { ArrowLeft, ArrowUp, ChevronLeft, ChevronRight, CheckCircle2, Bookmark, BookmarkCheck, List, ChevronDown, Clock, Sparkles, BookOpen, Eye, Lightbulb, Gem, Mountain, Award } from 'lucide-react'
+import { ArrowLeft, ArrowUp, ChevronLeft, ChevronRight, CheckCircle2, Bookmark, BookmarkCheck, List, ChevronDown, Clock, Sparkles, BookOpen, Eye, Lightbulb, Gem, Mountain, Award, Compass, Star, Sun, Moon, Flame, Heart, Zap } from 'lucide-react'
 import { useAppStore } from '@/store/use-app-store'
 import { allChapters, getChapterById } from '@/data/chapters'
 import type { Chapter } from '@/data/chapters'
@@ -29,13 +29,22 @@ import { QuoteBlock } from '@/components/chapter/quote-block'
 import { ChapterProgressIndicator } from '@/components/shared/chapter-progress-indicator'
 import { CompletionSummaryCard } from '@/components/shared/completion-summary-card'
 
-// Decorative divider component
-function DecorativeDivider() {
+// Part-based divider line gradient
+const partDividerLine: Record<string, string> = {
+  A: 'via-amber-300/30 to-amber-400/50 dark:via-amber-600/20 dark:to-amber-600/30',
+  B: 'via-emerald-300/30 to-emerald-400/50 dark:via-emerald-600/20 dark:to-emerald-600/30',
+  C: 'via-violet-300/30 to-violet-400/50 dark:via-violet-600/20 dark:to-violet-600/30',
+}
+
+// Decorative divider component — part-aware
+function DecorativeDivider({ part = 'A' }: { part?: string }) {
+  const line = partDividerLine[part] || partDividerLine.A
+  const ornament = partOrnamentColor[part] || partOrnamentColor.A
   return (
     <div className="flex items-center justify-center gap-3 my-6">
-      <span className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-300/30 to-amber-400/50 dark:via-amber-600/20 dark:to-amber-600/30" />
-      <span className="text-amber-400/50 dark:text-amber-500/40 text-xs tracking-[0.3em] select-none">✦</span>
-      <span className="h-px flex-1 bg-gradient-to-l from-transparent via-amber-300/30 to-amber-400/50 dark:via-amber-600/20 dark:to-amber-600/30" />
+      <span className={`h-px flex-1 bg-gradient-to-r from-transparent ${line}`} />
+      <span className={`${ornament} text-xs tracking-[0.3em] select-none`}>✦</span>
+      <span className={`h-px flex-1 bg-gradient-to-l from-transparent ${line}`} />
     </div>
   )
 }
@@ -88,15 +97,63 @@ const partGradientLine: Record<string, string> = {
   C: 'from-violet-500/50 to-transparent dark:from-violet-400/30',
 }
 
+// Part-based h2 title color (used inside SectionHeader)
+const partTitleColor: Record<string, string> = {
+  A: 'text-amber-700 dark:text-amber-300/80',
+  B: 'text-emerald-700 dark:text-emerald-300/80',
+  C: 'text-violet-700 dark:text-violet-300/80',
+}
+
+// Part-based decorative ornament color
+const partOrnamentColor: Record<string, string> = {
+  A: 'text-amber-400/50 dark:text-amber-500/40',
+  B: 'text-emerald-400/50 dark:text-emerald-500/40',
+  C: 'text-violet-400/50 dark:text-violet-500/40',
+}
+
+// Part-based Bismillah border
+const partBismillahBorder: Record<string, string> = {
+  A: 'border-amber-200/60 dark:border-amber-700/40',
+  B: 'border-emerald-200/60 dark:border-emerald-700/40',
+  C: 'border-violet-200/60 dark:border-violet-700/30',
+}
+
+// Part-based Bismillah bg
+const partBismillahBg: Record<string, string> = {
+  A: 'from-amber-50 via-amber-100/60 to-amber-50 dark:from-amber-950/30 dark:via-amber-900/20 dark:to-amber-950/30',
+  B: 'from-emerald-50 via-emerald-100/60 to-emerald-50 dark:from-emerald-950/30 dark:via-emerald-900/20 dark:to-emerald-950/30',
+  C: 'from-violet-50 via-violet-100/60 to-violet-50 dark:from-violet-950/30 dark:via-violet-900/20 dark:to-violet-950/30',
+}
+
+// Part-based corner accent color
+const partCornerBorder: Record<string, string> = {
+  A: 'border-amber-300/40 dark:border-amber-600/30',
+  B: 'border-emerald-300/40 dark:border-emerald-600/30',
+  C: 'border-violet-300/40 dark:border-violet-600/30',
+}
+
+// Part-based Bismillah text
+const partBismillahText: Record<string, string> = {
+  A: 'text-amber-800 dark:text-amber-200',
+  B: 'text-emerald-800 dark:text-emerald-200',
+  C: 'text-violet-800 dark:text-violet-200',
+}
+
+const partBismillahSub: Record<string, string> = {
+  A: 'text-amber-700/70 dark:text-amber-300/60',
+  B: 'text-emerald-700/70 dark:text-emerald-300/60',
+  C: 'text-violet-700/70 dark:text-violet-300/60',
+}
+
 // Seven Levels data for Partie C
 const sevenLevels = [
-  { id: 'c1', name: 'Tilawa', label: 'Récitation', description: 'La lettre comme lumière — Déchiffrement et prononciation sacrée' },
-  { id: 'c2', name: 'Tarjamah', label: 'Compréhension', description: 'Le sens caché dans les mots — Traduction et premiers sens' },
-  { id: 'c3', name: 'Tadabbur', label: 'Réflexion', description: 'Questionner le texte sacré — Méditation profonde des sens' },
-  { id: 'c4', name: 'Tafakkur', label: 'Contemplation', description: 'Voir au-delà du visible — Vision intérieure et liens cosmiques' },
-  { id: 'c5', name: 'Tazakkur', label: 'Rappel', description: 'Le dhikr qui réveille le cœur — Intégration et mémorisation vivante' },
-  { id: 'c6', name: 'Tahqiq', label: 'Vérification', description: "L'honnêteté radicale envers soi-même — Confrontation et vérité" },
-  { id: 'c7', name: 'Tajalli', label: 'Révélation', description: 'La lumière qui se dévoile — Illumination spirituelle et transformation' },
+  { id: 'c1', name: 'Tilawa', label: 'Récitation', description: 'La lettre comme lumière — Déchiffrement et prononciation sacrée', icon: Star, metaphor: 'La semence dans la terre' },
+  { id: 'c2', name: 'Tarjamah', label: 'Compréhension', description: 'Le sens caché dans les mots — Traduction et premiers sens', icon: Eye, metaphor: 'La première pluie sur la semence' },
+  { id: 'c3', name: 'Tadabbur', label: 'Réflexion', description: 'Questionner le texte sacré — Méditation profonde des sens', icon: Lightbulb, metaphor: 'La pousse qui perce le sol' },
+  { id: 'c4', name: 'Tafakkur', label: 'Contemplation', description: 'Voir au-delà du visible — Vision intérieure et liens cosmiques', icon: Compass, metaphor: 'L\'arbre qui déploie ses branches' },
+  { id: 'c5', name: 'Tazakkur', label: 'Rappel', description: 'Le dhikr qui réveille le cœur — Intégration et mémorisation vivante', icon: Flame, metaphor: 'Les fruits qui mûrissent' },
+  { id: 'c6', name: 'Tahqiq', label: 'Vérification', description: "L'honnêteté radicale envers soi-même — Confrontation et vérité", icon: Zap, metaphor: 'Le pressoir qui extrait le nectar' },
+  { id: 'c7', name: 'Tajalli', label: 'Révélation', description: 'La lumière qui se dévoile — Illumination spirituelle et transformation', icon: Sun, metaphor: 'L\'huile pure qui illumine' },
 ] as const
 
 // Animated section wrapper using framer-motion useInView
@@ -201,18 +258,86 @@ function SevenLevelsProgress({ currentChapterId }: { currentChapterId: string })
   )
 }
 
-// Level Badge for Partie C chapters
+// Level Badge for Partie C chapters — enhanced with fraction and metaphor
 function LevelBadge({ chapterNumber }: { chapterNumber: string }) {
   const levelMatch = chapterNumber.match(/C(\d)/)
   if (!levelMatch) return null
   const levelNum = parseInt(levelMatch[1])
   const level = sevenLevels[levelNum - 1]
+  const LevelIcon = level?.icon || Star
 
   return (
-    <div className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-violet-500 to-violet-600 dark:from-violet-600 dark:to-violet-700 px-3 py-1 text-white shadow-sm shadow-violet-300/30 dark:shadow-violet-900/30">
-      <Award className="h-3.5 w-3.5" />
-      <span className="text-xs font-bold">Niveau {levelNum}</span>
-      <span className="text-[10px] opacity-80">— {level?.label}</span>
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+      className="inline-flex flex-col items-center gap-2"
+    >
+      <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-500 to-violet-600 dark:from-violet-600 dark:to-violet-700 px-4 py-1.5 text-white shadow-md shadow-violet-300/30 dark:shadow-violet-900/30">
+        <LevelIcon className="h-4 w-4" />
+        <span className="text-xs font-bold">Niveau {levelNum}/7</span>
+        <span className="text-[10px] opacity-80">— {level?.label}</span>
+      </div>
+      <p className="text-[11px] text-violet-600/70 dark:text-violet-400/60 italic max-w-xs text-center leading-snug">{level?.metaphor}</p>
+    </motion.div>
+  )
+}
+
+// Level Summary Card — ties current level to 7-level framework
+function LevelSummaryCard({ chapterNumber }: { chapterNumber: string }) {
+  const isChapterComplete = useAppStore((s) => s.isChapterComplete)
+  const levelMatch = chapterNumber.match(/C(\d)/)
+  if (!levelMatch) return null
+  const levelNum = parseInt(levelMatch[1])
+  const level = sevenLevels[levelNum - 1]
+  const LevelIcon = level?.icon || Star
+  const completedCLevels = sevenLevels.filter((l, i) => i < levelNum && isChapterComplete(l.id)).length
+
+  return (
+    <div className="rounded-xl border border-violet-200/60 dark:border-violet-700/30 bg-gradient-to-br from-violet-50/50 via-stone-50/30 to-violet-50/40 dark:from-violet-950/20 dark:via-stone-900/15 dark:to-violet-950/15 p-5 shadow-sm relative overflow-hidden">
+      {/* Decorative background glow */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-violet-200/20 dark:bg-violet-800/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative z-10">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center justify-center rounded-full bg-violet-100 dark:bg-violet-900/40 h-8 w-8">
+            <LevelIcon className="h-4 w-4 text-violet-600 dark:text-violet-300" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-violet-700 dark:text-violet-300">
+              Niveau {levelNum} — {level?.name}
+            </h3>
+            <p className="text-[10px] text-violet-500/70 dark:text-violet-400/50">{level?.label}</p>
+          </div>
+        </div>
+        <p className="text-xs text-stone-600 dark:text-stone-300/80 leading-relaxed mb-3">{level?.description}</p>
+        <div className="flex items-center gap-2 text-[10px] text-violet-600/60 dark:text-violet-400/50">
+          <span className="italic">✦ {level?.metaphor}</span>
+        </div>
+        <div className="mt-3 pt-3 border-t border-violet-200/40 dark:border-violet-700/20">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] text-stone-500 dark:text-stone-400">Progression dans le cheminement</span>
+            <span className="text-[10px] font-semibold text-violet-600 dark:text-violet-400">{completedCLevels}/{levelNum} niveaux complétés</span>
+          </div>
+          <div className="mt-1.5 h-1.5 rounded-full bg-stone-200/60 dark:bg-stone-700/40 overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${levelNum > 0 ? (completedCLevels / levelNum) * 100 : 0}%` }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+              className="h-full rounded-full bg-gradient-to-r from-violet-400 to-violet-500 dark:from-violet-500 dark:to-violet-400"
+            />
+          </div>
+        </div>
+        {levelNum < 7 && (
+          <p className="mt-3 text-[10px] text-stone-400 dark:text-stone-500 italic">
+            Prochain niveau : <span className="font-medium text-violet-600/70 dark:text-violet-400/60">{sevenLevels[levelNum]?.name} — {sevenLevels[levelNum]?.label}</span>
+          </p>
+        )}
+        {levelNum === 7 && (
+          <p className="mt-3 text-[10px] text-violet-500/70 dark:text-violet-400/60 font-medium">
+            ✦ Vous avez atteint le sommet du cheminement spirituel ✦
+          </p>
+        )}
+      </div>
     </div>
   )
 }
@@ -606,7 +731,13 @@ export function ChapterView() {
                 <button
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
-                  className="rounded-full border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800/50 px-2.5 py-1 text-[10px] text-stone-600 dark:text-stone-400 transition-all duration-200 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700 dark:hover:border-amber-700 dark:hover:bg-amber-950/30 dark:hover:text-amber-300"
+                  className={`rounded-full border bg-stone-50 dark:bg-stone-800/50 px-2.5 py-1 text-[10px] text-stone-600 dark:text-stone-400 transition-all duration-200 hover:shadow-sm ${
+                    partLetter === 'C'
+                      ? 'border-stone-200 dark:border-stone-700 hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 dark:hover:border-violet-700 dark:hover:bg-violet-950/30 dark:hover:text-violet-300'
+                      : partLetter === 'B'
+                        ? 'border-stone-200 dark:border-stone-700 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:border-emerald-700 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-300'
+                        : 'border-stone-200 dark:border-stone-700 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700 dark:hover:border-amber-700 dark:hover:bg-amber-950/30 dark:hover:text-amber-300'
+                  }`}
                 >
                   {section.label}
                 </button>
@@ -617,27 +748,27 @@ export function ChapterView() {
 
         {/* Bismillah header */}
         <AnimatedSection>
-          <div className="rounded-xl border-2 border-amber-200/60 dark:border-amber-700/40 bg-gradient-to-r from-amber-50 via-amber-100/60 to-amber-50 dark:from-amber-950/30 dark:via-amber-900/20 dark:to-amber-950/30 px-6 py-5 text-center relative overflow-hidden shadow-[inset_0_0_30px_rgba(217,169,99,0.08)] dark:shadow-[inset_0_0_30px_rgba(217,169,99,0.05)]">
+          <div className={`rounded-xl border-2 ${partBismillahBorder[partLetter] || partBismillahBorder.A} bg-gradient-to-r ${partBismillahBg[partLetter] || partBismillahBg.A} px-6 py-5 text-center relative overflow-hidden shadow-[inset_0_0_30px_rgba(217,169,99,0.08)] dark:shadow-[inset_0_0_30px_rgba(217,169,99,0.05)]`}>
             {/* Decorative corner accents */}
-            <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-amber-300/40 dark:border-amber-600/30 rounded-tl-sm" />
-            <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-amber-300/40 dark:border-amber-600/30 rounded-tr-sm" />
-            <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-amber-300/40 dark:border-amber-600/30 rounded-bl-sm" />
-            <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-amber-300/40 dark:border-amber-600/30 rounded-br-sm" />
+            <div className={`absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 ${partCornerBorder[partLetter] || partCornerBorder.A} rounded-tl-sm`} />
+            <div className={`absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 ${partCornerBorder[partLetter] || partCornerBorder.A} rounded-tr-sm`} />
+            <div className={`absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 ${partCornerBorder[partLetter] || partCornerBorder.A} rounded-bl-sm`} />
+            <div className={`absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 ${partCornerBorder[partLetter] || partCornerBorder.A} rounded-br-sm`} />
             <p
               dir="rtl"
               lang="ar"
-              className="arabic-verse text-2xl md:text-3xl text-amber-800 dark:text-amber-200 mb-2 relative z-10"
+              className={`arabic-verse text-2xl md:text-3xl ${partBismillahText[partLetter] || partBismillahText.A} mb-2 relative z-10`}
             >
               بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
             </p>
-            <p className="text-sm italic text-amber-700/70 dark:text-amber-300/60 relative z-10">
+            <p className={`text-sm italic ${partBismillahSub[partLetter] || partBismillahSub.A} relative z-10`}>
               Au nom de Dieu, le Tout-Miséricordieux, le Très-Miséricordieux
             </p>
           </div>
         </AnimatedSection>
 
         {/* Decorative divider */}
-        <DecorativeDivider />
+        <DecorativeDivider part={partLetter} />
 
         {/* Verse display */}
         {chapter.arabicVerse && (
@@ -654,9 +785,9 @@ export function ChapterView() {
         {/* Word analysis table */}
         {chapter.wordAnalysis.length > 0 && (
           <AnimatedSection id="section-words">
-            <DecorativeDivider />
+            <DecorativeDivider part={partLetter} />
             <SectionHeader part={partLetter} icon={<Sparkles className="h-4 w-4" />}>
-              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Analyse des mots</h2>
+              <h2 className="text-xl font-bold">Analyse des mots</h2>
             </SectionHeader>
             <WordAnalysisTable words={chapter.wordAnalysis} />
           </AnimatedSection>
@@ -665,9 +796,9 @@ export function ChapterView() {
         {/* Comparison table */}
         {chapter.comparisonTable && (
           <AnimatedSection id="section-comparison">
-            <DecorativeDivider />
+            <DecorativeDivider part={partLetter} />
             <SectionHeader part={partLetter} icon={<Eye className="h-4 w-4" />}>
-              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Tableau comparatif</h2>
+              <h2 className="text-xl font-bold">Tableau comparatif</h2>
             </SectionHeader>
             <ComparisonTableBlock
               headers={chapter.comparisonTable.headers}
@@ -679,9 +810,9 @@ export function ChapterView() {
         {/* Coherence points */}
         {chapter.coherencePoints && chapter.coherencePoints.length > 0 && (
           <AnimatedSection id="section-coherence">
-            <DecorativeDivider />
+            <DecorativeDivider part={partLetter} />
             <SectionHeader part={partLetter} icon={<Lightbulb className="h-4 w-4" />}>
-              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Cohérence</h2>
+              <h2 className="text-xl font-bold">Cohérence</h2>
             </SectionHeader>
             <CoherencePoints points={chapter.coherencePoints} />
           </AnimatedSection>
@@ -690,7 +821,7 @@ export function ChapterView() {
         {/* Callout blocks */}
         {chapter.callouts && chapter.callouts.length > 0 && (
           <AnimatedSection className="space-y-3" id="section-callouts">
-            <DecorativeDivider />
+            <DecorativeDivider part={partLetter} />
             {chapter.callouts.map((callout, i) => (
               <CalloutBlock
                 key={i}
@@ -705,9 +836,9 @@ export function ChapterView() {
         {/* Bullet points */}
         {chapter.bulletPoints && chapter.bulletPoints.length > 0 && (
           <AnimatedSection id="section-bullets">
-            <DecorativeDivider />
+            <DecorativeDivider part={partLetter} />
             <SectionHeader part={partLetter} icon={<Sparkles className="h-4 w-4" />}>
-              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Points clés</h2>
+              <h2 className="text-xl font-bold">Points clés</h2>
             </SectionHeader>
             <BulletPointsList points={chapter.bulletPoints} />
           </AnimatedSection>
@@ -716,9 +847,9 @@ export function ChapterView() {
         {/* Treasures list */}
         {chapter.treasuresList && chapter.treasuresList.length > 0 && (
           <AnimatedSection id="section-treasures">
-            <DecorativeDivider />
+            <DecorativeDivider part={partLetter} />
             <SectionHeader part={partLetter} icon={<Gem className="h-4 w-4" />}>
-              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Trésors</h2>
+              <h2 className="text-xl font-bold">Trésors</h2>
             </SectionHeader>
             <TreasuresList treasures={chapter.treasuresList} />
           </AnimatedSection>
@@ -727,9 +858,9 @@ export function ChapterView() {
         {/* Metaphor table */}
         {chapter.metaphorTable && chapter.metaphorTable.length > 0 && (
           <AnimatedSection id="section-metaphors">
-            <DecorativeDivider />
+            <DecorativeDivider part={partLetter} />
             <SectionHeader part={partLetter} icon={<Eye className="h-4 w-4" />}>
-              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Métaphores</h2>
+              <h2 className="text-xl font-bold">Métaphores</h2>
             </SectionHeader>
             <MetaphorTable metaphors={chapter.metaphorTable} />
           </AnimatedSection>
@@ -738,9 +869,9 @@ export function ChapterView() {
         {/* Mirror questions */}
         {chapter.mirrorQuestions.length > 0 && (
           <AnimatedSection id="section-mirror">
-            <DecorativeDivider />
+            <DecorativeDivider part={partLetter} />
             <SectionHeader part={partLetter} icon={<Lightbulb className="h-4 w-4" />}>
-              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Questions miroir</h2>
+              <h2 className="text-xl font-bold">Questions miroir</h2>
             </SectionHeader>
             <MirrorQuestionsTable questions={chapter.mirrorQuestions} />
           </AnimatedSection>
@@ -749,9 +880,9 @@ export function ChapterView() {
         {/* Munajat section */}
         {chapter.munajatPrompts.length > 0 && (
           <AnimatedSection id="section-munajat">
-            <DecorativeDivider />
+            <DecorativeDivider part={partLetter} />
             <SectionHeader part={partLetter} icon={<BookOpen className="h-4 w-4" />}>
-              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Munajat — Méditation intime</h2>
+              <h2 className="text-xl font-bold">Munajat — Méditation intime</h2>
             </SectionHeader>
             <MunajatSection
               chapterId={chapterId}
@@ -763,9 +894,9 @@ export function ChapterView() {
         {/* Timer section */}
         {chapter.timerMinutes > 0 && (
           <AnimatedSection id="section-timer">
-            <DecorativeDivider />
+            <DecorativeDivider part={partLetter} />
             <SectionHeader part={partLetter} icon={<Clock className="h-4 w-4" />}>
-              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Méditation silencieuse</h2>
+              <h2 className="text-xl font-bold">Méditation silencieuse</h2>
             </SectionHeader>
             <TimerSection
               chapterId={chapterId}
@@ -777,9 +908,9 @@ export function ChapterView() {
         {/* Exercise section */}
         {chapter.exercises.length > 0 && (
           <AnimatedSection id="section-exercises">
-            <DecorativeDivider />
+            <DecorativeDivider part={partLetter} />
             <SectionHeader part={partLetter} icon={<Lightbulb className="h-4 w-4" />}>
-              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Exercices</h2>
+              <h2 className="text-xl font-bold">Exercices</h2>
             </SectionHeader>
             <ExerciseSection
               chapterId={chapterId}
@@ -791,9 +922,9 @@ export function ChapterView() {
         {/* Extra sections (B3-B10) */}
         {chapter.extraSections && chapter.extraSections.length > 0 && (
           <AnimatedSection id="section-extra">
-            <DecorativeDivider />
+            <DecorativeDivider part={partLetter} />
             <SectionHeader part={partLetter} icon={<BookOpen className="h-4 w-4" />}>
-              <h2 className="text-xl font-bold text-amber-700 dark:text-amber-300/80">Sections supplémentaires</h2>
+              <h2 className="text-xl font-bold">Sections supplémentaires</h2>
             </SectionHeader>
             <ExtraSections
               chapterId={chapterId}
@@ -805,7 +936,7 @@ export function ChapterView() {
         {/* Quotes */}
         {chapter.quotes && chapter.quotes.length > 0 && (
           <AnimatedSection className="space-y-3" id="section-quotes">
-            <DecorativeDivider />
+            <DecorativeDivider part={partLetter} />
             {chapter.quotes.map((quote, i) => (
               <QuoteBlock
                 key={i}
@@ -817,9 +948,15 @@ export function ChapterView() {
         )}
 
         {/* Decorative end divider */}
-        <DecorativeDivider />
+        <DecorativeDivider part={partLetter} />
 
         {/* Seven Levels Overview — only for Partie C */}
+        {partLetter === 'C' && (
+          <AnimatedSection>
+            <LevelSummaryCard chapterNumber={chapter.number} />
+          </AnimatedSection>
+        )}
+
         {partLetter === 'C' && (
           <AnimatedSection>
             <SevenLevelsOverview currentChapterId={chapterId} />

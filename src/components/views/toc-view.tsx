@@ -6,12 +6,13 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle2, Bookmark, ChevronRight, BookOpen, Flame, Trophy, Clock, Eye, Mountain } from 'lucide-react';
+import { CheckCircle2, Bookmark, ChevronRight, BookOpen, Flame, Trophy, Clock, Eye, Mountain, Star, Compass, Lightbulb, Sun, Zap } from 'lucide-react';
 import { DailyInspiration } from '@/components/shared/daily-inspiration';
 import { WordOfTheDay } from '@/components/shared/word-of-the-day';
 import { DuaOfTheDay } from '@/components/shared/dua-of-the-day';
 import { StudyReminder } from '@/components/shared/study-reminder';
 import { ReflectionCard } from '@/components/shared/reflection-card';
+import { VerseOfTheDay } from '@/components/shared/verse-of-the-day';
 import { useRef, useEffect, useState } from 'react';
 
 const toc = getTableOfContents();
@@ -70,6 +71,17 @@ const partDotColor: Record<string, string> = {
   B: 'bg-emerald-500 dark:bg-emerald-400',
   C: 'bg-violet-500 dark:bg-violet-400',
 };
+
+// Seven Levels data for Partie C
+const tocSevenLevels = [
+  { id: 'c1', name: 'Tilawa', label: 'Récitation', description: 'Déchiffrement et prononciation sacrée', icon: Star },
+  { id: 'c2', name: 'Tarjamah', label: 'Compréhension', description: 'Traduction et premiers sens', icon: Eye },
+  { id: 'c3', name: 'Tadabbur', label: 'Réflexion', description: 'Méditation profonde des sens', icon: Lightbulb },
+  { id: 'c4', name: 'Tafakkur', label: 'Contemplation', description: 'Vision intérieure et liens cosmiques', icon: Compass },
+  { id: 'c5', name: 'Tazakkur', label: 'Rappel', description: 'Intégration et mémorisation vivante', icon: Flame },
+  { id: 'c6', name: 'Tahqiq', label: 'Vérification', description: 'Confrontation et vérité', icon: Zap },
+  { id: 'c7', name: 'Tajalli', label: 'Révélation', description: 'Illumination spirituelle et transformation', icon: Sun },
+] as const;
 
 export function TocView() {
   const navigate = useAppStore((s) => s.navigate);
@@ -173,6 +185,11 @@ export function TocView() {
           <DuaOfTheDay />
         </motion.div>
 
+        {/* Verse of the Day */}
+        <motion.div variants={fadeIn}>
+          <VerseOfTheDay />
+        </motion.div>
+
         {/* Reflection Card - Carte de réflexion quotidienne */}
         <motion.div variants={fadeIn} className="mb-6">
           <ReflectionCard />
@@ -257,28 +274,76 @@ export function TocView() {
               </div>
             </div>
 
-            {/* Partie C: Mini vertical step indicator for Seven Levels */}
+            {/* Partie C: Enhanced Seven Levels Roadmap */}
             {part.letter === 'C' && (
-              <div className="mb-4 ml-2 flex items-start gap-2">
-                <Mountain className="h-4 w-4 text-violet-500 dark:text-violet-400 shrink-0 mt-0.5" />
-                <div className="flex flex-wrap gap-1.5">
-                  {['Tilawa', 'Tarjamah', 'Tadabbur', 'Tafakkur', 'Tazakkur', 'Tahqiq', 'Tajalli'].map((name, idx) => {
-                    const chapterId = `c${idx + 1}`
-                    const isComplete = isChapterComplete(chapterId)
-                    return (
-                      <span
-                        key={name}
-                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium transition-all ${
-                          isComplete
-                            ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 border border-violet-300/50 dark:border-violet-700/40'
-                            : 'bg-stone-100 dark:bg-stone-800/50 text-stone-400 dark:text-stone-500 border border-stone-200 dark:border-stone-700/40'
-                        }`}
-                      >
-                        {isComplete && <CheckCircle2 className="h-2.5 w-2.5" />}
-                        {idx + 1}. {name}
-                      </span>
-                    )
-                  })}
+              <div className="mb-5">
+                {/* Visual path with connected levels */}
+                <div className="relative rounded-xl border border-violet-200/60 dark:border-violet-700/30 bg-gradient-to-r from-violet-50/40 via-stone-50/20 to-violet-50/30 dark:from-violet-950/15 dark:via-stone-900/10 dark:to-violet-950/10 p-4 shadow-sm">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Mountain className="h-4 w-4 text-violet-500 dark:text-violet-400" />
+                    <span className="text-xs font-semibold tracking-wider uppercase text-violet-600 dark:text-violet-400">Les Sept Niveaux de Lecture</span>
+                  </div>
+                  {/* Connected path */}
+                  <div className="space-y-0">
+                    {tocSevenLevels.map((level, idx) => {
+                      const chapterId = level.id
+                      const isComplete = isChapterComplete(chapterId)
+                      const isCurrent = currentChapterId === chapterId
+                      const LevelIcon = level.icon
+                      return (
+                        <div key={level.id} className="flex items-start gap-3 relative">
+                          {/* Timeline connector */}
+                          <div className="flex flex-col items-center">
+                            <div className={`flex items-center justify-center rounded-full border-2 shrink-0 transition-all duration-500 ${
+                              isCurrent
+                                ? 'h-8 w-8 border-violet-500 bg-violet-100 dark:border-violet-400 dark:bg-violet-900/40 shadow-[0_0_10px_rgba(139,92,246,0.3)]'
+                                : isComplete
+                                  ? 'h-7 w-7 border-violet-400 bg-violet-400 dark:border-violet-500 dark:bg-violet-500'
+                                  : 'h-6 w-6 border-stone-300 bg-stone-50 dark:border-stone-600 dark:bg-stone-800'
+                            }`}>
+                              {(isComplete) ? (
+                                <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+                              ) : (
+                                <LevelIcon className={`h-3 w-3 ${isCurrent ? 'text-violet-700 dark:text-violet-200' : 'text-stone-400 dark:text-stone-500'}`} />
+                              )}
+                            </div>
+                            {idx < tocSevenLevels.length - 1 && (
+                              <div className={`w-0.5 h-6 rounded-full transition-all ${
+                                isComplete
+                                  ? 'bg-violet-300/60 dark:bg-violet-600/40'
+                                  : 'bg-stone-200 dark:bg-stone-700'
+                              }`} />
+                            )}
+                          </div>
+                          {/* Level info */}
+                          <div className={`pb-2 flex-1 min-w-0 ${!isComplete && !isCurrent ? 'opacity-60' : ''}`}>
+                            <div className="flex items-center gap-2">
+                              <span className={`font-semibold text-xs ${
+                                isCurrent
+                                  ? 'text-violet-700 dark:text-violet-300'
+                                  : isComplete
+                                    ? 'text-violet-600/80 dark:text-violet-400/70'
+                                    : 'text-stone-500 dark:text-stone-400'
+                              }`}>
+                                {idx + 1}. {level.name}
+                              </span>
+                              <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${
+                                isCurrent
+                                  ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-300 border border-violet-300/50 dark:border-violet-700/40 font-medium'
+                                  : 'bg-stone-100 dark:bg-stone-800/50 text-stone-500 dark:text-stone-400'
+                              }`}>
+                                {level.label}
+                              </span>
+                              {isCurrent && (
+                                <span className="text-[8px] text-violet-500 dark:text-violet-400 font-medium animate-pulse">← vous êtes ici</span>
+                              )}
+                            </div>
+                            <p className="text-[10px] text-stone-400 dark:text-stone-500 mt-0.5 leading-snug">{level.description}</p>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
               </div>
             )}
@@ -287,6 +352,10 @@ export function TocView() {
             {part.entries.map((entry) => {
               const completed = isChapterComplete(entry.id);
               const bookmarked = isBookmarked(entry.id);
+              // Find level info for Partie C
+              const cLevelMatch = entry.number.match(/C(\d)/)
+              const cLevelNum = cLevelMatch ? parseInt(cLevelMatch[1]) : null
+              const cLevel = cLevelNum ? tocSevenLevels[cLevelNum - 1] : null
 
               return (
                 <motion.div key={entry.id} variants={slideIn}>
@@ -303,17 +372,31 @@ export function TocView() {
                       )}
                     </span>
 
+                    {/* Level badge for Partie C */}
+                    {cLevelNum && (
+                      <span className="shrink-0 inline-flex items-center justify-center h-5 w-5 rounded-full bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-[9px] font-bold border border-violet-300/50 dark:border-violet-700/40">
+                        {cLevelNum}
+                      </span>
+                    )}
+
                     {/* Chapter number */}
                     <span className="shrink-0 text-xs font-medium text-amber-500 dark:text-amber-500/60">
                       {entry.number}
                     </span>
 
                     {/* Title with elegant dot leaders */}
-                    <span className="flex min-w-0 flex-1 items-baseline gap-1">
-                      <span className="shrink-0 text-stone-700 group-hover:text-amber-700 dark:text-stone-200/80 dark:group-hover:text-amber-100/90 transition-colors">
-                        {entry.title}
+                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                      <span className="flex items-baseline gap-1">
+                        <span className="shrink-0 text-stone-700 group-hover:text-amber-700 dark:text-stone-200/80 dark:group-hover:text-amber-100/90 transition-colors">
+                          {entry.title}
+                        </span>
+                        <span className="flex-1 border-b border-dotted border-stone-300 dark:border-stone-600/30 group-hover:border-amber-400 dark:group-hover:border-amber-600/40 transition-colors" />
                       </span>
-                      <span className="flex-1 border-b border-dotted border-stone-300 dark:border-stone-600/30 group-hover:border-amber-400 dark:group-hover:border-amber-600/40 transition-colors" />
+                      {cLevel && (
+                        <span className="text-[9px] text-violet-500/70 dark:text-violet-400/50 italic leading-none">
+                          {cLevel.name} — {cLevel.label}
+                        </span>
+                      )}
                     </span>
 
                     {/* Bookmark icon */}

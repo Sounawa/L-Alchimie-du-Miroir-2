@@ -7,6 +7,7 @@ import { allChapters } from '@/data/chapters'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -25,9 +26,14 @@ import {
   ChevronRight,
   Trophy,
   Brain,
+  Type,
+  Shuffle,
+  XCircle,
+  Star,
 } from 'lucide-react'
 
 type Difficulty = 'facile' | 'moyen' | 'difficile'
+type GameMode = 'classic' | 'fill-blank' | 'ordering'
 
 const DIFFICULTY_CONFIG: Record<Difficulty, { label: string; description: string; color: string }> = {
   facile: {
@@ -47,18 +53,49 @@ const DIFFICULTY_CONFIG: Record<Difficulty, { label: string; description: string
   },
 }
 
+const GAME_MODE_CONFIG: Record<GameMode, { label: string; description: string; icon: React.ElementType }> = {
+  classic: {
+    label: 'Classique',
+    description: 'Révélation progressive des mots',
+    icon: Eye,
+  },
+  'fill-blank': {
+    label: 'Texte à trous',
+    description: 'Tapez les mots manquants',
+    icon: Type,
+  },
+  ordering: {
+    label: 'Ordonnancement',
+    description: 'Remettez les mots en ordre',
+    icon: Shuffle,
+  },
+}
+
 function getWordsToShow(words: string[], difficulty: Difficulty): boolean[] {
   return words.map((_, idx) => {
     switch (difficulty) {
       case 'facile':
         return idx % 3 === 0
       case 'moyen':
-        // Show first word of each "phrase" (every 3-4 words group)
         return idx === 0 || words[idx - 1]?.endsWith('،') || words[idx - 1]?.endsWith(',')
       case 'difficile':
         return false
     }
   })
+}
+
+/** Fisher-Yates shuffle that guarantees the order is different from original */
+function shuffleWords(words: string[]): number[] {
+  const indices = words.map((_, i) => i)
+  let attempts = 0
+  do {
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[indices[i], indices[j]] = [indices[j], indices[i]]
+    }
+    attempts++
+  } while (attempts < 10 && indices.every((v, i) => v === i))
+  return indices
 }
 
 export function MemorizationView() {
@@ -68,10 +105,20 @@ export function MemorizationView() {
 
   const [selectedChapterId, setSelectedChapterId] = useState<string>('')
   const [difficulty, setDifficulty] = useState<Difficulty>('facile')
+  const [gameMode, setGameMode] = useState<GameMode>('classic')
   const [revealedIndices, setRevealedIndices] = useState<Set<number>>(new Set())
   const [showFullVerse, setShowFullVerse] = useState(false)
   const [hasChecked, setHasChecked] = useState(false)
   const [userInputs, setUserInputs] = useState<Record<number, string>>({})
+
+  // Fill-in-blank specific state
+  const [blankInputs, setBlankInputs] = useState<Record<number, string>>({})
+  const [blankChecked, setBlankChecked] = useState(false)
+
+  // Ordering game specific state
+  const [shuffledIndices, setShuffledIndices] = useState<number[]>([])
+  const [userOrder, setUserOrder] = useState<number[]>([])
+  const [orderingChecked, setOrderingChecked] = useState(false)
 
   const chapter = useMemo(
     () => allChapters.find((c) => c.id === selectedChapterId),
@@ -88,70 +135,148 @@ export function MemorizationView() {
     [words, difficulty]
   )
 
+  // Get indices of hidden words for fill-in-blank mode
+  const hiddenIndices = useMemo(() => {
+    return words.map((_, idx) => idx).filter((idx) => !visibleMap[idx])
+  }, [words, visibleMap])
+
   const handleChapterChange = useCallback((id: string) => {
     setSelectedChapterId(id)
-    setRevealedIndices(new Set())
-    setShowFullVerse(false)
-    setHasChecked(false)
-    setUserInputs({})
+    resetAllState()
   }, [])
 
   const handleDifficultyChange = useCallback((d: Difficulty) => {
     setDifficulty(d)
+    resetAllState()
+  }, [])
+
+  const handleGameModeChange = useCallback((m: GameMode) => {
+    setGameMode(m)
+    resetAllState()
+    if (m === 'ordering' && words.length > 0) {
+      const shuffled = shuffleWords(words)
+      setShuffledIndices(shuffled)
+      setUserOrder([])
+    }
+  }, [words])
+
+  function resetAllState() {
     setRevealedIndices(new Set())
     setShowFullVerse(false)
     setHasChecked(false)
     setUserInputs({})
-  }, [])
+    setBlankInputs({})
+    setBlankChecked(false)
+    setShuffledIndices([])
+    setUserOrder([])
+    setOrderingChecked(false)
+  }
 
   const handleHint = useCallback(() => {
-    // Reveal the next hidden word
-    for (let i = 0; i < words.length; i++) {
-      if (!visibleMap[i] && !revealedIndices.has(i)) {
-        setRevealedIndices((prev) => new Set([...prev, i]))
-        return
+    if (gameMode === 'classic') {
+      for (let i = 0; i < words.length; i++) {
+        if (!visibleMap[i] && !revealedIndices.has(i)) {
+          setRevealedIndices((prev) => new Set([...prev, i]))
+          return
+        }
+      }
+    } else if (gameMode === 'fill-blank') {
+      // Reveal one blank
+      for (const idx of hiddenIndices) {
+        if (!blankInputs[idx]) {
+          setBlankInputs((prev) => ({ ...prev, [idx]: words[idx] }))
+          return
+        }
+      }
+    } else if (gameMode === 'ordering') {
+      // Place next correct word
+      const nextIdx = userOrder.length
+      if (nextIdx < words.length) {
+        const correctWordIndex = words.indexOf(words[nextIdx])
+        setUserOrder((prev) => [...prev, correctWordIndex])
       }
     }
-  }, [visibleMap, revealedIndices, words.length])
+  }, [gameMode, words, visibleMap, revealedIndices, hiddenIndices, blankInputs, userOrder])
 
   const handleCheck = useCallback(() => {
-    setShowFullVerse(true)
-    setHasChecked(true)
+    if (gameMode === 'classic') {
+      setShowFullVerse(true)
+      setHasChecked(true)
 
-    // Calculate score
-    let correct = 0
-    let total = 0
-    words.forEach((word, idx) => {
-      if (!visibleMap[idx] && !revealedIndices.has(idx)) {
-        total++
-        const userInput = userInputs[idx]?.trim()
-        if (userInput && userInput === word) {
+      let correct = 0
+      let total = 0
+      words.forEach((word, idx) => {
+        if (!visibleMap[idx] && !revealedIndices.has(idx)) {
+          total++
+          const userInput = userInputs[idx]?.trim()
+          if (userInput && userInput === word) {
+            correct++
+          }
+        }
+      })
+
+      const score = total > 0 ? Math.round((correct / total) * 100) : 100
+
+      if (chapter) {
+        updateMemorizationProgress(chapter.id, difficulty, score)
+      }
+    } else if (gameMode === 'fill-blank') {
+      setBlankChecked(true)
+      let correct = 0
+      let total = hiddenIndices.length
+      for (const idx of hiddenIndices) {
+        const input = blankInputs[idx]?.trim()
+        if (input && input === words[idx]) {
           correct++
         }
       }
-    })
-
-    const score = total > 0 ? Math.round((correct / total) * 100) : 100
-
-    if (chapter) {
-      updateMemorizationProgress(chapter.id, difficulty, score)
+      const score = total > 0 ? Math.round((correct / total) * 100) : 100
+      if (chapter) {
+        updateMemorizationProgress(chapter.id, difficulty, score)
+      }
+    } else if (gameMode === 'ordering') {
+      setOrderingChecked(true)
+      let correct = 0
+      userOrder.forEach((wordIdx, pos) => {
+        if (wordIdx === pos) correct++
+      })
+      const total = words.length
+      const score = total > 0 ? Math.round((correct / total) * 100) : 100
+      if (chapter) {
+        updateMemorizationProgress(chapter.id, difficulty, score)
+      }
     }
-  }, [visibleMap, revealedIndices, words, userInputs, chapter, difficulty, updateMemorizationProgress])
+  }, [gameMode, words, visibleMap, revealedIndices, userInputs, blankInputs, hiddenIndices, userOrder, chapter, difficulty, updateMemorizationProgress])
 
   const handleReset = useCallback(() => {
-    setRevealedIndices(new Set())
-    setShowFullVerse(false)
-    setHasChecked(false)
-    setUserInputs({})
-  }, [])
+    resetAllState()
+    if (gameMode === 'ordering' && words.length > 0) {
+      const shuffled = shuffleWords(words)
+      setShuffledIndices(shuffled)
+      setUserOrder([])
+    }
+  }, [gameMode, words])
 
   const handleWordReveal = useCallback((idx: number) => {
     if (visibleMap[idx] || revealedIndices.has(idx) || showFullVerse) return
     setRevealedIndices((prev) => new Set([...prev, idx]))
   }, [visibleMap, revealedIndices, showFullVerse])
 
-  // Score calculation for display
-  const scoreResult = useMemo(() => {
+  // Ordering game: add word to order
+  const handleOrderingAdd = useCallback((wordIdx: number) => {
+    if (orderingChecked) return
+    if (userOrder.includes(wordIdx)) return
+    setUserOrder((prev) => [...prev, wordIdx])
+  }, [userOrder, orderingChecked])
+
+  // Ordering game: remove last word
+  const handleOrderingRemoveLast = useCallback(() => {
+    if (orderingChecked) return
+    setUserOrder((prev) => prev.slice(0, -1))
+  }, [orderingChecked])
+
+  // Score calculations
+  const classicScoreResult = useMemo(() => {
     if (!hasChecked) return null
     let correct = 0
     let total = 0
@@ -166,6 +291,31 @@ export function MemorizationView() {
     })
     return { correct, total, score: total > 0 ? Math.round((correct / total) * 100) : 100 }
   }, [hasChecked, words, visibleMap, revealedIndices, userInputs])
+
+  const fillBlankScoreResult = useMemo(() => {
+    if (!blankChecked) return null
+    let correct = 0
+    const total = hiddenIndices.length
+    for (const idx of hiddenIndices) {
+      const input = blankInputs[idx]?.trim()
+      if (input && input === words[idx]) {
+        correct++
+      }
+    }
+    return { correct, total, score: total > 0 ? Math.round((correct / total) * 100) : 100 }
+  }, [blankChecked, hiddenIndices, blankInputs, words])
+
+  const orderingScoreResult = useMemo(() => {
+    if (!orderingChecked) return null
+    let correct = 0
+    userOrder.forEach((wordIdx, pos) => {
+      if (wordIdx === pos) correct++
+    })
+    const total = words.length
+    return { correct, total, score: total > 0 ? Math.round((correct / total) * 100) : 100 }
+  }, [orderingChecked, userOrder, words])
+
+  const activeScoreResult = gameMode === 'classic' ? classicScoreResult : gameMode === 'fill-blank' ? fillBlankScoreResult : orderingScoreResult
 
   const progress = chapter ? memorizationProgress[chapter.id] : null
 
@@ -208,7 +358,7 @@ export function MemorizationView() {
         </p>
       </motion.div>
 
-      {/* Chapter selector + Difficulty toggle */}
+      {/* Chapter selector + Difficulty toggle + Game mode */}
       <motion.div custom={sectionIndex++} variants={fadeUp} initial="hidden" animate="visible">
         <Card className="border-amber-200/50 dark:border-amber-800/30">
           <CardContent className="pt-4 pb-4 space-y-4">
@@ -227,6 +377,33 @@ export function MemorizationView() {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Game mode selector */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-muted-foreground">Mode de jeu</label>
+              <div className="flex gap-2">
+                {(Object.entries(GAME_MODE_CONFIG) as [GameMode, typeof GAME_MODE_CONFIG[GameMode]][]).map(([key, config]) => {
+                  const Icon = config.icon
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => handleGameModeChange(key)}
+                      className={`flex-1 rounded-lg border px-3 py-2 text-center transition-all duration-200 ${
+                        gameMode === key
+                          ? 'bg-amber-100 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700 ring-2 ring-offset-1 ring-amber-400 dark:ring-amber-600'
+                          : 'border-stone-200 dark:border-stone-700 hover:border-amber-300 dark:hover:border-amber-700'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center gap-1.5 mb-0.5">
+                        <Icon className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                        <p className="text-sm font-semibold">{config.label}</p>
+                      </div>
+                      <p className="text-[10px] opacity-70">{config.description}</p>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
 
             {/* Difficulty selector */}
@@ -280,71 +457,273 @@ export function MemorizationView() {
                 </Badge>
                 <span className="text-sm font-medium">{chapter.title}</span>
               </div>
-              <Badge className={`text-[10px] border ${DIFFICULTY_CONFIG[difficulty].color}`}>
-                {DIFFICULTY_CONFIG[difficulty].label}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Badge className={`text-[10px] border ${DIFFICULTY_CONFIG[difficulty].color}`}>
+                  {DIFFICULTY_CONFIG[difficulty].label}
+                </Badge>
+                <Badge variant="outline" className="text-[10px] border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-400">
+                  {GAME_MODE_CONFIG[gameMode].label}
+                </Badge>
+              </div>
             </div>
 
             <CardContent className="pt-6 pb-6 px-6">
-              {/* Arabic verse with progressive reveal */}
-              <div className="relative">
-                {/* Top ornamental line */}
-                <div className="text-center mb-6 text-amber-500 dark:text-amber-400 tracking-[0.5em] text-sm select-none">
-                  ✦ ✦ ✦
-                </div>
+              {/* ===== CLASSIC MODE ===== */}
+              {gameMode === 'classic' && (
+                <div className="relative">
+                  <div className="text-center mb-6 text-amber-500 dark:text-amber-400 tracking-[0.5em] text-sm select-none">
+                    ✦ ✦ ✦
+                  </div>
+                  <div
+                    dir="rtl"
+                    lang="ar"
+                    className="arabic-verse text-3xl md:text-4xl text-center leading-loose flex flex-wrap justify-center gap-x-2 gap-y-3 min-h-[120px]"
+                  >
+                    {words.map((word, idx) => {
+                      const isVisible = visibleMap[idx] || revealedIndices.has(idx) || showFullVerse
+                      const isHidden = !isVisible
 
-                {/* Words grid */}
-                <div
-                  dir="rtl"
-                  lang="ar"
-                  className="arabic-verse text-3xl md:text-4xl text-center leading-loose flex flex-wrap justify-center gap-x-2 gap-y-3 min-h-[120px]"
-                >
-                  {words.map((word, idx) => {
-                    const isVisible = visibleMap[idx] || revealedIndices.has(idx) || showFullVerse
-                    const isHidden = !isVisible
-
-                    // Check result coloring
-                    let wordColor = 'text-amber-900 dark:text-amber-100'
-                    if (hasChecked && showFullVerse && !visibleMap[idx] && !revealedIndices.has(idx)) {
-                      const userInput = userInputs[idx]?.trim()
-                      if (userInput && userInput === word) {
-                        wordColor = 'text-emerald-600 dark:text-emerald-400'
-                      } else if (userInput) {
-                        wordColor = 'text-rose-500 dark:text-rose-400'
+                      let wordColor = 'text-amber-900 dark:text-amber-100'
+                      if (hasChecked && showFullVerse && !visibleMap[idx] && !revealedIndices.has(idx)) {
+                        const userInput = userInputs[idx]?.trim()
+                        if (userInput && userInput === word) {
+                          wordColor = 'text-emerald-600 dark:text-emerald-400'
+                        } else if (userInput) {
+                          wordColor = 'text-rose-500 dark:text-rose-400'
+                        }
                       }
-                    }
 
-                    return (
-                      <motion.span
-                        key={idx}
-                        initial={false}
-                        animate={{
-                          opacity: isVisible ? 1 : 0.3,
-                          scale: isVisible ? 1 : 0.95,
-                        }}
-                        transition={{ duration: 0.3, type: 'spring', stiffness: 300, damping: 25 }}
-                        className={`relative cursor-pointer inline-block ${wordColor} ${isHidden ? 'hover:opacity-50' : ''}`}
-                        onClick={() => handleWordReveal(idx)}
-                      >
-                        {isVisible ? (
-                          <span>{word}</span>
-                        ) : (
-                          <span className="inline-block min-w-[3ch] rounded bg-amber-200/60 dark:bg-amber-800/40 px-2 py-0.5 text-transparent select-none">
+                      return (
+                        <motion.span
+                          key={idx}
+                          initial={false}
+                          animate={{
+                            opacity: isVisible ? 1 : 0.3,
+                            scale: isVisible ? 1 : 0.95,
+                          }}
+                          transition={{ duration: 0.3, type: 'spring', stiffness: 300, damping: 25 }}
+                          className={`relative cursor-pointer inline-block ${wordColor} ${isHidden ? 'hover:opacity-50' : ''}`}
+                          onClick={() => handleWordReveal(idx)}
+                        >
+                          {isVisible ? (
+                            <span>{word}</span>
+                          ) : (
+                            <span className="inline-block min-w-[3ch] rounded bg-amber-200/60 dark:bg-amber-800/40 px-2 py-0.5 text-transparent select-none">
+                              {word}
+                            </span>
+                          )}
+                        </motion.span>
+                      )
+                    })}
+                  </div>
+                  <div className="text-center mt-6 text-amber-500 dark:text-amber-400 tracking-[0.5em] text-sm select-none">
+                    ✦ ✦ ✦
+                  </div>
+                </div>
+              )}
+
+              {/* ===== FILL-IN-BLANK MODE ===== */}
+              {gameMode === 'fill-blank' && (
+                <div className="relative">
+                  <div className="text-center mb-6 text-amber-500 dark:text-amber-400 tracking-[0.5em] text-sm select-none">
+                    ✦ ✦ ✦
+                  </div>
+                  <div
+                    dir="rtl"
+                    lang="ar"
+                    className="arabic-verse text-2xl md:text-3xl text-center leading-loose flex flex-wrap justify-center gap-x-2 gap-y-3 min-h-[120px]"
+                  >
+                    {words.map((word, idx) => {
+                      const isBlank = !visibleMap[idx]
+
+                      if (!isBlank) {
+                        return (
+                          <span key={idx} className="text-amber-900 dark:text-amber-100">
                             {word}
                           </span>
-                        )}
-                      </motion.span>
-                    )
-                  })}
-                </div>
+                        )
+                      }
 
-                {/* Bottom ornamental line */}
-                <div className="text-center mt-6 text-amber-500 dark:text-amber-400 tracking-[0.5em] text-sm select-none">
-                  ✦ ✦ ✦
-                </div>
-              </div>
+                      // Blank word - show input
+                      const isCorrect = blankChecked && blankInputs[idx]?.trim() === word
+                      const isIncorrect = blankChecked && blankInputs[idx]?.trim() && blankInputs[idx]?.trim() !== word
+                      const isEmpty = blankChecked && !blankInputs[idx]?.trim()
 
-              {/* Translation reference (always visible, small) */}
+                      return (
+                        <motion.span
+                          key={idx}
+                          initial={false}
+                          animate={{
+                            scale: isCorrect ? 1.05 : isIncorrect ? 0.95 : 1,
+                          }}
+                          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                          className="relative inline-flex items-center"
+                        >
+                          <Input
+                            dir="rtl"
+                            lang="ar"
+                            className={`w-auto min-w-[4ch] max-w-[12ch] h-9 text-center text-lg arabic-verse px-1 py-0 border-2 transition-all duration-300 ${
+                              isCorrect
+                                ? 'border-emerald-400 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-300'
+                                : isIncorrect
+                                  ? 'border-rose-400 dark:border-rose-500 bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-300'
+                                  : isEmpty
+                                    ? 'border-amber-400 dark:border-amber-500 bg-amber-50 dark:bg-amber-950/20'
+                                    : 'border-amber-300 dark:border-amber-700 bg-amber-50/30 dark:bg-amber-950/10'
+                            }`}
+                            value={blankInputs[idx] || ''}
+                            onChange={(e) => {
+                              if (!blankChecked) {
+                                setBlankInputs((prev) => ({ ...prev, [idx]: e.target.value }))
+                              }
+                            }}
+                            placeholder="..."
+                            disabled={blankChecked}
+                          />
+                          {/* Correct answer shown below on incorrect */}
+                          {(isIncorrect || isEmpty) && blankChecked && (
+                            <motion.span
+                              initial={{ opacity: 0, y: -5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[11px] text-emerald-600 dark:text-emerald-400 whitespace-nowrap"
+                            >
+                              {word}
+                            </motion.span>
+                          )}
+                          {isCorrect && (
+                            <motion.span
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              className="absolute -top-2 -right-2"
+                            >
+                              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                            </motion.span>
+                          )}
+                          {isIncorrect && (
+                            <motion.span
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              className="absolute -top-2 -right-2"
+                            >
+                              <XCircle className="h-4 w-4 text-rose-500" />
+                            </motion.span>
+                          )}
+                        </motion.span>
+                      )
+                    })}
+                  </div>
+                  <div className="text-center mt-8 text-amber-500 dark:text-amber-400 tracking-[0.5em] text-sm select-none">
+                    ✦ ✦ ✦
+                  </div>
+                </div>
+              )}
+
+              {/* ===== ORDERING MODE ===== */}
+              {gameMode === 'ordering' && shuffledIndices.length > 0 && (
+                <div className="space-y-6">
+                  {/* User's assembled verse */}
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-3 text-center">
+                      Votre ordre — cliquez sur les mots ci-dessous pour les placer
+                    </p>
+                    <div
+                      dir="rtl"
+                      lang="ar"
+                      className="arabic-verse text-2xl md:text-3xl text-center leading-loose flex flex-wrap justify-center gap-x-2 gap-y-3 min-h-[80px] rounded-lg border-2 border-dashed border-amber-300/40 dark:border-amber-700/30 p-4 bg-amber-50/20 dark:bg-amber-950/10"
+                    >
+                      {userOrder.length === 0 ? (
+                        <span className="text-muted-foreground/40 text-base italic">
+                          Cliquez sur les mots pour les placer dans l&apos;ordre...
+                        </span>
+                      ) : (
+                        userOrder.map((wordIdx, pos) => {
+                          const isCorrect = orderingChecked && wordIdx === pos
+                          const isIncorrect = orderingChecked && wordIdx !== pos
+
+                          return (
+                            <motion.span
+                              key={`placed-${wordIdx}-${pos}`}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{
+                                opacity: 1,
+                                scale: 1,
+                                backgroundColor: isCorrect
+                                  ? 'rgba(16, 185, 129, 0.1)'
+                                  : isIncorrect
+                                    ? 'rgba(244, 63, 94, 0.1)'
+                                    : 'transparent',
+                              }}
+                              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                              className={`inline-block rounded px-2 py-1 cursor-pointer transition-colors ${
+                                isCorrect
+                                  ? 'text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-400 dark:ring-emerald-500'
+                                  : isIncorrect
+                                    ? 'text-rose-600 dark:text-rose-400 ring-1 ring-rose-400 dark:ring-rose-500'
+                                    : 'text-amber-900 dark:text-amber-100 hover:bg-amber-100/50 dark:hover:bg-amber-900/20'
+                              }`}
+                              onClick={handleOrderingRemoveLast}
+                            >
+                              {words[wordIdx]}
+                              {isCorrect && <span className="text-[10px] mr-1">✓</span>}
+                              {isIncorrect && <span className="text-[10px] mr-1">✗</span>}
+                            </motion.span>
+                          )
+                        })
+                      )}
+                    </div>
+                    {userOrder.length > 0 && !orderingChecked && (
+                      <div className="text-center mt-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleOrderingRemoveLast}
+                          className="text-xs text-muted-foreground"
+                        >
+                          ← Retirer le dernier mot
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Available words pool */}
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-3 text-center">
+                      Mots disponibles
+                    </p>
+                    <div
+                      dir="rtl"
+                      lang="ar"
+                      className="arabic-verse text-2xl text-center leading-loose flex flex-wrap justify-center gap-x-2 gap-y-2"
+                    >
+                      {shuffledIndices.map((wordIdx) => {
+                        const isUsed = userOrder.includes(wordIdx)
+                        return (
+                          <motion.button
+                            key={`pool-${wordIdx}`}
+                            initial={false}
+                            animate={{
+                              opacity: isUsed ? 0.3 : 1,
+                              scale: isUsed ? 0.9 : 1,
+                            }}
+                            transition={{ duration: 0.2 }}
+                            onClick={() => handleOrderingAdd(wordIdx)}
+                            disabled={isUsed || orderingChecked}
+                            className={`inline-block rounded-lg px-3 py-1.5 transition-all ${
+                              isUsed
+                                ? 'bg-stone-100 dark:bg-stone-800/30 text-stone-300 dark:text-stone-600 cursor-not-allowed'
+                                : 'bg-amber-100/60 dark:bg-amber-900/20 text-amber-900 dark:text-amber-100 hover:bg-amber-200/60 dark:hover:bg-amber-800/30 cursor-pointer hover:scale-105'
+                            }`}
+                          >
+                            {words[wordIdx]}
+                          </motion.button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Translation reference */}
               {chapter.translation && (
                 <div className="mt-6 text-center">
                   <p className="text-sm italic text-muted-foreground/70 leading-relaxed">
@@ -363,7 +742,7 @@ export function MemorizationView() {
                 variant="outline"
                 size="sm"
                 onClick={handleHint}
-                disabled={showFullVerse}
+                disabled={gameMode === 'classic' ? showFullVerse : gameMode === 'fill-blank' ? blankChecked : orderingChecked}
                 className="gap-1.5"
               >
                 <Lightbulb className="h-4 w-4" />
@@ -373,7 +752,7 @@ export function MemorizationView() {
                 variant="outline"
                 size="sm"
                 onClick={handleCheck}
-                disabled={showFullVerse}
+                disabled={gameMode === 'classic' ? showFullVerse : gameMode === 'fill-blank' ? blankChecked : orderingChecked || userOrder.length !== words.length}
                 className="gap-1.5"
               >
                 <CheckCircle2 className="h-4 w-4" />
@@ -388,15 +767,17 @@ export function MemorizationView() {
                 <RotateCcw className="h-4 w-4" />
                 Recommencer
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowFullVerse(!showFullVerse)}
-                className="gap-1.5"
-              >
-                {showFullVerse ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                {showFullVerse ? 'Cacher' : 'Voir tout'}
-              </Button>
+              {gameMode === 'classic' && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowFullVerse(!showFullVerse)}
+                  className="gap-1.5"
+                >
+                  {showFullVerse ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showFullVerse ? 'Cacher' : 'Voir tout'}
+                </Button>
+              )}
             </div>
           </Card>
         </motion.div>
@@ -420,7 +801,7 @@ export function MemorizationView() {
 
       {/* Score result */}
       <AnimatePresence>
-        {scoreResult && (
+        {activeScoreResult && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -428,42 +809,44 @@ export function MemorizationView() {
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
           >
             <Card className={`border-2 ${
-              scoreResult.score >= 80
+              activeScoreResult.score >= 80
                 ? 'border-emerald-300 dark:border-emerald-700'
-                : scoreResult.score >= 50
+                : activeScoreResult.score >= 50
                   ? 'border-amber-300 dark:border-amber-700'
                   : 'border-rose-300 dark:border-rose-700'
             }`}>
               <CardContent className="pt-6 pb-6 text-center space-y-3">
                 <div className="flex justify-center">
                   <div className={`flex items-center justify-center h-16 w-16 rounded-full ${
-                    scoreResult.score >= 80
+                    activeScoreResult.score >= 80
                       ? 'bg-emerald-100 dark:bg-emerald-900/30'
-                      : scoreResult.score >= 50
+                      : activeScoreResult.score >= 50
                         ? 'bg-amber-100 dark:bg-amber-900/30'
                         : 'bg-rose-100 dark:bg-rose-900/30'
                   }`}>
-                    <Trophy className={`h-8 w-8 ${
-                      scoreResult.score >= 80
-                        ? 'text-emerald-600 dark:text-emerald-400'
-                        : scoreResult.score >= 50
+                    {activeScoreResult.score >= 80 ? (
+                      <Star className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
+                    ) : (
+                      <Trophy className={`h-8 w-8 ${
+                        activeScoreResult.score >= 50
                           ? 'text-amber-600 dark:text-amber-400'
                           : 'text-rose-600 dark:text-rose-400'
-                    }`} />
+                      }`} />
+                    )}
                   </div>
                 </div>
                 <h3 className="text-2xl font-bold">
-                  Score : {scoreResult.score}%
+                  Score : {activeScoreResult.score}%
                 </h3>
                 <p className="text-muted-foreground">
-                  {scoreResult.correct} mot{scoreResult.correct > 1 ? 's' : ''} correct{scoreResult.correct > 1 ? 's' : ''} sur {scoreResult.total}
+                  {activeScoreResult.correct} mot{activeScoreResult.correct > 1 ? 's' : ''} correct{activeScoreResult.correct > 1 ? 's' : ''} sur {activeScoreResult.total}
                 </p>
                 <p className="text-sm font-medium">
-                  {scoreResult.score >= 90
-                    ? 'Masha\'Allah ! Mémorisation excellente ! 🌟'
-                    : scoreResult.score >= 70
+                  {activeScoreResult.score >= 90
+                    ? "Masha'Allah ! Mémorisation excellente ! 🌟"
+                    : activeScoreResult.score >= 70
                       ? 'Très bien ! Continuez à pratiquer. ✨'
-                      : scoreResult.score >= 50
+                      : activeScoreResult.score >= 50
                         ? 'Bon effort ! Réessayez pour améliorer votre score. 💪'
                         : 'Continuez à pratiquer, la répétition est la clé. 🤲'}
                 </p>
@@ -491,15 +874,15 @@ export function MemorizationView() {
                 <ul className="text-xs text-muted-foreground space-y-1.5">
                   <li className="flex items-start gap-2">
                     <ChevronRight className="h-3 w-3 text-amber-500 shrink-0 mt-0.5" />
-                    <span>Commencez par le niveau <strong>Facile</strong> pour vous familiariser avec le verset</span>
+                    <span>Commencez par le mode <strong>Classique</strong> pour vous familiariser</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <ChevronRight className="h-3 w-3 text-amber-500 shrink-0 mt-0.5" />
-                    <span>Utilisez le bouton <strong>Indice</strong> pour révéler un mot à la fois</span>
+                    <span>Utilisez le mode <strong>Texte à trous</strong> pour tester votre mémoire active</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <ChevronRight className="h-3 w-3 text-amber-500 shrink-0 mt-0.5" />
-                    <span>Cliquez sur un mot caché pour le révéler individuellement</span>
+                    <span>Le mode <strong>Ordonnancement</strong> renforce la structure du verset</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <ChevronRight className="h-3 w-3 text-amber-500 shrink-0 mt-0.5" />

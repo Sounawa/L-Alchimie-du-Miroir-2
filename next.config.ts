@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: false,
   allowedDevOrigins: [
     '.space-z.ai',
-    'c-69f5c25f-1445a456-2d4b2c805475',
+    'preview-chat-76234511-4cd3-4504-91c3-1c29013b21be.space-z.ai',
   ],
 };
 

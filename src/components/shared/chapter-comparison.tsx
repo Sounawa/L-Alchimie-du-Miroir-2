@@ -2,7 +2,7 @@
 
 import { useAppStore } from '@/store/use-app-store';
 import { allChapters, getChapterById, type Chapter } from '@/data/chapters';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -20,8 +20,12 @@ import {
   ChevronRight,
   Sparkles,
   Eye,
-  MessageCircle,
   Layers,
+  CheckCircle2,
+  XCircle,
+  MinusCircle,
+  ArrowLeft,
+  Lightbulb,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -42,42 +46,53 @@ const fadeIn = {
 function getChapterThemes(chapter: Chapter): string[] {
   const themes: string[] = [];
 
-  // From word analysis
   for (const w of chapter.wordAnalysis) {
     if (w.mirrorDimension) {
-      // Extract key concept from first few words
       const words = w.mirrorDimension.split(' ').slice(0, 3).join(' ');
       themes.push(words);
     }
   }
 
-  // From callouts
   for (const c of chapter.callouts ?? []) {
     themes.push(c.title);
   }
 
-  // From coherence points
   if (chapter.coherencePoints && chapter.coherencePoints.length > 0) {
     themes.push('Cohérence textuelle');
   }
 
-  // From treasures
   if (chapter.treasuresList && chapter.treasuresList.length > 0) {
     themes.push('Trésors spirituels');
   }
 
-  // From metaphors
   if (chapter.metaphorTable && chapter.metaphorTable.length > 0) {
     themes.push('Métaphores');
   }
 
-  // Part-specific themes
   if (chapter.part === 'A') themes.push('Al-Fatiha');
   if (chapter.part === 'B') themes.push('Trésors du Coran');
   if (chapter.part === 'C') themes.push('Niveaux de lecture');
 
-  // Limit to 6 themes
   return themes.slice(0, 6);
+}
+
+/** Get vocabulary from word analysis */
+function getVocabulary(chapter: Chapter): string[] {
+  return chapter.wordAnalysis.map((w) => w.transliteration).filter(Boolean).slice(0, 8);
+}
+
+/** Get spiritual level indicator */
+function getSpiritualLevel(chapter: Chapter): { level: string; description: string; color: string } {
+  switch (chapter.part) {
+    case 'A':
+      return { level: 'Fondation', description: 'Les piliers de la Fatiha', color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/40' };
+    case 'B':
+      return { level: 'Exploration', description: 'Trésors et profondeurs du Coran', color: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/40' };
+    case 'C':
+      return { level: 'Élévation', description: 'Les sept niveaux de lecture', color: 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/20 border-violet-200 dark:border-violet-800/40' };
+    default:
+      return { level: 'Introduction', description: 'Préambule au voyage', color: 'text-stone-600 dark:text-stone-400 bg-stone-50 dark:bg-stone-950/20 border-stone-200 dark:border-stone-800/40' };
+  }
 }
 
 /** Get all mirror questions from a chapter */
@@ -85,9 +100,37 @@ function getMirrorQuestions(chapter: Chapter) {
   return chapter.mirrorQuestions.slice(0, 3);
 }
 
+/** Compare two sets of items and return matching/mismatching */
+function compareSets(left: string[], right: string[]): { match: string[]; leftOnly: string[]; rightOnly: string[] } {
+  const leftLower = left.map((t) => t.toLowerCase());
+  const rightLower = right.map((t) => t.toLowerCase());
+  const match = left.filter((t, i) => rightLower.includes(leftLower[i]));
+  const leftOnly = left.filter((t, i) => !rightLower.includes(leftLower[i]));
+  const rightOnly = right.filter((t, i) => !leftLower.includes(rightLower[i]));
+  return { match, leftOnly, rightOnly };
+}
+
+interface ComparisonIndicatorProps {
+  type: 'match' | 'left' | 'right' | 'neutral';
+}
+
+function ComparisonIndicator({ type }: ComparisonIndicatorProps) {
+  switch (type) {
+    case 'match':
+      return <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />;
+    case 'left':
+    case 'right':
+      return <XCircle className="h-3.5 w-3.5 text-rose-400 dark:text-rose-500 shrink-0" />;
+    case 'neutral':
+      return <MinusCircle className="h-3.5 w-3.5 text-stone-400 dark:text-stone-500 shrink-0" />;
+  }
+}
+
 function ChapterColumn({ chapter, label }: { chapter: Chapter; label: string }) {
   const themes = useMemo(() => getChapterThemes(chapter), [chapter]);
   const questions = useMemo(() => getMirrorQuestions(chapter), [chapter]);
+  const vocabulary = useMemo(() => getVocabulary(chapter), [chapter]);
+  const spiritualLevel = useMemo(() => getSpiritualLevel(chapter), [chapter]);
   const navigate = useAppStore((s) => s.navigate);
 
   return (
@@ -108,6 +151,16 @@ function ChapterColumn({ chapter, label }: { chapter: Chapter; label: string }) 
         <p className="text-xs text-stone-500 dark:text-stone-400/80 mt-0.5">
           {chapter.subtitle}
         </p>
+      </div>
+
+      {/* Spiritual level */}
+      <div className={`rounded-lg border px-3 py-2 ${spiritualLevel.color}`}>
+        <div className="flex items-center gap-1.5 mb-0.5">
+          <Sparkles className="h-3 w-3" />
+          <span className="text-[10px] font-semibold uppercase tracking-wider">Niveau spirituel</span>
+        </div>
+        <p className="text-sm font-medium">{spiritualLevel.level}</p>
+        <p className="text-[10px] opacity-70">{spiritualLevel.description}</p>
       </div>
 
       {/* Arabic verse */}
@@ -136,6 +189,29 @@ function ChapterColumn({ chapter, label }: { chapter: Chapter; label: string }) 
       )}
 
       <Separator className="bg-stone-200/60 dark:bg-stone-700/30" />
+
+      {/* Vocabulary */}
+      {vocabulary.length > 0 && (
+        <div>
+          <div className="flex items-center gap-1.5 mb-2">
+            <Lightbulb className="h-3.5 w-3.5 text-amber-500" />
+            <p className="text-xs font-semibold text-stone-600 dark:text-stone-300/80">
+              Vocabulaire clé
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {vocabulary.map((word, i) => (
+              <Badge
+                key={i}
+                variant="outline"
+                className="text-[10px] border-emerald-300/40 dark:border-emerald-700/20 text-stone-600 dark:text-stone-400/70"
+              >
+                {word}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Mirror questions */}
       {questions.length > 0 && (
@@ -206,9 +282,8 @@ function ChapterColumn({ chapter, label }: { chapter: Chapter; label: string }) 
 export function ChapterComparison() {
   const navigate = useAppStore((s) => s.navigate);
 
-  // Selectable chapters (all main chapters)
   const selectableChapters = useMemo(
-    () => allChapters.filter((c) => c.arabicVerse), // only chapters with content
+    () => allChapters.filter((c) => c.arabicVerse),
     []
   );
 
@@ -220,16 +295,32 @@ export function ChapterComparison() {
   const leftChapter = useMemo(() => getChapterById(leftId), [leftId]);
   const rightChapter = useMemo(() => getChapterById(rightId), [rightId]);
 
-  // Common themes
-  const commonThemes = useMemo(() => {
-    if (!leftChapter || !rightChapter) return [];
-    const leftThemes = getChapterThemes(leftChapter).map((t) =>
-      t.toLowerCase()
-    );
-    const rightThemes = getChapterThemes(rightChapter).map((t) =>
-      t.toLowerCase()
-    );
-    return leftThemes.filter((t) => rightThemes.includes(t));
+  // Theme comparison
+  const themeComparison = useMemo(() => {
+    if (!leftChapter || !rightChapter) return null;
+    const leftThemes = getChapterThemes(leftChapter);
+    const rightThemes = getChapterThemes(rightChapter);
+    return compareSets(leftThemes, rightThemes);
+  }, [leftChapter, rightChapter]);
+
+  // Vocabulary comparison
+  const vocabComparison = useMemo(() => {
+    if (!leftChapter || !rightChapter) return null;
+    const leftVocab = getVocabulary(leftChapter);
+    const rightVocab = getVocabulary(rightChapter);
+    return compareSets(leftVocab, rightVocab);
+  }, [leftChapter, rightChapter]);
+
+  // Spiritual level comparison
+  const levelComparison = useMemo(() => {
+    if (!leftChapter || !rightChapter) return null;
+    const leftLevel = getSpiritualLevel(leftChapter);
+    const rightLevel = getSpiritualLevel(rightChapter);
+    return {
+      left: leftLevel,
+      right: rightLevel,
+      isSame: leftLevel.level === rightLevel.level,
+    };
   }, [leftChapter, rightChapter]);
 
   return (
@@ -248,7 +339,8 @@ export function ChapterComparison() {
             onClick={() => navigate('toc')}
             className="mb-6 text-stone-500 hover:text-amber-600 dark:text-stone-400/70 dark:hover:text-amber-300/80"
           >
-            ← Retour
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Retour
           </Button>
           <h1 className="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-300 dark:via-yellow-200 dark:to-amber-300 bg-clip-text font-serif text-3xl text-transparent md:text-4xl">
             Comparaison de Chapitres
@@ -310,10 +402,9 @@ export function ChapterComparison() {
           </div>
         </motion.div>
 
-        {/* Comparison columns */}
+        {/* Side-by-side comparison */}
         {leftChapter && rightChapter && (
           <>
-            {/* Desktop: side by side, Mobile: stacked */}
             <motion.div variants={fadeIn} className="mb-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="border-stone-200/60 dark:border-stone-700/30">
@@ -329,41 +420,197 @@ export function ChapterComparison() {
               </div>
             </motion.div>
 
-            {/* Common themes section */}
-            <motion.div variants={fadeIn}>
-              <Card className="border-amber-300/40 dark:border-amber-700/20 overflow-hidden">
-                <div className="bg-gradient-to-r from-amber-50/80 via-amber-100/40 to-amber-50/80 dark:from-amber-950/20 dark:via-amber-900/10 dark:to-amber-950/20 p-4">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-amber-500 dark:text-amber-400" />
-                    <h3 className="font-semibold text-stone-700 dark:text-stone-200">
-                      Thèmes communs
-                    </h3>
-                  </div>
-                  <p className="mt-1 text-xs text-stone-500 dark:text-stone-400/80">
-                    Points de résonance entre ces deux chapitres
-                  </p>
-                </div>
-                <CardContent className="p-4">
-                  {commonThemes.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {commonThemes.map((theme, i) => (
-                        <Badge
-                          key={i}
-                          className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 border-0"
-                        >
-                          <Sparkles className="h-3 w-3 mr-1" />
-                          {theme}
-                        </Badge>
-                      ))}
+            {/* Comparison analysis cards */}
+            <motion.div variants={fadeIn} className="space-y-4 mb-8">
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles className="h-5 w-5 text-amber-500 dark:text-amber-400" />
+                <h3 className="text-lg font-semibold text-stone-700 dark:text-stone-200">
+                  Analyse comparative
+                </h3>
+              </div>
+
+              {/* Spiritual Level Comparison */}
+              {levelComparison && (
+                <Card className="border-amber-300/40 dark:border-amber-700/20 overflow-hidden">
+                  <div className="bg-gradient-to-r from-amber-50/80 via-amber-100/40 to-amber-50/80 dark:from-amber-950/20 dark:via-amber-900/10 dark:to-amber-950/20 p-4">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+                      <h4 className="font-semibold text-stone-700 dark:text-stone-200">
+                        Niveaux spirituels
+                      </h4>
                     </div>
-                  ) : (
-                    <p className="text-sm text-stone-400 dark:text-stone-500/50 italic">
-                      Aucun thème commun direct trouvé entre ces chapitres. Chaque
-                      chapitre a sa propre richesse spirituelle.
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
+                  </div>
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-4 flex-wrap">
+                      <div className={`flex items-center gap-2 rounded-lg border px-3 py-2 ${levelComparison.left.color}`}>
+                        <span className="text-sm font-medium">{leftChapter.number}</span>
+                        <span className="text-xs">{levelComparison.left.level}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {levelComparison.isSame ? (
+                          <ComparisonIndicator type="match" />
+                        ) : (
+                          <ComparisonIndicator type="neutral" />
+                        )}
+                        <span className="text-xs text-muted-foreground">
+                          {levelComparison.isSame ? 'Identique' : 'Différent'}
+                        </span>
+                      </div>
+                      <div className={`flex items-center gap-2 rounded-lg border px-3 py-2 ${levelComparison.right.color}`}>
+                        <span className="text-sm font-medium">{rightChapter.number}</span>
+                        <span className="text-xs">{levelComparison.right.level}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Theme Comparison */}
+              {themeComparison && (
+                <Card className="border-amber-300/40 dark:border-amber-700/20 overflow-hidden">
+                  <div className="bg-gradient-to-r from-amber-50/80 via-amber-100/40 to-amber-50/80 dark:from-amber-950/20 dark:via-amber-900/10 dark:to-amber-950/20 p-4">
+                    <div className="flex items-center gap-2">
+                      <Layers className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+                      <h4 className="font-semibold text-stone-700 dark:text-stone-200">
+                        Comparaison des thèmes
+                      </h4>
+                    </div>
+                  </div>
+                  <CardContent className="p-4 space-y-3">
+                    {/* Common themes */}
+                    {themeComparison.match.length > 0 && (
+                      <div>
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <ComparisonIndicator type="match" />
+                          <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                            Thèmes communs ({themeComparison.match.length})
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 ml-5">
+                          {themeComparison.match.map((theme, i) => (
+                            <Badge key={i} className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-0 text-[10px]">
+                              <CheckCircle2 className="h-3 w-3 mr-1" />
+                              {theme}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Left only */}
+                    {themeComparison.leftOnly.length > 0 && (
+                      <div>
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <ComparisonIndicator type="left" />
+                          <span className="text-xs font-semibold text-rose-500 dark:text-rose-400">
+                            Uniquement {leftChapter.number} ({themeComparison.leftOnly.length})
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 ml-5">
+                          {themeComparison.leftOnly.map((theme, i) => (
+                            <Badge key={i} variant="outline" className="text-[10px] border-rose-300/40 dark:border-rose-700/30 text-rose-600 dark:text-rose-400">
+                              {theme}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Right only */}
+                    {themeComparison.rightOnly.length > 0 && (
+                      <div>
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <ComparisonIndicator type="right" />
+                          <span className="text-xs font-semibold text-rose-500 dark:text-rose-400">
+                            Uniquement {rightChapter.number} ({themeComparison.rightOnly.length})
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 ml-5">
+                          {themeComparison.rightOnly.map((theme, i) => (
+                            <Badge key={i} variant="outline" className="text-[10px] border-rose-300/40 dark:border-rose-700/30 text-rose-600 dark:text-rose-400">
+                              {theme}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {themeComparison.match.length === 0 && themeComparison.leftOnly.length === 0 && themeComparison.rightOnly.length === 0 && (
+                      <p className="text-sm text-stone-400 dark:text-stone-500/50 italic text-center py-3">
+                        Aucun thème à comparer pour ces chapitres.
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Vocabulary Comparison */}
+              {vocabComparison && (vocabComparison.match.length > 0 || vocabComparison.leftOnly.length > 0 || vocabComparison.rightOnly.length > 0) && (
+                <Card className="border-amber-300/40 dark:border-amber-700/20 overflow-hidden">
+                  <div className="bg-gradient-to-r from-amber-50/80 via-amber-100/40 to-amber-50/80 dark:from-amber-950/20 dark:via-amber-900/10 dark:to-amber-950/20 p-4">
+                    <div className="flex items-center gap-2">
+                      <Lightbulb className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+                      <h4 className="font-semibold text-stone-700 dark:text-stone-200">
+                        Comparaison du vocabulaire
+                      </h4>
+                    </div>
+                  </div>
+                  <CardContent className="p-4 space-y-3">
+                    {vocabComparison.match.length > 0 && (
+                      <div>
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <ComparisonIndicator type="match" />
+                          <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                            Vocabulaire partagé ({vocabComparison.match.length})
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 ml-5">
+                          {vocabComparison.match.map((word, i) => (
+                            <Badge key={i} className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-0 text-[10px]">
+                              <CheckCircle2 className="h-3 w-3 mr-1" />
+                              {word}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {vocabComparison.leftOnly.length > 0 && (
+                      <div>
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <ComparisonIndicator type="left" />
+                          <span className="text-xs font-semibold text-stone-500 dark:text-stone-400">
+                            Uniquement {leftChapter.number}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 ml-5">
+                          {vocabComparison.leftOnly.map((word, i) => (
+                            <Badge key={i} variant="outline" className="text-[10px] border-stone-300/40 dark:border-stone-700/20 text-stone-600 dark:text-stone-400/70">
+                              {word}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {vocabComparison.rightOnly.length > 0 && (
+                      <div>
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <ComparisonIndicator type="right" />
+                          <span className="text-xs font-semibold text-stone-500 dark:text-stone-400">
+                            Uniquement {rightChapter.number}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 ml-5">
+                          {vocabComparison.rightOnly.map((word, i) => (
+                            <Badge key={i} variant="outline" className="text-[10px] border-stone-300/40 dark:border-stone-700/20 text-stone-600 dark:text-stone-400/70">
+                              {word}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
             </motion.div>
           </>
         )}
@@ -381,7 +628,8 @@ export function ChapterComparison() {
                 <p className="mt-1 text-xs text-stone-500 dark:text-stone-400/80 leading-relaxed">
                   Comparez des chapitres de différentes parties (A, B, C) pour découvrir
                   comment les thèmes de la Fatiha résonnent dans les versets du Coran
-                  et les niveaux de lecture approfondis.
+                  et les niveaux de lecture approfondis. Les thèmes communs révèlent les
+                  fils conducteurs spirituels entre les chapitres.
                 </p>
               </div>
             </div>

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
-type ViewType = 'cover' | 'toc' | 'intro' | 'chapter' | 'progress' | 'search' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization' | 'reading-plan' | 'comparison';
+type ViewType = 'cover' | 'toc' | 'intro' | 'chapter' | 'progress' | 'search' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization' | 'reading-plan' | 'comparison' | 'stats';
 
 type FontFamily = 'system' | 'serif' | 'reading';
 type ReadingMode = 'normal' | 'focus' | 'soothing';
@@ -115,6 +115,12 @@ interface AppState {
   // Daily reflection card
   dailyReflectionIndex: number;
 
+  // Verse of the day
+  verseOfDayDismissed: string; // ISO date string of when it was last dismissed
+
+  // Activity log for heatmap
+  activityLog: string[]; // Array of YYYY-MM-DD date strings
+
   // Keyboard shortcuts overlay (transient - not persisted)
   showShortcuts: boolean;
 
@@ -184,6 +190,10 @@ interface AppState {
   // Du'a of the day actions
   dismissDuaOfDay: () => void;
   isDuaOfDayDismissed: () => boolean;
+
+  // Verse of the day actions
+  dismissVerseOfDay: () => void;
+  isVerseOfDayDismissed: () => boolean;
 
   // Meditation time actions
   incrementMeditationTime: (minutes: number) => void;
@@ -293,6 +303,12 @@ export const useAppStore = create<AppState>()(
 
       // ── Daily Reflection Index ────────────────────────────────────────
       dailyReflectionIndex: 0,
+
+      // ── Verse of the Day ────────────────────────────────────────────
+      verseOfDayDismissed: '',
+
+      // ── Activity Log ─────────────────────────────────────────────────
+      activityLog: [],
 
       // ── Keyboard Shortcuts Overlay ────────────────────────────────
       showShortcuts: false,
@@ -556,12 +572,15 @@ export const useAppStore = create<AppState>()(
       // ── Streak Actions ─────────────────────────────────────────
 
       recordActivity: () => {
-        const { lastActivityDate, currentStreak, longestStreak } = get();
+        const { lastActivityDate, currentStreak, longestStreak, activityLog } = get();
         const today = getTodayDateString();
         const yesterday = getYesterdayDateString();
 
         // Already recorded today
         if (lastActivityDate === today) return;
+
+        // Add today to activity log
+        const newLog = activityLog.includes(today) ? activityLog : [...activityLog, today].slice(-365); // Keep last 365 days
 
         // Continue streak (was active yesterday)
         if (lastActivityDate === yesterday) {
@@ -570,6 +589,7 @@ export const useAppStore = create<AppState>()(
             lastActivityDate: today,
             currentStreak: newStreak,
             longestStreak: Math.max(longestStreak, newStreak),
+            activityLog: newLog,
           });
         } else {
           // Streak broken or first activity — start new streak
@@ -577,6 +597,7 @@ export const useAppStore = create<AppState>()(
             lastActivityDate: today,
             currentStreak: 1,
             longestStreak: Math.max(longestStreak, 1),
+            activityLog: newLog,
           });
         }
       },
@@ -696,6 +717,16 @@ export const useAppStore = create<AppState>()(
         return get().duaOfDayDismissed === getTodayDateString();
       },
 
+      // ── Verse of the Day Actions ─────────────────────────────────────
+
+      dismissVerseOfDay: () => {
+        set({ verseOfDayDismissed: getTodayDateString() });
+      },
+
+      isVerseOfDayDismissed: () => {
+        return get().verseOfDayDismissed === getTodayDateString();
+      },
+
       // ── Meditation Time Actions ─────────────────────────────────────
 
       incrementMeditationTime: (minutes: number) => {
@@ -719,7 +750,7 @@ export const useAppStore = create<AppState>()(
         if (!hash) return;
 
         // Parse hash format: "toc", "chapter/c1", "progress", "glossary", etc.
-        const validViews: ViewType[] = ['cover', 'toc', 'intro', 'chapter', 'progress', 'search', 'glossary', 'journal', 'settings', 'tasbih', 'bookmarks', 'memorization', 'reading-plan', 'comparison'];
+        const validViews: ViewType[] = ['cover', 'toc', 'intro', 'chapter', 'progress', 'search', 'glossary', 'journal', 'settings', 'tasbih', 'bookmarks', 'memorization', 'reading-plan', 'comparison', 'stats'];
 
         if (hash.startsWith('chapter/')) {
           const chapterId = hash.replace('chapter/', '');
@@ -834,12 +865,16 @@ export const useAppStore = create<AppState>()(
           duaOfDayDismissed: '',
           totalMeditationMinutes: 0,
           dailyReflectionIndex: 0,
+          verseOfDayDismissed: '',
+          activityLog: [],
           showShortcuts: false,
         });
       },
     }),
     {
       name: 'alchimie-du-miroir',
+      storage: createJSONStorage(() => localStorage),
+      skipHydration: true,
       // Only persist these fields — exclude transient UI state
       partialize: (state) => ({
         currentView: state.currentView,
@@ -869,6 +904,8 @@ export const useAppStore = create<AppState>()(
         duaOfDayDismissed: state.duaOfDayDismissed,
         totalMeditationMinutes: state.totalMeditationMinutes,
         dailyReflectionIndex: state.dailyReflectionIndex,
+        verseOfDayDismissed: state.verseOfDayDismissed,
+        activityLog: state.activityLog,
       }),
     }
   )

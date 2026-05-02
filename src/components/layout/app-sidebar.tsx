@@ -87,7 +87,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
     uncompletedByPart[part.letter] = count
   }
 
-  const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization' | 'reading-plan' | 'comparison', chapterId?: string) => {
+  const handleNavigate = (view: 'cover' | 'toc' | 'progress' | 'chapter' | 'glossary' | 'journal' | 'settings' | 'tasbih' | 'bookmarks' | 'memorization' | 'reading-plan' | 'comparison' | 'stats', chapterId?: string) => {
     navigate(view, chapterId ?? null)
     // Only close sidebar on mobile
     if (isMobile) onClose()
@@ -103,6 +103,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
     { icon: GraduationCap, label: 'Mémorisation', view: 'memorization' as const },
     { icon: Calendar, label: 'Plan de Lecture', view: 'reading-plan' as const },
     { icon: ArrowLeftRight, label: 'Comparaison', view: 'comparison' as const },
+    { icon: BarChart3, label: 'Statistiques', view: 'stats' as const },
     { icon: Hash, label: 'Tasbih', view: 'tasbih' as const },
     { icon: Settings, label: 'Paramètres', view: 'settings' as const },
   ]

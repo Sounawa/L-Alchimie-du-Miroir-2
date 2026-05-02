@@ -20,6 +20,8 @@ import { TasbihCounter } from '@/components/shared/tasbih-counter'
 import { MemorizationView } from '@/components/views/memorization-view'
 import { ReadingPlanView } from '@/components/views/reading-plan-view'
 import { ChapterComparison } from '@/components/shared/chapter-comparison'
+import { VerseOfTheDay } from '@/components/shared/verse-of-the-day'
+import { StatsView } from '@/components/views/stats-view'
 import { ShortcutsOverlay } from '@/components/shared/shortcuts-overlay'
 import { ReadingProgressBar } from '@/components/shared/reading-progress-bar'
 import { ViewTransition } from '@/components/shared/view-transition'
@@ -37,6 +39,11 @@ export default function Home() {
   const syncFromHash = useAppStore((s) => s.syncFromHash)
   const syncToHash = useAppStore((s) => s.syncToHash)
   const mainRef = useRef<HTMLDivElement>(null)
+
+  // Hydrate Zustand persist store on client
+  useEffect(() => {
+    useAppStore.persist.rehydrate()
+  }, [])
 
   // Register keyboard shortcuts
   useKeyboardShortcuts()
@@ -113,6 +120,8 @@ export default function Home() {
         return <ReadingPlanView />
       case 'comparison':
         return <ChapterComparison />
+      case 'stats':
+        return <StatsView />
       default:
         return <CoverView />
     }
