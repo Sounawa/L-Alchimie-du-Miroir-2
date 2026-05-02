@@ -13,12 +13,12 @@ interface VerseDisplayProps {
 export function VerseDisplay({ arabicVerse, translation, translationSource, chapterTitle }: VerseDisplayProps) {
   return (
     <div className="space-y-6">
-      {/* Illuminated manuscript frame with animated gradient border */}
+      {/* Illuminated manuscript frame with animated gradient border + breathing */}
       <div className="relative">
         {/* Animated gradient border layer */}
         <div className="verse-gradient-border rounded-xl p-[2px]">
           {/* Inner border to create the "border" effect */}
-          <div className="rounded-[10px] border border-amber-200/60 dark:border-amber-700/50 bg-gradient-to-b from-amber-50 via-amber-50/80 to-amber-100/60 dark:from-amber-950/40 dark:via-amber-950/30 dark:to-amber-950/20 p-6 md:p-10 relative overflow-hidden">
+          <div className="rounded-[10px] border border-amber-200/60 dark:border-amber-700/50 bg-gradient-to-b from-amber-50 via-amber-50/80 to-amber-100/60 dark:from-amber-950/40 dark:via-amber-950/30 dark:to-amber-950/20 p-6 md:p-10 relative overflow-hidden verse-frame-breathing ink-wash">
 
             {/* Subtle background pattern */}
             <div
@@ -51,11 +51,16 @@ export function VerseDisplay({ arabicVerse, translation, translationSource, chap
               ✦ ✦ ✦
             </div>
 
-            {/* Decorative corner elements */}
-            <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-amber-400/60 dark:border-amber-500/40 rounded-tl-sm" />
-            <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-amber-400/60 dark:border-amber-500/40 rounded-tr-sm" />
-            <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-amber-400/60 dark:border-amber-500/40 rounded-bl-sm" />
-            <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-amber-400/60 dark:border-amber-500/40 rounded-br-sm" />
+            {/* Double-line ornamental corners — outer */}
+            <div className="absolute top-3 left-3 w-8 h-8 border-t-2 border-l-2 border-amber-400/50 dark:border-amber-500/30 rounded-tl-sm" />
+            <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-amber-400/50 dark:border-amber-500/30 rounded-tr-sm" />
+            <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-amber-400/50 dark:border-amber-500/30 rounded-bl-sm" />
+            <div className="absolute bottom-3 right-3 w-8 h-8 border-b-2 border-r-2 border-amber-400/50 dark:border-amber-500/30 rounded-br-sm" />
+            {/* Double-line ornamental corners — inner */}
+            <div className="absolute top-5 left-5 w-5 h-5 border-t border-l border-amber-300/30 dark:border-amber-600/20 rounded-tl-sm" />
+            <div className="absolute top-5 right-5 w-5 h-5 border-t border-r border-amber-300/30 dark:border-amber-600/20 rounded-tr-sm" />
+            <div className="absolute bottom-5 left-5 w-5 h-5 border-b border-l border-amber-300/30 dark:border-amber-600/20 rounded-bl-sm" />
+            <div className="absolute bottom-5 right-5 w-5 h-5 border-b border-r border-amber-300/30 dark:border-amber-600/20 rounded-br-sm" />
 
             {/* Arabic verse */}
             <p

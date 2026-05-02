@@ -189,7 +189,7 @@ export function ReadingPlanView() {
           <h1 className="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-300 dark:via-yellow-200 dark:to-amber-300 bg-clip-text font-serif text-3xl text-transparent md:text-4xl">
             Plan de Lecture
           </h1>
-          <p className="mt-3 text-sm text-stone-500 dark:text-stone-400/60">
+          <p className="mt-3 text-sm text-stone-500 dark:text-stone-400/80">
             Choisissez un rythme qui vous convient et commencez votre parcours structuré
           </p>
           <div className="mx-auto mt-4 flex items-center justify-center gap-3">
@@ -225,7 +225,7 @@ export function ReadingPlanView() {
                 {/* Progress bar */}
                 <div className="mb-3">
                   <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="text-stone-500 dark:text-stone-400/60">
+                    <span className="text-stone-500 dark:text-stone-400/80">
                       Jour {planProgress.currentDay} / {planProgress.totalDays}
                     </span>
                     <Badge
@@ -248,7 +248,7 @@ export function ReadingPlanView() {
                 </div>
 
                 {/* Start date */}
-                <div className="flex items-center gap-1.5 text-xs text-stone-400 dark:text-stone-500/60">
+                <div className="flex items-center gap-1.5 text-xs text-stone-400 dark:text-stone-500/80">
                   <Calendar className="h-3 w-3" />
                   <span>Commencé le {new Date(planStartDate).toLocaleDateString('fr-FR')}</span>
                 </div>
@@ -375,7 +375,7 @@ export function ReadingPlanView() {
                         {plan.schedule.map((day) => (
                           <div
                             key={day.day}
-                            className="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400/60"
+                            className="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400/80"
                           >
                             <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-stone-100 dark:bg-stone-800 text-[10px] font-bold">
                               {day.day}
@@ -410,7 +410,7 @@ export function ReadingPlanView() {
                 <p className="text-sm font-medium text-stone-700 dark:text-stone-200/80">
                   Conseil de lecture
                 </p>
-                <p className="mt-1 text-xs text-stone-500 dark:text-stone-400/60 leading-relaxed">
+                <p className="mt-1 text-xs text-stone-500 dark:text-stone-400/80 leading-relaxed">
                   Vous pouvez changer de plan à tout moment. Votre progression est sauvegardée
                   automatiquement. Prenez le temps de méditer — la qualité prime sur la quantité.
                 </p>

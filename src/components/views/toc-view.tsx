@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { CheckCircle2, Bookmark, ChevronRight, BookOpen, Flame, Trophy, Clock, Eye } from 'lucide-react';
 import { DailyInspiration } from '@/components/shared/daily-inspiration';
 import { WordOfTheDay } from '@/components/shared/word-of-the-day';
+import { DuaOfTheDay } from '@/components/shared/dua-of-the-day';
 import { StudyReminder } from '@/components/shared/study-reminder';
 import { useRef, useEffect, useState } from 'react';
 
@@ -138,7 +139,7 @@ export function TocView() {
                 <Trophy className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                 <div>
                   <p className="text-sm font-semibold text-stone-700 dark:text-stone-200/80">Résumé de progression</p>
-                  <p className="text-xs text-stone-500 dark:text-stone-400/60">{completedChapters.length}/17 chapitres complétés</p>
+                  <p className="text-xs text-stone-500 dark:text-stone-400/80">{completedChapters.length}/17 chapitres complétés</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -166,25 +167,34 @@ export function TocView() {
           <WordOfTheDay />
         </motion.div>
 
+        {/* Du'a of the Day */}
+        <motion.div variants={fadeIn}>
+          <DuaOfTheDay />
+        </motion.div>
+
         {/* Dernière lecture indicator */}
         {lastReadChapter && (
           <motion.div variants={fadeIn} className="mb-6">
-            <div className="rounded-xl border border-amber-200/50 bg-gradient-to-r from-amber-50/60 via-amber-50/30 to-transparent dark:border-amber-800/30 dark:from-amber-950/20 dark:via-amber-950/10 dark:to-transparent p-3 flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
-                <Eye className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+            <div className="rounded-xl border border-amber-200/50 bg-gradient-to-r from-amber-50/60 via-amber-50/30 to-transparent dark:border-amber-800/30 dark:from-amber-950/20 dark:via-amber-950/10 dark:to-transparent p-3 flex items-center gap-3 relative overflow-hidden shadow-sm card-shadow-subtle">
+              {/* Ambient glow behind the card */}
+              <div className="absolute -inset-1 bg-amber-200/20 dark:bg-amber-700/10 blur-xl rounded-2xl pointer-events-none" />
+              <div className="relative flex items-center gap-3 w-full">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
+                  <Eye className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] uppercase tracking-wider text-amber-600/60 dark:text-amber-400/70 font-medium">Dernière lecture</p>
+                  <p className="text-sm font-medium text-stone-700 dark:text-stone-200/80 truncate">{lastReadChapter.title}</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('chapter', lastReadChapter.chapterId)}
+                  className="text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 shrink-0"
+                >
+                  Lire →
+                </Button>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] uppercase tracking-wider text-amber-600/60 dark:text-amber-400/50 font-medium">Dernière lecture</p>
-                <p className="text-sm font-medium text-stone-700 dark:text-stone-200/80 truncate">{lastReadChapter.title}</p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('chapter', lastReadChapter.chapterId)}
-                className="text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 shrink-0"
-              >
-                Lire →
-              </Button>
             </div>
           </motion.div>
         )}
@@ -197,8 +207,8 @@ export function TocView() {
           >
             <span className="shrink-0 text-amber-500 dark:text-amber-400/60">Intro</span>
             <span className="flex-1 text-stone-700 dark:text-stone-200/80">Introduction</span>
-            <span className="text-xs text-stone-400 dark:text-stone-500/50">3</span>
-            <ChevronRight className="size-4 text-stone-400 transition-colors group-hover:text-amber-500 dark:text-stone-600/50 dark:group-hover:text-amber-400/60" />
+            <span className="text-xs text-stone-400 dark:text-stone-500/80">3</span>
+            <ChevronRight className="size-4 text-stone-400 transition-colors group-hover:text-amber-500 dark:text-stone-600/60 dark:group-hover:text-amber-400/80" />
           </button>
         </motion.div>
 
@@ -223,15 +233,19 @@ export function TocView() {
               </div>
             )}
 
-            {/* Part header with color dot */}
+            {/* Part header with Islamic-inspired ornamental decoration */}
             <div className="my-8">
               <div className="flex items-center gap-3">
                 <span className="h-px flex-1 bg-gradient-to-r from-amber-500/40 to-transparent dark:from-amber-600/40" />
                 <div className="flex items-center gap-2">
                   <span className={`inline-block h-2 w-2 rounded-full ${partDotColor[part.letter] || 'bg-amber-500'}`} />
+                  {/* Islamic-inspired ornamental element */}
+                  <span className="text-amber-400/30 dark:text-amber-600/20 text-[8px] tracking-[0.2em] select-none">✦ ❋ ✦</span>
                   <h2 className="shrink-0 text-sm font-semibold tracking-wider text-amber-600 dark:text-amber-400/80 uppercase">
                     Partie {part.letter} — {part.title}
                   </h2>
+                  <span className="text-amber-400/30 dark:text-amber-600/20 text-[8px] tracking-[0.2em] select-none">✦ ❋ ✦</span>
+                  <span className={`inline-block h-2 w-2 rounded-full ${partDotColor[part.letter] || 'bg-amber-500'}`} />
                 </div>
                 <span className="h-px flex-1 bg-gradient-to-l from-amber-500/40 to-transparent dark:from-amber-600/40" />
               </div>
@@ -276,13 +290,13 @@ export function TocView() {
                     )}
 
                     {/* Reading time */}
-                    <span className="shrink-0 text-[10px] text-stone-400 dark:text-stone-500/60 flex items-center gap-0.5">
+                    <span className="shrink-0 text-[10px] text-stone-400 dark:text-stone-500 flex items-center gap-0.5">
                       <Clock className="size-3" />
                       {getReadingTime(entry.id)} min
                     </span>
 
                     {/* Chevron */}
-                    <ChevronRight className="size-4 shrink-0 text-stone-400 transition-colors group-hover:text-amber-500 dark:text-stone-600/50 dark:group-hover:text-amber-400/60" />
+                    <ChevronRight className="size-4 shrink-0 text-stone-400 transition-colors group-hover:text-amber-500 dark:text-stone-600/60 dark:group-hover:text-amber-400/80" />
                   </button>
                 </motion.div>
               );
@@ -312,12 +326,12 @@ export function TocView() {
                 <span className="block size-4 rounded-full border border-stone-300 dark:border-stone-600/30" />
               </span>
               <span className="flex min-w-0 flex-1 items-baseline gap-1">
-                <span className="shrink-0 text-stone-600 group-hover:text-amber-700 dark:text-stone-300/70 dark:group-hover:text-amber-100/90 transition-colors">
+                <span className="shrink-0 text-stone-600 group-hover:text-amber-700 dark:text-stone-300/80 dark:group-hover:text-amber-100/90 transition-colors">
                   {entry.title}
                 </span>
                 <span className="flex-1 border-b border-dotted border-stone-300 dark:border-stone-600/30 group-hover:border-amber-400 dark:group-hover:border-amber-600/40 transition-colors" />
               </span>
-              <ChevronRight className="size-4 shrink-0 text-stone-400 transition-colors group-hover:text-amber-500 dark:text-stone-600/50 dark:group-hover:text-amber-400/60" />
+              <ChevronRight className="size-4 shrink-0 text-stone-400 transition-colors group-hover:text-amber-500 dark:text-stone-600/60 dark:group-hover:text-amber-400/80" />
             </button>
           </motion.div>
         ))}
@@ -326,10 +340,13 @@ export function TocView() {
         <motion.div variants={fadeIn} className="mt-10">
           <Separator className="mb-6 bg-stone-200/60 dark:bg-stone-700/30" />
           <div className="flex items-center justify-between text-sm">
-            <span className="text-stone-500 dark:text-stone-400/60">Progression</span>
+            <span className="text-stone-500 dark:text-stone-400">Progression</span>
             <ProgressIndicator />
           </div>
         </motion.div>
+
+        {/* Soft gradient fade at the bottom */}
+        <div className="pointer-events-none h-24 bg-gradient-to-t from-stone-100 dark:from-stone-950 to-transparent" />
       </motion.div>
     </div>
   );

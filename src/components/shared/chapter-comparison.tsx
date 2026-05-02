@@ -105,7 +105,7 @@ function ChapterColumn({ chapter, label }: { chapter: Chapter; label: string }) 
         <h3 className="font-bold text-stone-800 dark:text-stone-100">
           {chapter.number} — {chapter.title}
         </h3>
-        <p className="text-xs text-stone-500 dark:text-stone-400/60 mt-0.5">
+        <p className="text-xs text-stone-500 dark:text-stone-400/80 mt-0.5">
           {chapter.subtitle}
         </p>
       </div>
@@ -129,7 +129,7 @@ function ChapterColumn({ chapter, label }: { chapter: Chapter; label: string }) 
           <p className="text-[10px] uppercase tracking-wider text-stone-400 dark:text-stone-500/50 font-medium mb-1">
             Traduction
           </p>
-          <p className="text-sm text-stone-600 dark:text-stone-300/70 leading-relaxed italic">
+          <p className="text-sm text-stone-600 dark:text-stone-300/80 leading-relaxed italic">
             {chapter.translation}
           </p>
         </div>
@@ -142,7 +142,7 @@ function ChapterColumn({ chapter, label }: { chapter: Chapter; label: string }) 
         <div>
           <div className="flex items-center gap-1.5 mb-2">
             <Eye className="h-3.5 w-3.5 text-amber-500" />
-            <p className="text-xs font-semibold text-stone-600 dark:text-stone-300/70">
+            <p className="text-xs font-semibold text-stone-600 dark:text-stone-300/80">
               Questions miroir
             </p>
           </div>
@@ -171,7 +171,7 @@ function ChapterColumn({ chapter, label }: { chapter: Chapter; label: string }) 
         <div>
           <div className="flex items-center gap-1.5 mb-2">
             <Layers className="h-3.5 w-3.5 text-amber-500" />
-            <p className="text-xs font-semibold text-stone-600 dark:text-stone-300/70">
+            <p className="text-xs font-semibold text-stone-600 dark:text-stone-300/80">
               Thèmes clés
             </p>
           </div>
@@ -253,7 +253,7 @@ export function ChapterComparison() {
           <h1 className="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 dark:from-amber-300 dark:via-yellow-200 dark:to-amber-300 bg-clip-text font-serif text-3xl text-transparent md:text-4xl">
             Comparaison de Chapitres
           </h1>
-          <p className="mt-3 text-sm text-stone-500 dark:text-stone-400/60">
+          <p className="mt-3 text-sm text-stone-500 dark:text-stone-400/80">
             Comparez deux chapitres côte à côte pour découvrir les résonances spirituelles
           </p>
           <div className="mx-auto mt-4 flex items-center justify-center gap-3">
@@ -267,7 +267,7 @@ export function ChapterComparison() {
         <motion.div variants={fadeIn} className="mb-8">
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <div className="flex-1 w-full">
-              <label className="text-xs font-medium text-stone-500 dark:text-stone-400/60 mb-1.5 block">
+              <label className="text-xs font-medium text-stone-500 dark:text-stone-400/80 mb-1.5 block">
                 Chapitre 1
               </label>
               <Select value={leftId} onValueChange={setLeftId}>
@@ -291,7 +291,7 @@ export function ChapterComparison() {
             </div>
 
             <div className="flex-1 w-full">
-              <label className="text-xs font-medium text-stone-500 dark:text-stone-400/60 mb-1.5 block">
+              <label className="text-xs font-medium text-stone-500 dark:text-stone-400/80 mb-1.5 block">
                 Chapitre 2
               </label>
               <Select value={rightId} onValueChange={setRightId}>
@@ -339,7 +339,7 @@ export function ChapterComparison() {
                       Thèmes communs
                     </h3>
                   </div>
-                  <p className="mt-1 text-xs text-stone-500 dark:text-stone-400/60">
+                  <p className="mt-1 text-xs text-stone-500 dark:text-stone-400/80">
                     Points de résonance entre ces deux chapitres
                   </p>
                 </div>
@@ -378,7 +378,7 @@ export function ChapterComparison() {
                 <p className="text-sm font-medium text-stone-700 dark:text-stone-200/80">
                   Astuce de comparaison
                 </p>
-                <p className="mt-1 text-xs text-stone-500 dark:text-stone-400/60 leading-relaxed">
+                <p className="mt-1 text-xs text-stone-500 dark:text-stone-400/80 leading-relaxed">
                   Comparez des chapitres de différentes parties (A, B, C) pour découvrir
                   comment les thèmes de la Fatiha résonnent dans les versets du Coran
                   et les niveaux de lecture approfondis.

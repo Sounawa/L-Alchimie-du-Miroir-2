@@ -153,7 +153,7 @@ export function SettingsView() {
               </p>
               {/* Translation sample */}
               <p
-                className="text-center text-xs leading-relaxed text-stone-600/70 dark:text-stone-300/60 italic"
+                className="text-center text-xs leading-relaxed text-stone-600/70 dark:text-stone-300/80 italic"
                 style={{
                   fontFamily:
                     fontFamily === 'system'

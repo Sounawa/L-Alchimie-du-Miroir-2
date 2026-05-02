@@ -744,9 +744,33 @@ const b1: Chapter = {
       meditation: "Réfléchissez à votre véritable source de sécurité.",
     },
   ],
-  munajatPrompts: [],
+  munajatPrompts: [
+    "Ya Allah, Tu es Al-Hayy Al-Qayyum — fais que ma confiance en Toi remplace ma dépendance envers les créatures.",
+    "Ya Allah, ni somnolence ni sommeil ne Te saisissent — veille sur mon cœur quand moi je m'endors.",
+    "Ya 'Aliyy Ya 'Azim, Ton Trône déborde les cieux et la terre — comment pourrais-je douter de Ta puissance dans ma vie ?",
+    "Ya Allah, Ta connaissance embrasse mon passé et mon futur — remets-moi entre Tes mains, car Tu sais ce que j'ignore.",
+  ],
   timerMinutes: 30,
-  exercises: [],
+  exercises: [
+    {
+      question:
+        "Prenez chaque trésor de la liste (les 10 points) et méditez-le pendant 2 minutes. Notez pour chacun : quelle émotion ou pensée surgit ? Quel lien avec votre vie ?",
+      placeholder:
+        "Mes réflexions sur chaque trésor d'Ayat al-Kursi...",
+    },
+    {
+      question:
+        "Écrivez une prière personnelle (munajat) en utilisant les noms Al-Hayy (Le Vivant) et Al-Qayyum (Le Subsistant). Exprimez votre confiance et votre abandon à Sa souveraineté.",
+      placeholder:
+        "Ma prière de confiance en Al-Hayy Al-Qayyum...",
+    },
+    {
+      question:
+        "Pendant 24 heures, chaque fois que vous ressentez de l'anxiété ou de l'insécurité, récitez intérieurement « Al-Hayyu Al-Qayyum ». Notez les moments où ce dhikr a apaisé votre cœur.",
+      placeholder:
+        "Mon journal de dhikr Al-Hayy Al-Qayyum sur 24h...",
+    },
+  ],
 };
 
 // ---- Chapter B2 — Ayat an-Nur ----
@@ -801,10 +825,59 @@ const b2: Chapter = {
         "La révélation éclaire la fitrah, qui éclaire le cœur, qui éclaire le monde",
     },
   ],
-  mirrorQuestions: [],
-  munajatPrompts: [],
+  mirrorQuestions: [
+    {
+      question:
+        "Quelle est la lumière dans mon cœur ? Est-elle vive, vacillante ou éteinte ?",
+      meditation:
+        "Examinez l'état de votre foi comme on examine la flamme d'une lampe — qu'est-ce qui la nourrit, qu'est-ce qui l'éteint ?",
+    },
+    {
+      question:
+        "Protège-je la niche de mon cœur des vents de la distraction ?",
+      meditation:
+        "La niche (mishkat) est un espace protégé. Quelles distractions laissent entrer le vent et menacent votre lumière intérieure ?",
+    },
+    {
+      question:
+        "Comment la fitrah — ma nature innée — se manifeste-t-elle dans ma vie quotidienne ?",
+      meditation:
+        "L'huile presque lumineuse sans feu : votre nature est déjà orientée vers Dieu. Comment l'écoutez-vous ou l'étouffez-vous ?",
+    },
+    {
+      question:
+        "Ma contemplation du Coran change-t-elle concrètement mon comportement ?",
+      meditation:
+        "Lumière sur lumière : la révélation éclaire la fitrah qui éclaire le cœur qui éclaire le monde. Votre contemplation produit-elle de la lumière visible ?",
+    },
+  ],
+  munajatPrompts: [
+    "Ya Nur, illumine les recoins obscurs de mon cœur que je refuse de voir.",
+    "Ya Allah, fais que mon cœur soit une niche digne de Ta lumière — protège-la des vents de la distraction.",
+    "Ya Allah, ravive ma fitrah, cette huile presque lumineuse que Tu as placée en moi — fais que Ton feu la touche.",
+    "Ya Allah, accorde-moi la lumière sur la lumière — que Ta révélation éclaire ma nature, que ma nature éclaire mes actes.",
+  ],
   timerMinutes: 28,
-  exercises: [],
+  exercises: [
+    {
+      question:
+        "Dessinez ou décrivez la niche de votre cœur : qu'y a-t-il à l'intérieur ? La lampe est-elle allumée ? Le verre est-il propre ou voilé ? L'huile est-elle abondante ou rare ? Soyez honnête et symbolique.",
+      placeholder:
+        "Description de la niche de mon cœur...",
+    },
+    {
+      question:
+        "Pendant 24 heures, pratiquez le tafakkur (contemplation) : à chaque moment de la journée, demandez-vous « Où est la lumière d'Allah dans cette situation ? ». Notez vos observations.",
+      placeholder:
+        "Mon journal de tafakkur sur 24h...",
+    },
+    {
+      question:
+        "Choisissez une métaphore du verset (niche, lampe, verre, olivier, huile) et appliquez-la concrètement à votre vie. Par exemple : « Comment puis-je devenir un olivier béni pour les autres ? »",
+      placeholder:
+        "Application concrète d'une métaphore d'Ayat an-Nur...",
+    },
+  ],
   callouts: [
     {
       type: "gold",
@@ -2000,6 +2073,46 @@ const appendices = {
       definition:
         "Ostentation — accomplir un acte de culte pour être vu des autres plutôt que pour Dieu",
     },
+    {
+      term: "Tilawa",
+      definition:
+        "Récitation suivie du Coran — lire en suivant chaque lettre avec précision et présence",
+    },
+    {
+      term: "Tarjamah",
+      definition:
+        "Traduction et compréhension — faire traverser le sens d'une langue à une autre",
+    },
+    {
+      term: "Tahqiq",
+      definition:
+        "Vérification et réalisation — aligner sa vie avec ce que l'on sait être vrai",
+    },
+    {
+      term: "Tazakkur",
+      definition:
+        "Rappel actif — se réveiller de l'oubli par l'évocation consciente de Dieu",
+    },
+    {
+      term: "Tuma'ninah",
+      definition:
+        "Tranquillité du cœur — la paix profonde que seul le dhikr peut donner",
+    },
+    {
+      term: "Ghafla",
+      definition:
+        "Inadvertance et oubli — l'état du cœur endormi, inconscient de la présence divine",
+    },
+    {
+      term: "Ihsan",
+      definition:
+        "L'excellence spirituelle — adorer Dieu comme si tu Le voyais, car Lui te voit",
+    },
+    {
+      term: "Tawba",
+      definition:
+        "Le retour vers Dieu — se repentir sincèrement et revenir sur le chemin droit",
+    },
   ],
   journalTemplate: [
     "Date :",
@@ -2090,7 +2203,8 @@ export const allChapters: Chapter[] = [
 // ---------------------------------------------------------------------------
 
 export function getChapterById(id: string): Chapter | undefined {
-  return allChapters.find((ch) => ch.id === id);
+  const lowerId = id.toLowerCase();
+  return allChapters.find((ch) => ch.id.toLowerCase() === lowerId);
 }
 
 // ---------------------------------------------------------------------------

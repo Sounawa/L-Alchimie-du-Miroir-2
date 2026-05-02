@@ -146,11 +146,16 @@ export function ChapterView() {
   const [showStickyTitle, setShowStickyTitle] = useState(false)
   const [showTocDropdown, setShowTocDropdown] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
+  const [scrollProgress, setScrollProgress] = useState(0)
 
   useEffect(() => {
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 400)
       setShowStickyTitle(window.scrollY > 250)
+      // Calculate scroll progress for bottom glow
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight
+      const progress = docHeight > 0 ? Math.min(window.scrollY / docHeight, 1) : 0
+      setScrollProgress(progress)
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
@@ -223,7 +228,7 @@ export function ChapterView() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -60, opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="fixed top-14 left-0 right-0 z-30 border-b bg-background/85 backdrop-blur-lg dark:bg-background/75 lg:left-72"
+            className="fixed top-14 left-0 right-0 z-30 bg-gradient-to-b from-background/90 via-background/80 to-background/60 backdrop-blur-xl dark:from-background/80 dark:via-background/70 dark:to-background/50 border-b border-amber-200/20 dark:border-amber-700/15 lg:left-72 shadow-sm shadow-amber-900/5 dark:shadow-amber-900/10"
           >
             <div className="mx-auto flex h-10 max-w-3xl items-center gap-3 px-4">
               <Badge variant="outline" className="text-[10px] text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700 shrink-0">
@@ -287,8 +292,8 @@ export function ChapterView() {
             >
               <div className="text-4xl mb-2">🎉🎊✨</div>
               <h3 className="text-lg font-bold text-amber-700 dark:text-amber-300 mb-1">Masha&apos;Allah !</h3>
-              <p className="text-sm text-stone-600 dark:text-stone-300/80">Chapitre complété avec succès !</p>
-              <p className="text-xs text-stone-500 dark:text-stone-400/60 mt-1">Que cette lumière continue de vous guider.</p>
+              <p className="text-sm text-stone-600 dark:text-stone-300">Chapitre complété avec succès !</p>
+              <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">Que cette lumière continue de vous guider.</p>
             </motion.div>
             {/* Floating confetti emojis */}
             {['🎉', '✨', '🌟', '⭐', '🎊'].map((emoji, i) => (
@@ -312,7 +317,16 @@ export function ChapterView() {
         )}
       </AnimatePresence>
 
-      <div className={`max-w-3xl mx-auto px-4 md:px-8 py-6 space-y-6 scroll-smooth bg-gradient-to-b ${partBgGradient[partLetter] || partBgGradient.A} min-h-screen`}>
+      <div className={`max-w-3xl mx-auto px-4 md:px-8 py-6 space-y-6 scroll-smooth bg-gradient-to-b ${partBgGradient[partLetter] || partBgGradient.A} min-h-screen relative`}>
+        {/* Reading progress glow at bottom viewport */}
+        {scrollProgress > 0.1 && (
+          <div
+            className="pointer-events-none fixed bottom-0 left-0 right-0 h-24 z-20 reading-progress-glow lg:left-72"
+            style={{
+              background: `radial-gradient(ellipse at 50% 100%, rgba(245, 158, 11, ${0.06 + scrollProgress * 0.12}) 0%, transparent 70%)`,
+            }}
+          />
+        )}
         {/* Back button and Bookmark */}
         <AnimatedSection>
           <div className="flex items-center justify-between">
@@ -633,12 +647,12 @@ export function ChapterView() {
           </div>
         </AnimatedSection>
 
-        {/* Complete chapter section — enhanced with celebration */}
+        {/* Complete chapter section — enhanced with gradient card */}
         <AnimatedSection
-          className={`rounded-xl border p-4 transition-all duration-500 shadow-sm ${
+          className={`rounded-xl border p-5 transition-all duration-500 shadow-sm card-shadow-subtle ${
             completed
-              ? 'border-emerald-300/50 bg-emerald-50/50 dark:border-emerald-700/30 dark:bg-emerald-950/20'
-              : 'border-stone-200 dark:border-stone-700/30 bg-white dark:bg-stone-900/30'
+              ? 'border-emerald-300/50 bg-gradient-to-br from-emerald-50/60 via-emerald-50/30 to-amber-50/20 dark:border-emerald-700/30 dark:from-emerald-950/20 dark:via-emerald-950/10 dark:to-amber-950/10'
+              : 'border-amber-200/60 bg-gradient-to-br from-amber-50/40 via-white to-amber-50/20 dark:border-amber-800/30 dark:from-amber-950/15 dark:via-stone-900/30 dark:to-amber-950/10'
           }`}
         >
           <div className="flex items-center gap-3">
@@ -686,6 +700,9 @@ export function ChapterView() {
 
         {/* Chapter scroll progress indicator */}
         <ChapterProgressIndicator />
+
+        {/* Bottom fade mask to encourage scrolling */}
+        <div className="pointer-events-none fixed bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background/60 to-transparent z-10 lg:left-72" />
       </div>
     </>
   )

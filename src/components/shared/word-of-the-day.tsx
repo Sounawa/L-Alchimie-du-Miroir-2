@@ -360,10 +360,10 @@ export function WordOfTheDay() {
 
           {/* Mirror dimension callout */}
           <div className="mb-4 rounded-lg border border-amber-300/40 dark:border-amber-700/20 bg-amber-100/30 dark:bg-amber-950/20 px-3 py-2.5">
-            <p className="text-[10px] uppercase tracking-wider text-amber-600/70 dark:text-amber-400/50 font-medium mb-1">
+            <p className="text-[10px] uppercase tracking-wider text-amber-600/70 dark:text-amber-400/70 font-medium mb-1">
               ✦ Dimension miroir
             </p>
-            <p className="text-xs text-stone-600 dark:text-stone-300/70 leading-relaxed">
+            <p className="text-xs text-stone-600 dark:text-stone-300/80 leading-relaxed">
               {word.mirrorDimension}
             </p>
           </div>
@@ -371,7 +371,7 @@ export function WordOfTheDay() {
           {/* Verse */}
           <div className="mb-4 text-center">
             <p
-              className="arabic-verse text-lg leading-relaxed text-stone-600 dark:text-stone-300/60"
+              className="arabic-verse text-lg leading-relaxed text-stone-600 dark:text-stone-300/80"
               lang="ar"
               dir="rtl"
             >

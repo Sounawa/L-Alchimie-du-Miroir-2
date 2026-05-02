@@ -260,7 +260,7 @@ export function JournalView() {
                 <p className="text-sm italic text-amber-900 dark:text-amber-200/80 leading-relaxed">
                   {todayQuote.text}
                 </p>
-                <p className="text-[11px] text-amber-700/60 dark:text-amber-400/50 mt-1">
+                <p className="text-[11px] text-amber-700/60 dark:text-amber-400/70 mt-1">
                   — {todayQuote.source}
                 </p>
               </div>

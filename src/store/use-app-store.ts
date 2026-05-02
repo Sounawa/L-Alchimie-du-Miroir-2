@@ -106,6 +106,9 @@ interface AppState {
   // Word of the day
   wordOfDayDismissed: string; // ISO date string of when it was last dismissed
 
+  // Du'a of the day
+  duaOfDayDismissed: string; // ISO date string of when it was last dismissed
+
   // Keyboard shortcuts overlay (transient - not persisted)
   showShortcuts: boolean;
 
@@ -172,8 +175,16 @@ interface AppState {
   dismissWordOfDay: () => void;
   isWordOfDayDismissed: () => boolean;
 
+  // Du'a of the day actions
+  dismissDuaOfDay: () => void;
+  isDuaOfDayDismissed: () => boolean;
+
   // Keyboard shortcuts overlay actions
   toggleShortcuts: () => void;
+
+  // Hash routing actions
+  syncFromHash: () => void;
+  syncToHash: () => void;
 
   // Data export/import
   exportAllData: () => string;
@@ -264,6 +275,9 @@ export const useAppStore = create<AppState>()(
 
       // ── Word of the Day ─────────────────────────────────────────────
       wordOfDayDismissed: '',
+
+      // ── Du'a of the Day ─────────────────────────────────────────────
+      duaOfDayDismissed: '',
 
       // ── Keyboard Shortcuts Overlay ────────────────────────────────
       showShortcuts: false,
@@ -657,10 +671,56 @@ export const useAppStore = create<AppState>()(
         return get().wordOfDayDismissed === getTodayDateString();
       },
 
+      // ── Du'a of the Day Actions ─────────────────────────────────────
+
+      dismissDuaOfDay: () => {
+        set({ duaOfDayDismissed: getTodayDateString() });
+      },
+
+      isDuaOfDayDismissed: () => {
+        return get().duaOfDayDismissed === getTodayDateString();
+      },
+
       // ── Keyboard Shortcuts Overlay Actions ────────────────────────
 
       toggleShortcuts: () => {
         set((state) => ({ showShortcuts: !state.showShortcuts }));
+      },
+
+      // ── Hash Routing Actions ──────────────────────────────────────
+
+      syncFromHash: () => {
+        if (typeof window === 'undefined') return;
+        // Strip leading '#' and optional '/' to handle both #/chapter/b1 and #chapter/b1
+        const hash = window.location.hash.replace(/^#\/?/, '');
+        if (!hash) return;
+
+        // Parse hash format: "toc", "chapter/c1", "progress", "glossary", etc.
+        const validViews: ViewType[] = ['cover', 'toc', 'intro', 'chapter', 'progress', 'search', 'glossary', 'journal', 'settings', 'tasbih', 'bookmarks', 'memorization', 'reading-plan', 'comparison'];
+
+        if (hash.startsWith('chapter/')) {
+          const chapterId = hash.replace('chapter/', '');
+          set({ currentView: 'chapter', currentChapterId: chapterId });
+        } else if (validViews.includes(hash as ViewType)) {
+          set({ currentView: hash as ViewType, currentChapterId: null });
+        }
+      },
+
+      syncToHash: () => {
+        if (typeof window === 'undefined') return;
+        const { currentView, currentChapterId } = get();
+        let newHash = '';
+
+        if (currentView === 'chapter' && currentChapterId) {
+          newHash = `#/chapter/${currentChapterId}`;
+        } else {
+          newHash = `#/${currentView}`;
+        }
+
+        // Only update if different to avoid infinite loops
+        if (window.location.hash !== newHash) {
+          window.history.replaceState(null, '', newHash);
+        }
       },
 
       // ── Data Export/Import Actions ──────────────────────────────
@@ -748,6 +808,7 @@ export const useAppStore = create<AppState>()(
           selectedPlan: null,
           planStartDate: null,
           wordOfDayDismissed: '',
+          duaOfDayDismissed: '',
           showShortcuts: false,
         });
       },
@@ -780,6 +841,7 @@ export const useAppStore = create<AppState>()(
         selectedPlan: state.selectedPlan,
         planStartDate: state.planStartDate,
         wordOfDayDismissed: state.wordOfDayDismissed,
+        duaOfDayDismissed: state.duaOfDayDismissed,
       }),
     }
   )

@@ -34,10 +34,31 @@ export default function Home() {
   const sidebarOpen = useAppStore((s) => s.sidebarOpen)
   const fontFamily = useAppStore((s) => s.fontFamily)
   const readingMode = useAppStore((s) => s.readingMode)
+  const syncFromHash = useAppStore((s) => s.syncFromHash)
+  const syncToHash = useAppStore((s) => s.syncToHash)
   const mainRef = useRef<HTMLDivElement>(null)
 
   // Register keyboard shortcuts
   useKeyboardShortcuts()
+
+  // Sync from URL hash on mount
+  useEffect(() => {
+    syncFromHash()
+  }, [syncFromHash])
+
+  // Listen for hash changes (browser back/forward)
+  useEffect(() => {
+    const handleHashChange = () => {
+      syncFromHash()
+    }
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [syncFromHash])
+
+  // Sync to URL hash when navigation state changes
+  useEffect(() => {
+    syncToHash()
+  }, [currentView, currentChapterId, syncToHash])
 
   // Scroll to top on view change
   useEffect(() => {

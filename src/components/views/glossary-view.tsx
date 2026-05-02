@@ -159,9 +159,9 @@ export function GlossaryView() {
                 onClick={() => scrollToLetter(letter)}
                 disabled={!isActive}
                 className={`
-                  w-8 h-8 rounded-md text-xs font-medium transition-all duration-200 relative group
+                  w-9 h-9 rounded-lg text-xs font-semibold transition-all duration-200 relative group
                   ${isActive
-                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-900/60 hover:scale-110 cursor-pointer'
+                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-900/60 hover:scale-110 hover:shadow-sm hover:shadow-amber-200/30 dark:hover:shadow-amber-800/20 cursor-pointer'
                     : 'text-muted-foreground/30 dark:text-muted-foreground/20 cursor-default'
                   }
                 `}
@@ -241,14 +241,14 @@ export function GlossaryView() {
                         >
                           <AccordionItem
                             value={item.term}
-                            className="border border-amber-200/40 dark:border-amber-800/20 rounded-lg px-4 bg-amber-50/30 dark:bg-amber-950/10 hover:border-amber-300/60 dark:hover:border-amber-700/40 transition-colors"
+                            className="border border-amber-200/40 dark:border-amber-800/20 rounded-xl px-4 bg-amber-50/30 dark:bg-amber-950/10 hover:border-amber-300/60 dark:hover:border-amber-700/40 transition-all duration-200 data-[state=open]:bg-gradient-to-br data-[state=open]:from-amber-50/60 data-[state=open]:via-amber-50/30 data-[state=open]:to-amber-100/20 dark:data-[state=open]:from-amber-950/20 dark:data-[state=open]:via-amber-950/10 dark:data-[state=open]:to-amber-900/10 data-[state=open]:shadow-sm data-[state=open]:card-shadow-subtle"
                           >
                             <AccordionTrigger className="py-3 hover:no-underline">
                               <span className="font-semibold text-amber-900 dark:text-amber-200 text-sm">
                                 {item.term}
                               </span>
                             </AccordionTrigger>
-                            <AccordionContent className="text-sm leading-relaxed text-foreground/80 dark:text-foreground/70">
+                            <AccordionContent className="text-sm leading-relaxed text-foreground/80 dark:text-foreground/80">
                               {item.definition}
                             </AccordionContent>
                           </AccordionItem>
@@ -289,7 +289,7 @@ export function GlossaryView() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + idx * 0.06, duration: 0.3, ease: 'easeOut' }}
                 >
-                  <Card className="border-amber-200/40 dark:border-amber-800/20 hover:border-amber-300/60 dark:hover:border-amber-700/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 hover:shadow-amber-100/30 dark:hover:shadow-amber-900/10">
+                  <Card className="border-amber-200/40 dark:border-amber-800/20 hover:border-amber-300/60 dark:hover:border-amber-700/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 hover:shadow-amber-100/30 dark:hover:shadow-amber-900/10 card-shadow-subtle">
                     <CardContent className="py-4 px-4">
                       <div className="flex items-start gap-3">
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100/60 dark:bg-amber-900/20 mt-0.5">

@@ -89,7 +89,7 @@ export function IntroView() {
           {intro.fromLevel1to2.split('\n\n').map((paragraph, i) => (
             <p
               key={i}
-              className="mb-4 leading-relaxed text-stone-600 dark:text-stone-300/70"
+              className="mb-4 leading-relaxed text-stone-600 dark:text-stone-300/80"
             >
               {paragraph}
             </p>
@@ -114,7 +114,7 @@ export function IntroView() {
                     <CardTitle className="text-sm text-amber-700 dark:text-amber-200/80">
                       {change.title}
                     </CardTitle>
-                    <CardDescription className="text-stone-500 dark:text-stone-400/60">
+                    <CardDescription className="text-stone-500 dark:text-stone-400/80">
                       {change.description}
                     </CardDescription>
                   </CardHeader>
@@ -156,13 +156,13 @@ export function IntroView() {
                         {row.part}
                       </div>
                     </TableCell>
-                    <TableCell className="text-stone-600 dark:text-stone-300/60">
+                    <TableCell className="text-stone-600 dark:text-stone-300/80">
                       {row.content}
                     </TableCell>
-                    <TableCell className="text-amber-600 dark:text-amber-400/60">
+                    <TableCell className="text-amber-600 dark:text-amber-400/80">
                       {row.chapters}
                     </TableCell>
-                    <TableCell className="text-stone-500 dark:text-stone-400/50">
+                    <TableCell className="text-stone-500 dark:text-stone-400/80">
                       <div className="flex items-center gap-1">
                         <Clock className="size-3 text-stone-400 dark:text-stone-500/50" />
                         {row.duration}
@@ -207,25 +207,25 @@ export function IntroView() {
 
           {/* Hadith about the lemon and the date */}
           <div className="mb-4 rounded-lg border-l-4 border-amber-400/60 bg-amber-50/50 py-3 pr-4 pl-5 dark:border-amber-500/40 dark:bg-stone-800/30">
-            <p className="mb-2 text-sm leading-relaxed text-stone-600 italic dark:text-stone-300/70">
+            <p className="mb-2 text-sm leading-relaxed text-stone-600 italic dark:text-stone-300/80">
               &ldquo;L&apos;exemple d&apos;un bon compagnon et d&apos;un mauvais compagnon
               est comme celui du vendeur de musc et du forgeron : le vendeur de
               musc te donne un parfum ou tu en achètes, ou au minimum tu sens une
               bonne odeur. Quant au forgeron, il te brûle les vêtements ou tu
               sents une mauvaise odeur.&rdquo;
             </p>
-            <span className="text-xs text-amber-600/70 dark:text-amber-400/50">
+            <span className="text-xs text-amber-600/70 dark:text-amber-400/70">
               — Hadith rapporté par Al-Bukhari et Muslim
             </span>
           </div>
 
           {/* Hadith about seeking knowledge */}
           <div className="rounded-lg border-l-4 border-amber-400/60 bg-amber-50/50 py-3 pr-4 pl-5 dark:border-amber-500/40 dark:bg-stone-800/30">
-            <p className="mb-2 text-sm leading-relaxed text-stone-600 italic dark:text-stone-300/70">
+            <p className="mb-2 text-sm leading-relaxed text-stone-600 italic dark:text-stone-300/80">
               &ldquo;Quiconque emprunte un chemin à la recherche de la science,
               Allah lui facilite un chemin vers le Paradis.&rdquo;
             </p>
-            <span className="text-xs text-amber-600/70 dark:text-amber-400/50">
+            <span className="text-xs text-amber-600/70 dark:text-amber-400/70">
               — Hadith rapporté par Muslim
             </span>
           </div>
@@ -234,7 +234,7 @@ export function IntroView() {
         {/* CTA to first chapter */}
         <motion.div variants={fadeIn} className="mt-8 text-center">
           <Separator className="mb-8 bg-stone-200/60 dark:bg-stone-700/30" />
-          <p className="mb-4 text-sm text-stone-500 dark:text-stone-400/60">
+          <p className="mb-4 text-sm text-stone-500 dark:text-stone-400/80">
             Prêt à commencer votre méditation ?
           </p>
           <Button

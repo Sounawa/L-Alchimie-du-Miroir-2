@@ -150,9 +150,11 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
         <Progress value={progressPercent} className="h-2" />
       </div>
 
-      {/* Hijri Date Display */}
+      {/* Hijri Date Display — refined card */}
       <div className="px-4 py-2">
-        <HijriDateDisplay />
+        <div className="rounded-lg border border-amber-200/40 dark:border-amber-800/20 bg-amber-50/40 dark:bg-amber-950/10 px-3 py-2 shadow-sm card-shadow-subtle">
+          <HijriDateDisplay />
+        </div>
       </div>
 
       <Separator />
@@ -234,12 +236,16 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
                           whileHover={{ x: 3 }}
                           whileTap={{ scale: 0.98 }}
                         >
-                          {/* Status icon */}
-                          <span className="shrink-0 w-4 h-4 flex items-center justify-center">
+                          {/* Status icon + reading indicator */}
+                          <span className="shrink-0 w-4 h-4 flex items-center justify-center relative">
                             {isComplete ? (
                               <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                             ) : (
                               <span className="block h-3.5 w-3.5 rounded-sm border border-muted-foreground/30" />
+                            )}
+                            {/* Currently reading pulsing amber dot */}
+                            {isActive && (
+                              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-amber-500 dark:bg-amber-400 amber-dot-pulse" />
                             )}
                           </span>
 
@@ -285,7 +291,7 @@ function SidebarContent({ onClose, isMobile }: { onClose: () => void; isMobile: 
           </div>
         </ScrollArea>
         {/* Gradient fade at bottom of scroll area */}
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-background to-transparent" />
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background via-background/80 to-transparent" />
       </div>
 
       <Separator />

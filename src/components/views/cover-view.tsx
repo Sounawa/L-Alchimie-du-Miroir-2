@@ -4,7 +4,7 @@ import { useAppStore } from '@/store/use-app-store';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 
 // 7 inspiring Islamic/spiritual quotes in French for daily rotation
 const dailyQuotes = [
@@ -34,7 +34,7 @@ function QuoteOfTheDay() {
       {/* Subtle decorative element */}
       <div className="absolute top-0 left-0 w-16 h-16 bg-amber-200/20 dark:bg-amber-800/10 rounded-br-full" />
       <div className="relative">
-        <p className="text-xs font-medium text-amber-600/60 dark:text-amber-400/50 mb-2 uppercase tracking-wider">
+        <p className="text-xs font-medium text-amber-600/60 dark:text-amber-400/70 mb-2 uppercase tracking-wider">
           Citation du jour
         </p>
         <div className="relative">
@@ -44,7 +44,7 @@ function QuoteOfTheDay() {
           </p>
           <span className="absolute -bottom-3 right-0 text-3xl text-amber-300/40 dark:text-amber-600/30 font-serif select-none leading-none">&rdquo;</span>
         </div>
-        <p className="text-[11px] text-amber-700/60 dark:text-amber-400/50 mt-3 italic">
+        <p className="text-[11px] text-amber-700/60 dark:text-amber-400/70 mt-3 italic">
           — {quote.source}
         </p>
       </div>
@@ -122,9 +122,19 @@ function SparkleField() {
 
 export function CoverView() {
   const navigate = useAppStore((s) => s.navigate);
+  const [scrollY, setScrollY] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-amber-50/80 via-amber-50/40 to-amber-100/50 dark:from-stone-950 dark:via-stone-900 dark:to-amber-950/20 animate-cover-entrance">
+    <div ref={containerRef} className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-amber-50/80 via-amber-50/40 to-amber-100/50 dark:from-stone-950 dark:via-stone-900 dark:to-amber-950/20 animate-cover-entrance noise-overlay">
       {/* Decorative Islamic-style border pattern */}
       <div className="pointer-events-none absolute inset-3 sm:inset-5 border border-amber-300/20 dark:border-amber-600/15 rounded-xl sm:rounded-2xl" />
       <div className="pointer-events-none absolute inset-4 sm:inset-6 border border-amber-400/10 dark:border-amber-500/10 rounded-lg sm:rounded-xl" />
@@ -133,11 +143,11 @@ export function CoverView() {
       <div className="pointer-events-none absolute top-5 sm:top-8 right-5 sm:right-8 text-amber-400/30 dark:text-amber-500/20 text-lg select-none">✦</div>
       <div className="pointer-events-none absolute bottom-5 sm:bottom-8 left-5 sm:left-8 text-amber-400/30 dark:text-amber-500/20 text-lg select-none">✦</div>
       <div className="pointer-events-none absolute bottom-5 sm:bottom-8 right-5 sm:right-8 text-amber-400/30 dark:text-amber-500/20 text-lg select-none">✦</div>
-      {/* Secondary warm radial glow for light mode */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,_rgba(251,191,36,0.10)_0%,_transparent_50%)] dark:bg-none" />
-      {/* Soft warm vignette in light mode */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_50%,_rgba(180,130,60,0.08)_100%)] dark:bg-none" />
-      {/* Subtle Islamic geometric pattern overlay */}
+      {/* Secondary warm radial glow for light mode — parallax */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,_rgba(251,191,36,0.10)_0%,_transparent_50%)] dark:bg-none" style={{ transform: `translateY(${scrollY * -0.15}px)` }} />
+      {/* Soft warm vignette in light mode — parallax */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_50%,_rgba(180,130,60,0.08)_100%)] dark:bg-none" style={{ transform: `translateY(${scrollY * -0.1}px)` }} />
+      {/* Subtle Islamic geometric pattern overlay — parallax */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.08] dark:opacity-[0.04]"
         style={{
@@ -150,33 +160,42 @@ export function CoverView() {
             linear-gradient(120deg, rgba(217, 169, 99, 0.15) 12%, transparent 12.5%, transparent 87%, rgba(217, 169, 99, 0.15) 87.5%)
           `,
           backgroundSize: '80px 140px, 80px 140px, 56px 97px, 56px 97px, 56px 97px, 56px 97px',
+          transform: `translateY(${scrollY * -0.2}px)`,
         }}
       />
 
-      {/* Sparkle/particle animation */}
-      <SparkleField />
+      {/* Sparkle/particle animation — parallax */}
+      <div style={{ transform: `translateY(${scrollY * -0.25}px)` }}>
+        <SparkleField />
+      </div>
 
       {/* Radial warm glow */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(180,130,60,0.12)_0%,_transparent_70%)] dark:bg-[radial-gradient(ellipse_at_center,_rgba(180,130,60,0.08)_0%,_transparent_70%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(180,130,60,0.12)_0%,_transparent_70%)] dark:bg-[radial-gradient(ellipse_at_center,_rgba(180,130,60,0.08)_0%,_transparent_70%)]" style={{ transform: `translateY(${scrollY * -0.08}px)` }} />
 
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
         className="relative z-10 flex flex-col items-center gap-6 px-6 py-12 text-center max-w-lg md:gap-8 md:py-16 md:max-w-xl"
+        style={{ transform: `translateY(${scrollY * -0.3}px)` }}
       >
-        {/* Decorative Bismillah calligraphy line */}
-        <motion.div variants={item} className="mb-2 opacity-40 dark:opacity-25">
-          <p
-            dir="rtl"
-            lang="ar"
-            className="arabic-verse text-lg md:text-xl text-amber-700 dark:text-amber-400/50 select-none"
-          >
-            بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
-          </p>
+        {/* Decorative Bismillah calligraphy line — enhanced */}
+        <motion.div variants={item} className="mb-2 relative">
+          <div className="absolute inset-0 bg-amber-300/10 dark:bg-amber-500/5 blur-xl rounded-full scale-150" />
+          <div className="relative flex items-center gap-3">
+            <span className="h-px w-8 bg-gradient-to-r from-transparent to-amber-400/30 dark:to-amber-500/20" />
+            <p
+              dir="rtl"
+              lang="ar"
+              className="arabic-verse text-lg md:text-xl text-amber-700/60 dark:text-amber-400/40 select-none"
+            >
+              بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+            </p>
+            <span className="h-px w-8 bg-gradient-to-l from-transparent to-amber-400/30 dark:to-amber-500/20" />
+          </div>
         </motion.div>
 
-        {/* Mirror emoji with dramatic glow and gentle pulse */}
+        {/* Mirror emoji with dramatic multi-layer glow — enhanced */}
         <motion.div variants={item} className="relative">
           <motion.span
             className="block text-8xl md:text-9xl"
@@ -185,18 +204,26 @@ export function CoverView() {
           >
             🪞
           </motion.span>
-          {/* Multi-layer glow effect with pulse */}
+          {/* Layer 1: Outermost soft ethereal haze */}
           <motion.div
-            className="absolute inset-0 rounded-full bg-amber-400/25 blur-2xl dark:bg-amber-400/30"
-            animate={{ opacity: [0.5, 0.8, 0.5], scale: [0.95, 1.1, 0.95] }}
+            className="absolute inset-0 rounded-full bg-amber-300/10 blur-[60px] dark:bg-amber-400/8"
+            animate={{ opacity: [0.3, 0.6, 0.3], scale: [0.85, 1.2, 0.85] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          {/* Layer 2: Mid glow */}
+          <motion.div
+            className="absolute inset-0 rounded-full bg-amber-400/20 blur-3xl dark:bg-amber-400/15"
+            animate={{ opacity: [0.4, 0.7, 0.4], scale: [0.9, 1.15, 0.9] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          {/* Layer 3: Inner bright glow */}
+          <motion.div
+            className="absolute inset-0 rounded-full bg-amber-500/15 blur-xl dark:bg-amber-300/10"
+            animate={{ opacity: [0.5, 0.9, 0.5], scale: [0.92, 1.08, 0.92] }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
           />
-          <div className="absolute inset-0 rounded-full bg-amber-300/15 blur-3xl dark:bg-amber-300/10" />
-          <motion.div
-            className="absolute inset-0 rounded-full bg-amber-500/10 blur-xl"
-            animate={{ opacity: [0.3, 0.7, 0.3], scale: [0.9, 1.1, 0.9] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-          />
+          {/* Layer 4: Core highlight */}
+          <div className="absolute inset-0 rounded-full bg-amber-200/10 blur-lg dark:bg-amber-200/5" />
         </motion.div>
 
         {/* Title with shimmer and gentle float */}
@@ -264,14 +291,14 @@ export function CoverView() {
         {/* Author line */}
         <motion.p
           variants={item}
-          className="mt-3 text-sm font-serif italic text-stone-600 dark:text-stone-300/70 tracking-wide"
+          className="mt-3 text-sm font-serif italic text-stone-600 dark:text-stone-300/80 tracking-wide"
         >
           Un guide de tadabbur progressif
         </motion.p>
 
         {/* Edition with decorative separator — perfectly centered */}
         <motion.div variants={item} className="w-full text-center">
-          <p className="text-xs text-stone-500 dark:text-stone-400/60 tracking-wider">
+          <p className="text-xs text-stone-500 dark:text-stone-400/80 tracking-wider">
             ✦ Édition 2025 — Pour usage personnel ✦
           </p>
         </motion.div>
@@ -307,8 +334,8 @@ export function CoverView() {
         animate={{ opacity: [0.4, 0.8, 0.4], y: [0, 6, 0] }}
         transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
       >
-        <span className="text-xs text-stone-400 dark:text-stone-500/60 select-none">Défiler</span>
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-stone-400 dark:text-stone-500/60">
+        <span className="text-xs text-stone-400 dark:text-stone-500 select-none">Défiler</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-stone-400 dark:text-stone-500">
           <path d="M10 4 L10 14 M5 10 L10 15 L15 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </motion.div>

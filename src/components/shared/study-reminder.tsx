@@ -69,7 +69,7 @@ export function StudyReminder() {
                   variant="ghost"
                   size="sm"
                   onClick={dismissReminder}
-                  className="h-8 w-8 p-0 text-amber-600/60 hover:text-amber-700 dark:text-amber-400/50 dark:hover:text-amber-300 hover:bg-amber-100/50 dark:hover:bg-amber-900/20"
+                  className="h-8 w-8 p-0 text-amber-600/60 hover:text-amber-700 dark:text-amber-400/70 dark:hover:text-amber-300 hover:bg-amber-100/50 dark:hover:bg-amber-900/20"
                   title="Masquer pour aujourd'hui"
                 >
                   <X className="h-3.5 w-3.5" />
