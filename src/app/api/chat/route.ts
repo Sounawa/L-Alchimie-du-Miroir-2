@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+export const dynamic = "force-static";
+
 import ZAI from 'z-ai-web-dev-sdk';
 
 export async function POST(request: NextRequest) {

@@ -195,7 +195,8 @@ export function VerseAudioPlayer({ arabicText, part }: VerseAudioPlayerProps) {
 
     setIsLoading(true)
     try {
-      const response = await fetch('/api/tts', {
+      const basePath = process.env.NODE_ENV === 'production' ? '/L-Alchimie-du-Miroir-2' : ''
+      const response = await fetch(`${basePath}/api/tts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: arabicText, lang: 'ar' }),

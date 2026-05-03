@@ -217,7 +217,11 @@ export function AiChatPanel() {
         ? `${currentChapter.number} — ${currentChapter.title}: ${currentChapter.translation}`
         : undefined
 
-      const response = await fetch('/api/chat', {
+      // Build API URL with basePath awareness for GitHub Pages
+      const basePath = process.env.NODE_ENV === 'production' ? '/L-Alchimie-du-Miroir-2' : ''
+      const apiUrl = `${basePath}/api/chat`
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -239,7 +243,7 @@ export function AiChatPanel() {
     } catch {
       addChatMessage(
         'assistant',
-        'Je suis désolé, une erreur de connexion est survenue. Veuillez réessayer.'
+        "Je suis désolé, l'assistant IA n'est pas disponible en mode statique (GitHub Pages). Cette fonctionnalité nécessite un serveur backend. Vous pouvez toutefois utiliser les autres fonctionnalités de l'application !"
       )
     } finally {
       setIsLoading(false)

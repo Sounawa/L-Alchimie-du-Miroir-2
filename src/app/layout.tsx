@@ -22,18 +22,26 @@ const amiri = Amiri({
   display: "swap",
 });
 
+// basePath for GitHub Pages deployment
+const basePath = process.env.GITHUB_PAGES === "true" ? "/L-Alchimie-du-Miroir-2" : "";
+
 export const metadata: Metadata = {
   title: "L'Alchimie du Miroir — Niveau 2",
   description: "Guide Pratique Interactif Avancé — Méditer le Coran avec l'Âme. Basé sur les enseignements d'Al-Ghazālī, Ibn al-Qayyim et Ibn ʿArabī.",
   keywords: ["Coran", "tadabbur", "méditation", "Al-Fatiha", "spiritualité", "islam"],
   authors: [{ name: "L'Alchimie du Miroir" }],
   icons: {
-    icon: "/logo.svg",
+    icon: `${basePath}/logo.svg`,
   },
-  manifest: "/manifest.json",
+  manifest: `${basePath}/manifest.json`,
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
+  },
+  other: {
+    "theme-color": "#d97706",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
   },
 };
 
@@ -48,12 +56,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning className="transition-colors duration-300">
-      <head>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#d97706" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${amiri.variable} antialiased bg-background text-foreground transition-colors duration-300`}
       >
@@ -65,13 +67,14 @@ export default function RootLayout({
           {children}
           <Toaster />
         </ThemeProvider>
-        {/* Service Worker Registration */}
+        {/* Service Worker Registration — auto-detects basePath from current URL */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').catch(function() {});
+                  var swPath = window.location.pathname.split('/').slice(0, 2).join('/') + '/sw.js';
+                  navigator.serviceWorker.register(swPath).catch(function() {});
                 });
               }
             `,
