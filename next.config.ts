@@ -3,19 +3,19 @@ import type { NextConfig } from "next";
 const isGitHubPages = process.env.GITHUB_PAGES === "true";
 
 const nextConfig: NextConfig = {
-  // GitHub Pages requires static export
-  output: "export",
+  // GitHub Pages requires static export; local dev uses standalone
+  output: isGitHubPages ? "export" : "standalone",
 
   // GitHub Pages serves from repo subdirectory — only in production build
   basePath: isGitHubPages ? "/L-Alchimie-du-Miroir-2" : "",
 
   // Static export doesn't support image optimization
   images: {
-    unoptimized: true,
+    unoptimized: isGitHubPages,
   },
 
   // Trailing slash for GitHub Pages compatibility
-  trailingSlash: true,
+  trailingSlash: isGitHubPages,
 
   typescript: {
     ignoreBuildErrors: true,
