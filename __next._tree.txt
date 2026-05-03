@@ -1,0 +1,13 @@
+:HL["/L-Alchimie-du-Miroir-2/_next/static/chunks/ddfe2425b3c5086d.css","style"]
+:HL["/L-Alchimie-du-Miroir-2/_next/static/chunks/889f9a4349b60eda.css","style"]
+:HL["/L-Alchimie-du-Miroir-2/_next/static/media/05d29f0ed5b0e698-s.p.6d7a8113.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/L-Alchimie-du-Miroir-2/_next/static/media/1062333f2bd32cfe-s.p.7f0fdb38.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/L-Alchimie-du-Miroir-2/_next/static/media/291696193ea1e96b-s.p.6ef5e8dc.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/L-Alchimie-du-Miroir-2/_next/static/media/3d462cbf47f6bc3e-s.p.86d2dfcf.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/L-Alchimie-du-Miroir-2/_next/static/media/648474ecaeaf4c9a-s.p.caba5483.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/L-Alchimie-du-Miroir-2/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/L-Alchimie-du-Miroir-2/_next/static/media/a516064422e747c5-s.p.9cee4707.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/L-Alchimie-du-Miroir-2/_next/static/media/c697ccb90a07d27c-s.p.4ea713b0.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/L-Alchimie-du-Miroir-2/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/L-Alchimie-du-Miroir-2/_next/static/media/d9c6de8f7f992343-s.p.3909b374.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"buildId":"roBeSui9ptOW_OerhTRRY","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
